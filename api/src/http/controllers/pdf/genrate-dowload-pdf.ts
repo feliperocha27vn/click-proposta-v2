@@ -12,6 +12,7 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
       onRequest: [verifyJwt],
       schema: {
         body: z.object({
+          imgUrl: z.string(),
           nameUser: z.string(),
           nameCustomer: z.string(),
           emailCustomer: z.string(),
@@ -29,6 +30,7 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
     },
     async (request, reply) => {
       const {
+        imgUrl,
         nameUser,
         nameCustomer,
         emailCustomer,
@@ -39,6 +41,7 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
 
       try {
         const pdfDocument = React.createElement(BudgetPdfDocument, {
+          imgUrl,
           nameUser,
           nameCustomer,
           emailCustomer,

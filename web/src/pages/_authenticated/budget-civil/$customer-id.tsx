@@ -85,6 +85,7 @@ function RouteComponent() {
 
   function handleSubmitForm(data: ServicesForm) {
     generatePdfFn({
+      imgUrl: user?.user.avatarUrl || '',
       services: data.service,
       nameUser: user?.user.name || '',
       nameCustomer: customer?.customer.name || '',
@@ -141,7 +142,7 @@ function RouteComponent() {
             <DialogServicesDetail
               closeDialog={closeDialog}
               setCloseDialog={setCloseDialog}
-              servicesData={servicesData}
+              servicesData={servicesData || []}
               handleSelectService={handleSelectService}
             />
           </div>

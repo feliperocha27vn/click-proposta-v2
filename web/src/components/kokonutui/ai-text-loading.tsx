@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 /**
  * @author: @kokonutui
@@ -10,36 +10,36 @@
  * @github: https://github.com/kokonut-labs/kokonutui
  */
 
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useState } from "react";
+import { cn } from '@/lib/utils'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
 
 interface AITextLoadingProps {
-    texts?: string[];
-    className?: string;
-    interval?: number;
+    texts?: string[]
+    className?: string
+    interval?: number
 }
 
 export default function AITextLoading({
     texts = [
-        "Thinking...",
-        "Processing...",
-        "Analyzing...",
-        "Computing...",
-        "Almost...",
+        'Thinking...',
+        'Processing...',
+        'Analyzing...',
+        'Computing...',
+        'Almost...',
     ],
     className,
     interval = 1500,
 }: AITextLoadingProps) {
-    const [currentTextIndex, setCurrentTextIndex] = useState(0);
+    const [currentTextIndex, setCurrentTextIndex] = useState(0)
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
-        }, interval);
+            setCurrentTextIndex(prevIndex => (prevIndex + 1) % texts.length)
+        }, interval)
 
-        return () => clearInterval(timer);
-    }, [interval, texts.length]);
+        return () => clearInterval(timer)
+    }, [interval, texts.length])
 
     return (
         <div className="flex items-center justify-center p-8">
@@ -56,7 +56,7 @@ export default function AITextLoading({
                         animate={{
                             opacity: 1,
                             y: 0,
-                            backgroundPosition: ["200% center", "-200% center"],
+                            backgroundPosition: ['200% center', '-200% center'],
                         }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{
@@ -64,12 +64,12 @@ export default function AITextLoading({
                             y: { duration: 0.3 },
                             backgroundPosition: {
                                 duration: 2.5,
-                                ease: "linear",
+                                ease: 'linear',
                                 repeat: Infinity,
                             },
                         }}
                         className={cn(
-                            "flex justify-center text-3xl font-bold bg-gradient-to-r from-neutral-950 via-neutral-400 to-neutral-950 dark:from-white dark:via-neutral-600 dark:to-white bg-[length:200%_100%] bg-clip-text text-transparent whitespace-nowrap min-w-max",
+                            'flex justify-center text-3xl font-bold bg-gradient-to-r from-neutral-950 via-neutral-400 to-neutral-950 dark:from-white dark:via-neutral-600 dark:to-white bg-[length:200%_100%] bg-clip-text text-transparent whitespace-nowrap min-w-max',
                             className
                         )}
                     >
@@ -78,5 +78,5 @@ export default function AITextLoading({
                 </AnimatePresence>
             </motion.div>
         </div>
-    );
+    )
 }

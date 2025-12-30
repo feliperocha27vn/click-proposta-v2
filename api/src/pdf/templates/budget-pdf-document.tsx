@@ -1,4 +1,11 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
+import {
+    Document,
+    Image,
+    Page,
+    StyleSheet,
+    Text,
+    View,
+} from '@react-pdf/renderer'
 
 const styles = StyleSheet.create({
     page: { padding: 30, backgroundColor: '#fff' },
@@ -12,6 +19,9 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 8,
         borderRadius: 4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
     },
     companyName: {
         fontSize: 20,
@@ -97,9 +107,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#007bff',
     },
+    companyImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 5,
+    },
+    companyNameBox: {
+        flexDirection: 'column',
+    },
 })
 
 interface BudgetPdfDocumentProps {
+    imgUrl: string
     nameUser: string
     nameCustomer: string
     emailCustomer: string
@@ -113,12 +132,16 @@ interface BudgetPdfDocumentProps {
 }
 
 export function BudgetPdfDocument(props: BudgetPdfDocumentProps) {
-    const formatCurrency = (amount: number, locale = 'pt-BR', currency = 'BRL') => {
+    const formatCurrency = (
+        amount: number,
+        locale = 'pt-BR',
+        currency = 'BRL'
+    ) => {
         return new Intl.NumberFormat(locale, {
             style: 'currency',
             currency: currency,
-        }).format(amount);
-    };
+        }).format(amount)
+    }
 
     return (
         <Document title={`Proposta ${props.nameCustomer}`}>
@@ -126,8 +149,11 @@ export function BudgetPdfDocument(props: BudgetPdfDocumentProps) {
                 {/* Header */}
                 <View style={styles.header}>
                     <View style={styles.companyBox}>
-                        <Text style={styles.companyName}>{props.nameUser}</Text>
-                        <Text style={styles.companyCnpj}>CNPJ: 00.000.000/0000-00</Text>
+                        <Image style={styles.companyImage} src={props.imgUrl} />
+                        <View style={styles.companyNameBox}>
+                            <Text style={styles.companyName}>{props.nameUser}</Text>
+                            <Text style={styles.companyCnpj}>CNPJ: 00.000.000/0000-00</Text>
+                        </View>
                     </View>
                     <Text style={styles.proposalTitle}>PROPOSTA</Text>
                 </View>
@@ -148,9 +174,7 @@ export function BudgetPdfDocument(props: BudgetPdfDocumentProps) {
                             <Text style={styles.serviceTitle}>
                                 {index + 1}. {item.name}
                             </Text>
-                            <Text style={styles.serviceDescription}>
-                                {item.description}
-                            </Text>
+                            <Text style={styles.serviceDescription}>{item.description}</Text>
                         </View>
                     ))}
                 </View>

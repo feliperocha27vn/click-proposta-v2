@@ -1,6 +1,7 @@
 import apiMutator from '@/lib/axios'
 
 interface GeneratePdfRequest {
+  imgUrl: string
   nameUser: string
   nameCustomer: string
   emailCustomer: string
