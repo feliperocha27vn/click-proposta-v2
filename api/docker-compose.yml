@@ -1,0 +1,10 @@
+name: click-proposal-api
+services:
+  api-barber:
+    image: bitnami/postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_USERNAME=docker
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=click-proposal

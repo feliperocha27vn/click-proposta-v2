@@ -1,0 +1,1 @@
+-- This migration is empty (placeholder for production sync)

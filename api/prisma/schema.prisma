@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  email              String          @unique
+  name               String?
+  avatarUrl          String?         @map("avatar_url")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @default(now()) @updatedAt @map("updated_at")
+  id                 String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  plan               planType        @default(FREE)
+  cpf                String?         @unique
+  isRegisterComplete Boolean         @default(false) @map("is_register_complete")
+  phone              String?
+  cnpj               String?
+  Customers          Customers[]
+  Payments           Payments[]
+  ProposalDraft      ProposalDraft[]
+  Proposal           Proposal[]
+  Services           Services[]
+  budgets            Budgets[]
+
+  @@map("users")
+}
+
+model Customers {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  email         String          @unique
+  phone         String
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  userId        String          @map("user_id") @db.Uuid
+  user          User            @relation(fields: [userId], references: [id])
+  ProposalDraft ProposalDraft[]
+  Proposal      Proposal[]
+  budgets       Budgets[]
+
+  @@map("customers")
+}
+
+model Services {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  description      String?
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
+  userId           String             @map("user_id") @db.Uuid
+  ProposalServices ProposalServices[]
+  user             User               @relation(fields: [userId], references: [id])
+
+  @@map("services")
+}
+
+model Proposal {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  urlLogoImage       String?            @map("url_logo_image")
+  title              String
+  customersId        String             @map("customers_id") @db.Uuid
+  welcomeDescription String?            @map("welcome_description")
+  whyUs              String?            @map("why_us")
+  challenge          String?
+  solution           String?
+  results            String?
+  discount           Int
+  totalPrice         Decimal            @map("total_price") @db.Decimal(10, 2)
+  userId             String             @map("user_id") @db.Uuid
+  status             status             @default(DRAFT)
+  ProposalServices   ProposalServices[]
+  customer           Customers          @relation(fields: [customersId], references: [id])
+  user               User               @relation(fields: [userId], references: [id])
+
+  @@map("proposals")
+}
+
+model ProposalServices {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  proposalId String   @map("proposal_id") @db.Uuid
+  servicesId String   @map("services_id") @db.Uuid
+  price      Decimal  @db.Decimal(10, 2)
+  proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  service    Services @relation(fields: [servicesId], references: [id], onDelete: Cascade)
+
+  @@map("proposal_services")
+}
+
+model Payments {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  abacatePayId String   @unique @map("abacate_pay_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+model ProposalDraft {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String    @map("user_id") @db.Uuid
+  customerId         String    @map("customer_id") @db.Uuid
+  title              String
+  welcomeDescription String    @map("welcome_description")
+  whyUs              String    @map("why_us")
+  challenge          String
+  solution           String
+  results            String
+  userPrompt         String    @map("user_prompt")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  customer           Customers @relation(fields: [customerId], references: [id])
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@map("proposal_drafts")
+}
+
+model Budgets {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  total       Decimal  @default(0.0) @db.Decimal(10, 2)
+  status      status   @default(DRAFT)
+  customersId String   @map("customers_id") @db.Uuid
+  usersId     String   @map("users_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  customer Customers @relation(fields: [customersId], references: [id])
+  users    User      @relation(fields: [usersId], references: [id])
+
+  budgetsServices BudgetsServices[]
+
+  @@map("budgets")
+}
+
+model BudgetsServices {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String @db.Text
+
+  budgets   Budgets @relation(fields: [budgetsId], references: [id])
+  budgetsId String  @map("budgets_id") @db.Uuid
+
+  @@map("budgets_services")
+}
+
+enum planType {
+  FREE
+  PRO
+}
+
+enum status {
+  DRAFT
+  SENT
+  APPROVED
+  REJECTED
+}
