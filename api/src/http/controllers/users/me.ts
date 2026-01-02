@@ -15,6 +15,7 @@ export const getMe: FastifyPluginAsyncZod = async app => {
         response: {
           200: z.object({
             user: z.object({
+              id: z.string(),
               email: z.email(),
               name: z.string().nullable(),
               avatarUrl: z.string().nullable(),

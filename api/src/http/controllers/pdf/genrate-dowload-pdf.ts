@@ -11,6 +11,7 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
     {
       onRequest: [verifyJwt],
       schema: {
+        tags: ['PDF'],
         body: z.object({
           imgUrl: z.string(),
           nameUser: z.string(),

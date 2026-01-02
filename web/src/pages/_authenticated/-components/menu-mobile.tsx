@@ -13,9 +13,9 @@ export function MenuMobileAuth() {
     <div className="md:hidden">
       <Sheet>
         <SheetTrigger className="space-y-1">
-          <div className="h-[3px] rounded-xl w-[20px] bg-zinc-800" />
-          <div className="h-[3px] rounded-xl w-[15px] bg-zinc-800" />
-          <div className="h-[3px] rounded-xl w-[10px] bg-zinc-800" />
+          <div className="h-0.75 rounded-xl w-5 bg-zinc-800" />
+          <div className="h-0.75 rounded-xl w-3.75 bg-zinc-800" />
+          <div className="h-0.75 rounded-xl w-2.5 bg-zinc-800" />
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>

@@ -48,6 +48,8 @@ export const getById: FastifyPluginAsyncZod = async app => {
             message: err.message,
           })
         }
+
+        throw err
       }
     }
   )

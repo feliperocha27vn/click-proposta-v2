@@ -95,7 +95,7 @@ function RouteComponent() {
           </button>
         </div>
       </div>
-      <ScrollArea className="relative h-[30rem] rounded-md border p-4 w-full">
+      <ScrollArea className="relative h-120 rounded-md border p-4 w-full">
         <div className="space-y-2 md:grid md:grid-cols-2 md:gap-4">
           {loading ? (
             <>
@@ -130,7 +130,7 @@ function RouteComponent() {
           )}
         </div>
         {loading && (
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-white via-white/80 to-transparent pointer-events-none" />
         )}
       </ScrollArea>
       <Button

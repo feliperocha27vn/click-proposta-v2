@@ -1,7 +1,7 @@
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUi from '@fastify/swagger-ui'
+import ScalarApiReference from '@scalar/fastify-api-reference'
 import fastify from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import {
@@ -10,6 +10,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 import { env } from './env'
+import { routesBudgets } from './http/controllers/budgets/routes'
 import { routesCustomer } from './http/controllers/customer/routes'
 import { routesPayments } from './http/controllers/payments/routes'
 import { generatePdfDocument } from './http/controllers/pdf/genrate-dowload-pdf'
@@ -53,7 +54,7 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
-app.register(fastifySwaggerUi, {
+app.register(ScalarApiReference, {
   routePrefix: '/docs',
 })
 
@@ -73,3 +74,4 @@ app.register(routesCustomer)
 app.register(routesPayments)
 app.register(routesProposalDraft)
 app.register(generatePdfDocument)
+app.register(routesBudgets)

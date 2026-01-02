@@ -1,38 +1,40 @@
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { cn } from '@/lib/utils'
+import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
 
 interface AITextLoadingProps {
-    texts?: string[];
-    className?: string;
-    interval?: number;
-    isLoading?: boolean;
+    texts?: string[]
+    className?: string
+    interval?: number
+    isLoading?: boolean
 }
 
 export function AITextLoading({
     texts = [
-        "Pensando...",
-        "Processando...",
-        "Analisando...",
-        "Computando...",
-        "Quase...",
+        'Pensando...',
+        'Processando...',
+        'Analisando...',
+        'Computando...',
+        'Quase...',
     ],
     className,
     interval = 1500,
     isLoading = true,
 }: AITextLoadingProps) {
-    const [currentTextIndex, setCurrentTextIndex] = useState(0);
+    const [currentTextIndex, setCurrentTextIndex] = useState(0)
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
-        }, interval);
+            setCurrentTextIndex(prevIndex => (prevIndex + 1) % texts.length)
+        }, interval)
 
-        return () => clearInterval(timer);
-    }, [interval, texts.length]);
+        return () => clearInterval(timer)
+    }, [interval, texts.length])
 
     return (
-        <div className={`${isLoading ? "flex" : "hidden"} items-center justify-center`}>
+        <div
+            className={`${isLoading ? 'flex' : 'hidden'} items-center justify-center`}
+        >
             <motion.div
                 className="relative px-4 w-full"
                 initial={{ opacity: 0 }}
@@ -46,7 +48,7 @@ export function AITextLoading({
                         animate={{
                             opacity: 1,
                             y: 0,
-                            backgroundPosition: ["200% center", "-200% center"],
+                            backgroundPosition: ['200% center', '-200% center'],
                         }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{
@@ -54,12 +56,12 @@ export function AITextLoading({
                             y: { duration: 0.3 },
                             backgroundPosition: {
                                 duration: 2.5,
-                                ease: "linear",
+                                ease: 'linear',
                                 repeat: Infinity,
                             },
                         }}
                         className={cn(
-                            "flex justify-center font-bold bg-gradient-to-r from-neutral-950 via-neutral-400 to-neutral-950 dark:from-white dark:via-neutral-600 dark:to-white bg-[length:200%_100%] bg-clip-text text-transparent whitespace-nowrap min-w-max",
+                            'flex justify-center font-bold bg-linear-to-t from-neutral-950 via-neutral-400 to-neutral-950 dark:from-white dark:via-neutral-600 dark:to-white bg-size-[200%_100%] bg-clip-text text-transparent whitespace-nowrap min-w-max',
                             className
                         )}
                     >
@@ -68,5 +70,5 @@ export function AITextLoading({
                 </AnimatePresence>
             </motion.div>
         </div>
-    );
+    )
 }

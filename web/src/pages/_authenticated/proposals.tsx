@@ -1,3 +1,4 @@
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -14,6 +15,7 @@ import {
   type FetchMinimalDetailsProposal200Item,
 } from '@/http/api'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { MenuMobileAuth } from './-components/menu-mobile'
 
@@ -81,7 +83,7 @@ function RouteComponent() {
                 <Skeleton className="h-2 w-8/12 bg-zinc-400 md:h-20 md:hidden" />
               </div>
             </>
-          ) : (
+          ) : minimalDetailsProposal.length > 0 ? (
             minimalDetailsProposal.map(proposal => (
               <>
                 <div
@@ -132,16 +134,31 @@ function RouteComponent() {
                 </div>
               </>
             ))
+          ) : (
+            <div className="space-y-4">
+              <Alert className="mt-50">
+                <AlertTitle className="flex items-center gap-2">
+                  Atenção <AlertCircle />
+                </AlertTitle>
+                <AlertDescription>
+                  Você ainda não tem nenhuma proposta. Clique no botão "Nova
+                  proposta" para criar uma.
+                </AlertDescription>
+              </Alert>
+              <Link to="/select-type-proposal" className="w-full">
+                <Button className="w-full">Nova proposta</Button>
+              </Link>
+            </div>
           )}
         </div>
         <div className="border rounded-md mt-6 hidden xl:inline-table xl:w-full">
           <Table>
             <TableHeader className="bg-neutral-100">
               <TableRow>
-                <TableHead className="w-[300px]">Nome do cliente</TableHead>
+                <TableHead className="w-75">Nome do cliente</TableHead>
                 <TableHead>Proposta</TableHead>
-                <TableHead className="w-[200px]">Valor total</TableHead>
-                <TableHead className="w-[250px]">Status</TableHead>
+                <TableHead className="w-50">Valor total</TableHead>
+                <TableHead className="w-62.5">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -202,7 +219,7 @@ function RouteComponent() {
           </Table>
         </div>
         {loading && (
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-white via-white/80 to-transparent pointer-events-none" />
         )}
       </div>
     </>

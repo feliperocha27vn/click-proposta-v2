@@ -107,7 +107,7 @@ function RouteComponent() {
           )}
         </div>
         {loading && (
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-white via-white/80 to-transparent pointer-events-none" />
         )}
       </div>
     </div>

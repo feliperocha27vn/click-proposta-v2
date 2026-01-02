@@ -17,12 +17,12 @@ export function CardDashboard({
     icon,
 }: CardDashboardProps) {
     return (
-        <div className="flex flex-col border rounded-2xl px-3 py-4 justify-between h-[200px] xl:h-[300px]">
+        <div className="flex flex-col border rounded-2xl px-3 py-4 justify-between h-50 xl:h-75">
             <div className="xl:hidden">{icon}</div>
             <img
                 src={image}
                 alt="Pessoa preenchendo formulario"
-                className="hidden xl:block w-full object-cover h-[180px] rounded-t-2xl"
+                className="hidden xl:block w-full object-cover h-45 rounded-t-2xl"
             />
             <div className="space-y-2">
                 <div className="font-medium">{title}</div>

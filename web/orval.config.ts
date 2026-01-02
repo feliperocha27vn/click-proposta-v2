@@ -6,7 +6,7 @@ config()
 
 export default defineConfig({
   api: {
-    input: '../click-proposta-api/swagger.json',
+    input: '../api/swagger.json',
     output: {
       target: './src/http/api.ts',
       clean: true,

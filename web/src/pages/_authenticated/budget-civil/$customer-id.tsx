@@ -1,18 +1,26 @@
+import { generatePdf } from '@/api/generate-pdf'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import {
   type FetchManyServices200ServicesItem,
+  type PostBudgetsBody,
   fetchManyServices,
   getCustomerById,
   getMe,
+  postBudgets,
 } from '@/http/api'
-import { generatePdf } from '@/http/generate-pdf'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useParams } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useParams,
+} from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
+import { AlertCreateService } from '../-components/alerts-create-service'
 import { DialogServicesDetail } from './-components/dialog-services-detail'
 
 export const Route = createFileRoute(
@@ -21,26 +29,19 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
-interface ServiceItem {
-  id: string
-  name: string
-  description: string
-}
-
-interface ServicesForm {
-  service: ServiceItem[]
-  total: string
-}
-
 function RouteComponent() {
-  const { register, handleSubmit, control } = useForm<ServicesForm>({
-    defaultValues: {
-      service: [],
-      total: '',
-    },
-  })
+  const { register, handleSubmit, control, getValues } =
+    useForm<PostBudgetsBody>({
+      defaultValues: {
+        customerId: '',
+        userId: '',
+        total: 0,
+        services: [],
+      },
+    })
   const { 'customer-id': customerId } = useParams({ strict: false })
   const [closeDialog, setCloseDialog] = useState(false)
+  const navigate = useNavigate()
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -62,9 +63,21 @@ function RouteComponent() {
     refetchOnWindowFocus: false,
   })
 
+  const { mutate: generatePdfFn, isPending } = useMutation({
+    mutationFn: generatePdf,
+  })
+
+  const {
+    mutate: createBudgetFn,
+    isPending: isPendingCreateBudget,
+    isSuccess,
+  } = useMutation({
+    mutationFn: postBudgets,
+  })
+
   const { fields, append } = useFieldArray({
     control,
-    name: 'service',
+    name: 'services',
   })
 
   function handleSelectService(data: FetchManyServices200ServicesItem) {
@@ -79,19 +92,24 @@ function RouteComponent() {
     setCloseDialog(false)
   }
 
-  const { mutate: generatePdfFn, isPending } = useMutation({
-    mutationFn: generatePdf,
-  })
-
-  function handleSubmitForm(data: ServicesForm) {
+  function handleGeneratePdf(data: PostBudgetsBody) {
     generatePdfFn({
       imgUrl: user?.user.avatarUrl || '',
-      services: data.service,
+      services: data.services,
       nameUser: user?.user.name || '',
       nameCustomer: customer?.customer.name || '',
       emailCustomer: customer?.customer.email || '',
       phoneCustomer: customer?.customer.phone || '',
+      total: String(data.total),
+    })
+  }
+
+  function handleSubmitForm(data: PostBudgetsBody) {
+    createBudgetFn({
+      customerId: customerId || '',
+      userId: user?.user.id || '',
       total: data.total,
+      services: data.services,
     })
   }
 
@@ -106,7 +124,7 @@ function RouteComponent() {
         <form className="space-y-2" onSubmit={handleSubmit(handleSubmitForm)}>
           <div className="flex items-center gap-x-2">
             <img
-              className="size-32"
+              className="size-24 rounded-2xl"
               src={user?.user.avatarUrl || ''}
               alt={`Logo da empresa ${user?.user.name || ''}`}
             />
@@ -127,17 +145,18 @@ function RouteComponent() {
                 <div className="w-full space-y-2">
                   <div>
                     <span className="font-light">Título</span>
-                    <Textarea {...register(`service.${index}.name`)} />
+                    <Textarea {...register(`services.${index}.name`)} />
                     <span className="font-light">Descrição</span>
-                    <Textarea {...register(`service.${index}.description`)} />
+                    <Textarea {...register(`services.${index}.description`)} />
                   </div>
                 </div>
               </div>
             ))}
             <Input
               placeholder="Total do orçamento"
-              {...register('total')}
+              {...register('total', { valueAsNumber: true })}
               className="w-11/12"
+              type="number"
             />
             <DialogServicesDetail
               closeDialog={closeDialog}
@@ -147,15 +166,39 @@ function RouteComponent() {
             />
           </div>
           <Button
+            className="w-full"
             type="submit"
+            disabled={isPendingCreateBudget}
+          >
+            {isPendingCreateBudget
+              ? 'Salvando orçamento...'
+              : 'Salvar orçamento'}
+          </Button>
+          <Button
+            type="button"
             className="w-full"
             variant="secondary"
             disabled={isPending}
+            onClick={() => {
+              const formData = getValues()
+              handleGeneratePdf(formData)
+            }}
           >
-            {isPending ? 'Gerando PDF...' : 'Baixar PDF e salvar orçamento'}
+            {isPending ? 'Gerando PDF...' : 'Baixar PDF'}
           </Button>
         </form>
       </div>
+      <AlertCreateService
+        isOpen={isSuccess}
+        onClose={() => { }}
+        type="success"
+        title="Sucesso"
+        description="Orçamento salvo com sucesso"
+        actionText="Ir para orçamentos salvos"
+        onAction={() => {
+          navigate({ to: '/proposals' })
+        }}
+      />
     </>
   )
 }
