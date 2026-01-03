@@ -1,4 +1,5 @@
 import { generatePdf } from '@/api/generate-pdf'
+import { BackButton } from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,13 +12,7 @@ import {
   postBudgets,
 } from '@/http/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import {
-  createFileRoute,
-  Link,
-  useNavigate,
-  useParams,
-} from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { AlertCreateService } from '../-components/alerts-create-service'
@@ -115,12 +110,10 @@ function RouteComponent() {
 
   return (
     <>
-      <div className="w-1/12 xl:hidden">
-        <Link to="/select-type-proposal">
-          <ArrowLeft />
-        </Link>
+      <div className="xl:hidden">
+        <BackButton to="/select-type-proposal" />
       </div>
-      <div className="mt-4 flex flex-col gap-x-2">
+      <div className="mt-4 flex flex-col gap-x-2 max-w-2xl mx-auto">
         <form className="space-y-2" onSubmit={handleSubmit(handleSubmitForm)}>
           <div className="flex items-center gap-x-2">
             <img

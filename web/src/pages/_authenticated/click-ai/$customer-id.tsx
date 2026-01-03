@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { BackButton } from '@/components/back-button'
+import { createFileRoute } from '@tanstack/react-router'
 import { ChatInputIa } from './-components/chat-input-ia'
 
 export const Route = createFileRoute('/_authenticated/click-ai/$customer-id')({
@@ -9,9 +9,7 @@ export const Route = createFileRoute('/_authenticated/click-ai/$customer-id')({
 function RouteComponent() {
   return (
     <>
-      <Link to="/select-costumer">
-        <ArrowLeft className="cursor-pointer" />
-      </Link>
+      <BackButton to="/select-costumer" />
       <div className="min-h-screen flex flex-col items-center justify-center">
         <ChatInputIa />
       </div>

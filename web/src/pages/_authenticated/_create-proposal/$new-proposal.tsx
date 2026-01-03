@@ -1,19 +1,19 @@
+import { BackButton } from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import {
+  type CreateProposalBody,
+  type CreateProposalBodyServicesItem,
   createProposal,
   fetchManyServices,
   getCustomerById,
   getLastDraftProposal,
-  type CreateProposalBody,
-  type CreateProposalBodyServicesItem,
 } from '@/http/api'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useParams } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
+import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { ProposalStatusModal } from './-components/proposal-status-modal'
@@ -75,7 +75,7 @@ function RouteComponent() {
     enabled: !!customerId,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
-    select: (data) => data.proposalDraft, // 🎯 Extrai apenas o proposalDraft
+    select: data => data.proposalDraft, // 🎯 Extrai apenas o proposalDraft
   })
 
   const customer = customerData
@@ -83,14 +83,16 @@ function RouteComponent() {
 
   // 🎯 useForm com values vindos do draft (atualiza automaticamente)
   const { register, handleSubmit } = useForm<CreateProposalBody>({
-    values: draftProposal ? {
-      title: draftProposal.title || '',
-      welcomeDescription: draftProposal.welcomeDescription || '',
-      whyUs: draftProposal.whyUs || '',
-      challenge: draftProposal.challenge || '',
-      solution: draftProposal.solution || '',
-      results: draftProposal.results || '',
-    } as Partial<CreateProposalBody> as CreateProposalBody : undefined,
+    values: draftProposal
+      ? ({
+        title: draftProposal.title || '',
+        welcomeDescription: draftProposal.welcomeDescription || '',
+        whyUs: draftProposal.whyUs || '',
+        challenge: draftProposal.challenge || '',
+        solution: draftProposal.solution || '',
+        results: draftProposal.results || '',
+      } as Partial<CreateProposalBody> as CreateProposalBody)
+      : undefined,
   })
 
   function handleServicesChange(services: ServiceItem[]) {
@@ -175,9 +177,7 @@ function RouteComponent() {
   return (
     <div className="w-full">
       <div className="flex w-full">
-        <Link to="/select-costumer">
-          <ArrowLeft className="cursor-pointer" />
-        </Link>
+        <BackButton to="/select-costumer" className="mb-0" />
         <div className="w-full flex justify-center font-semibold text-2xl">
           <h1>Criar proposta</h1>
         </div>

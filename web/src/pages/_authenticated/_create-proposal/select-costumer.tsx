@@ -1,3 +1,4 @@
+import { BackButton } from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -8,7 +9,7 @@ import {
   searchByNameEmail,
 } from '@/http/api'
 import { createFileRoute, Link, useSearch } from '@tanstack/react-router'
-import { ArrowLeft, Search, User } from 'lucide-react'
+import { Search, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import FormCreateNewCustomer from './-components/form-create-new-customer'
 
@@ -66,9 +67,7 @@ function RouteComponent() {
   return (
     <div className="space-y-4">
       <div className="flex w-full">
-        <Link to="/select-type-proposal">
-          <ArrowLeft className="cursor-pointer" />
-        </Link>
+        <BackButton to="/select-type-proposal" className="mb-0" />
         <div className="w-full flex justify-center font-semibold text-2xl">
           <h1>Escolha o cliente</h1>
         </div>
