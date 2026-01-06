@@ -571,6 +571,28 @@ export type PostBudgets404 = {
   message: string;
 };
 
+export type GetByIdBudget200BudgetBudgetsServicesItem = {
+  id: string;
+  title: string;
+  description: string;
+};
+
+export type GetByIdBudget200Budget = {
+  id: string;
+  total: number;
+  status: string;
+  customersId: string;
+  budgetsServices: GetByIdBudget200BudgetBudgetsServicesItem[];
+};
+
+export type GetByIdBudget200 = {
+  budget: GetByIdBudget200Budget;
+};
+
+export type GetByIdBudget404 = {
+  message: string;
+};
+
 export const createNewCustomer = (
     createNewCustomerBody: CreateNewCustomerBody,
  ) => {
@@ -824,6 +846,15 @@ export const postBudgets = (
       );
     }
   
+export const getByIdBudget = (
+    budgetId: string,
+ ) => {
+      return apiMutator<GetByIdBudget200>(
+      {url: `/budgets/${budgetId}`, method: 'GET'
+    },
+      );
+    }
+  
 export type CreateNewCustomerResult = NonNullable<Awaited<ReturnType<typeof createNewCustomer>>>
 export type FetchCustomersResult = NonNullable<Awaited<ReturnType<typeof fetchCustomers>>>
 export type SearchByNameEmailResult = NonNullable<Awaited<ReturnType<typeof searchByNameEmail>>>
@@ -849,3 +880,4 @@ export type CreateProposalDraftResult = NonNullable<Awaited<ReturnType<typeof cr
 export type GetLastDraftProposalResult = NonNullable<Awaited<ReturnType<typeof getLastDraftProposal>>>
 export type PostPdfGenerateResult = NonNullable<Awaited<ReturnType<typeof postPdfGenerate>>>
 export type PostBudgetsResult = NonNullable<Awaited<ReturnType<typeof postBudgets>>>
+export type GetByIdBudgetResult = NonNullable<Awaited<ReturnType<typeof getByIdBudget>>>

@@ -97,7 +97,9 @@ function RouteComponent() {
               >
                 <User className="hidden md:block size-10" />
                 <div className="md:space-y-2">
-                  <p className="font-semibold">{customer.name}</p>
+                  <p className="font-semibold truncate w-10/12">
+                    {customer.name}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {customer.email}
                   </p>

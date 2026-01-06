@@ -12,4 +12,12 @@ export class PrismaBudgetsServicesRepository
 
     return budgetsServices
   }
+
+  async fetchManyByBudgetId(budgetId: string) {
+    const budgetsServices = await prisma.budgetsServices.findMany({
+      where: { budgetsId: budgetId },
+    })
+
+    return budgetsServices
+  }
 }
