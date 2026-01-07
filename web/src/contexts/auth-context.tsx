@@ -47,8 +47,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const initAuth = async () => {
       try {
         console.log('🔍 Iniciando getSession...')
-        const { data: { session }, error } = await supabase.auth.getSession()
-        console.log('🔍 getSession result:', { session: !!session, user: session?.user?.email, error })
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession()
+        console.log('🔍 getSession result:', {
+          session: !!session,
+          user: session?.user?.email,
+          error,
+        })
 
         if (!mounted) return
 
@@ -64,13 +71,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         // Só limpa tokens da URL DEPOIS de processar a sessão
-        if (session && (window.location.hash.includes('access_token') || window.location.hash.includes('refresh_token'))) {
+        if (
+          session &&
+          (window.location.hash.includes('access_token') ||
+            window.location.hash.includes('refresh_token'))
+        ) {
           console.log('🔍 Limpando tokens da URL após sessão criada')
-          window.history.replaceState({}, document.title, window.location.pathname)
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          )
         }
 
         const sessionId = session?.user?.id ?? null
-        console.debug('[auth] initAuth sessionId:', sessionId, 'prev:', prevSessionIdRef.current)
+        console.debug(
+          '[auth] initAuth sessionId:',
+          sessionId,
+          'prev:',
+          prevSessionIdRef.current
+        )
 
         // Só atualiza o estado se a sessão mudou (evita loops de atualização)
         if (prevSessionIdRef.current !== sessionId) {
@@ -80,12 +100,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
             loading: false,
           })
           prevSessionIdRef.current = sessionId
-          console.debug('[auth] updated state from initAuth/onAuthStateChange ->', sessionId)
+          console.debug(
+            '[auth] updated state from initAuth/onAuthStateChange ->',
+            sessionId
+          )
         } else {
           // garante que o loading seja desligado sem forçar merge de usuário igual
           updateAuthState({ loading: false })
         }
-
       } catch (error) {
         console.error('Erro inesperado na inicialização:', error)
         if (mounted) {
@@ -103,7 +125,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!mounted) return
 
       console.log('Auth event:', event, session?.user?.email)
-      console.debug('[auth] onAuthStateChange session id:', session?.user?.id, 'prev:', prevSessionIdRef.current)
+      console.debug(
+        '[auth] onAuthStateChange session id:',
+        session?.user?.id,
+        'prev:',
+        prevSessionIdRef.current
+      )
 
       // Ignora INITIAL_SESSION pois já tratamos no initAuth
       if (event === 'INITIAL_SESSION') return
@@ -153,14 +180,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.error('Erro no signInWithOAuth:', error)
         throw error
       }
-
     } catch (error) {
       console.error('Erro no login:', error)
       updateAuthState({ authLoading: false })
       throw error
     }
     // Não definir authLoading=false aqui pois o usuário será redirecionado
-  }  // Função de logout forçado (limpa tudo)
+  } // Função de logout forçado (limpa tudo)
   const forceSignOut = async () => {
     try {
       updateAuthState({ authLoading: true })
@@ -170,16 +196,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
       sessionStorage.clear()
 
       // Limpar cookies do supabase
-      document.cookie.split(";").forEach(function (c) {
-        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-      });
+      document.cookie.split(';').forEach(c => {
+        document.cookie = c
+          .replace(/^ +/, '')
+          .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/')
+      })
 
       // Sign out do supabase
       await supabase.auth.signOut()
 
       // Limpar URL de tokens
-      if (window.location.hash.includes('access_token') || window.location.hash.includes('refresh_token')) {
-        window.history.replaceState({}, document.title, window.location.pathname)
+      if (
+        window.location.hash.includes('access_token') ||
+        window.location.hash.includes('refresh_token')
+      ) {
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        )
       }
 
       // Forçar estado limpo
@@ -192,7 +227,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       prevSessionIdRef.current = null
 
       console.log('Logout forçado concluído')
-
     } catch (error) {
       console.error('Erro no logout forçado:', error)
     } finally {
@@ -209,7 +243,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const { error } = await supabase.auth.signOut()
       if (error) throw error
-
     } catch (error) {
       console.error('Erro no logout:', error)
       throw error
@@ -229,9 +262,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   )
 }
 

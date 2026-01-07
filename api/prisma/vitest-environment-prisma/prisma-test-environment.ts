@@ -4,11 +4,22 @@ import { randomUUID } from 'node:crypto'
 import type { Environment } from 'vitest/environments'
 
 function generateDatabaseUrl(schema: string) {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('Please provide a DATABASE_URL env variable')
+  if (!process.env.DATABASE_URL_TEST) {
+    throw new Error('Please provide a DATABASE_URL_TEST env variable')
   }
 
-  const url = new URL(process.env.DATABASE_URL)
+  const url = new URL(process.env.DATABASE_URL_TEST)
+  url.searchParams.set('schema', schema)
+
+  return url.toString()
+}
+
+function generateDirectUrl(schema: string) {
+  if (!process.env.DIRECT_URL_TEST) {
+    return null
+  }
+
+  const url = new URL(process.env.DIRECT_URL_TEST)
   url.searchParams.set('schema', schema)
 
   return url.toString()
@@ -16,22 +27,31 @@ function generateDatabaseUrl(schema: string) {
 
 export default (<Environment>{
   name: 'prisma',
-  transformMode: 'ssr',
+  viteEnvironment: 'ssr',
   async setup() {
     const schema = randomUUID()
     const databaseUrl = generateDatabaseUrl(schema)
+    const directUrl = generateDirectUrl(schema)
 
-    process.env.DATABASE_URL = databaseUrl
+    // Atribuir as URLs com o schema único
+    process.env.DATABASE_URL_TEST = databaseUrl
 
-    // Use db push to create the schema but skip client generation
-    // Prisma Client should already be generated before running tests (via package.json script)
-    execSync('npx prisma db push --force-reset --skip-generate', {
-      stdio: 'ignore', // Suppress output to avoid cluttering test results
-    })
+    if (directUrl) {
+      process.env.DIRECT_URL_TEST = directUrl
+    }
+
+    try {
+      execSync('npx prisma db push --force-reset --skip-generate', {
+        stdio: 'inherit',
+        env: process.env,
+      })
+    } catch (error) {
+      console.error('Failed to push database schema:', error)
+      throw error
+    }
 
     return {
       async teardown() {
-        // Import prisma here to use the correct instance with the test schema
         const { prisma } = await import('../../src/lib/prisma.js')
 
         try {
@@ -39,7 +59,6 @@ export default (<Environment>{
             `DROP SCHEMA IF EXISTS "${schema}" CASCADE`
           )
         } catch (error) {
-          // Ignore errors during cleanup
           console.warn(`Failed to cleanup schema ${schema}:`, error)
         } finally {
           await prisma.$disconnect()

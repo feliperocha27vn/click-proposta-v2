@@ -27,6 +27,7 @@ app.setValidatorCompiler(validatorCompiler)
 app.register(fastifyCors, {
   origin: ['http://localhost:5173', 'https://click-proposta.umdoce.dev.br'],
   methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH', 'OPTIONS'],
+  credentials: true,
 })
 
 app.register(fastifySwagger, {

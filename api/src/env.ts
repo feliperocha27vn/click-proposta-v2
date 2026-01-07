@@ -9,6 +9,8 @@ const envSchema = z.object({
   ABACATE_COMPLETATION_URL: z.url(),
   ABACATE_API_KEY: z.string(),
   GEMINI_API_KEY: z.string(),
+  DATABASE_URL: z.string(),
+  DATABASE_URL_TEST: z.string(),
 })
 
 export const env = envSchema.parse(process.env)
