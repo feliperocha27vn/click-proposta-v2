@@ -6,7 +6,8 @@
     "dev": "npx tsx --watch --env-file .env src/server.ts",
     "build": "tsup src/server.ts --format cjs --target node22",
     "start": "node dist/server.js",
-    "test:e2e": "vitest run --project e2e"
+    "test:e2e": "vitest run --project e2e",
+    "test:e2e:watch": "vitest --project e2e"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +36,7 @@
     "@prisma/client": "^6.14.0",
     "@react-pdf/renderer": "^4.3.1",
     "@scalar/fastify-api-reference": "^1.40.9",
+    "@types/supertest": "^6.0.3",
     "abacatepay-nodejs-sdk": "^1.4.1",
     "fastify": "^5.5.0",
     "fastify-type-provider-zod": "^5.0.3",

@@ -2464,9 +2464,8 @@
         "parameters": [
           {
             "schema": {
-              "default": 1,
-              "type": "number",
-              "minimum": 1
+              "default": 0,
+              "type": "number"
             },
             "in": "query",
             "name": "pageIndex",

@@ -1,6 +1,6 @@
 name: click-proposal-api
 services:
-  api-barber:
+  api-click-proposal:
     image: bitnami/postgresql
     ports:
       - "5432:5432"

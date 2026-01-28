@@ -14,7 +14,7 @@ export const fetchManyBudgets: FastifyPluginAsyncZod = async app => {
         operationId: 'fetchManyBudgets',
         tags: ['Budgets'],
         querystring: z.object({
-          pageIndex: z.number().min(1).default(1),
+          pageIndex: z.number().default(0),
         }),
         response: {
           200: z.object({
