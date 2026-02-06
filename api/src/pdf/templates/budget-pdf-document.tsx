@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     companyName: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
         color: '#ffffff',
         marginBottom: 4,
@@ -155,7 +155,7 @@ export function BudgetPdfDocument(props: BudgetPdfDocumentProps) {
                             <Text style={styles.companyCnpj}>CNPJ: 00.000.000/0000-00</Text>
                         </View>
                     </View>
-                    <Text style={styles.proposalTitle}>PROPOSTA</Text>
+                    <Text style={styles.proposalTitle}>ORÇAMENTO</Text>
                 </View>
 
                 {/* Cliente */}

@@ -20,7 +20,7 @@ if (env.NODE_ENV === 'development') {
     const spec = JSON.stringify(app.swagger(), null, 2)
 
     writeFile(specFile, spec).then(() => {
-      console.log('Swagger spec generated📄')
+      console.log('Swagger spec generated 📄')
     })
   })
 }

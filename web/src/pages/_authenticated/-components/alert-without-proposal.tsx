@@ -16,7 +16,7 @@ export function AlertWithoutProposal() {
                 </AlertDescription>
             </Alert>
             <Link to="/select-type-proposal" className="w-full">
-                <Button className="w-full">Nova proposta</Button>
+                <Button className="w-full cursor-pointer">Nova proposta</Button>
             </Link>
         </div>
     )

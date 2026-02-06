@@ -571,6 +571,25 @@ export type PostBudgets404 = {
   message: string;
 };
 
+export type FetchManyBudgetsParams = {
+pageIndex?: number;
+};
+
+export type FetchManyBudgets200BudgetsItem = {
+  id: string;
+  total: number;
+  status: 'DRAFT' | 'SENT' | 'APPROVED' | 'REJECTED'
+  customerName: string;
+};
+
+export type FetchManyBudgets200 = {
+  budgets: FetchManyBudgets200BudgetsItem[];
+};
+
+export type FetchManyBudgets404 = {
+  message: string;
+};
+
 export type GetByIdBudget200BudgetBudgetsServicesItem = {
   id: string;
   title: string;
@@ -846,6 +865,16 @@ export const postBudgets = (
       );
     }
   
+export const fetchManyBudgets = (
+    params?: FetchManyBudgetsParams,
+ ) => {
+      return apiMutator<FetchManyBudgets200>(
+      {url: `/budgets`, method: 'GET',
+        params
+    },
+      );
+    }
+  
 export const getByIdBudget = (
     budgetId: string,
  ) => {
@@ -880,4 +909,5 @@ export type CreateProposalDraftResult = NonNullable<Awaited<ReturnType<typeof cr
 export type GetLastDraftProposalResult = NonNullable<Awaited<ReturnType<typeof getLastDraftProposal>>>
 export type PostPdfGenerateResult = NonNullable<Awaited<ReturnType<typeof postPdfGenerate>>>
 export type PostBudgetsResult = NonNullable<Awaited<ReturnType<typeof postBudgets>>>
+export type FetchManyBudgetsResult = NonNullable<Awaited<ReturnType<typeof fetchManyBudgets>>>
 export type GetByIdBudgetResult = NonNullable<Awaited<ReturnType<typeof getByIdBudget>>>
