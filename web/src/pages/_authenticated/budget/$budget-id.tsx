@@ -1,11 +1,18 @@
 import { BackButton } from '@/components/back-button'
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Button } from '@/components/ui/button'
 import { getByIdBudget } from '@/http/api'
 import { formaterPrice } from '@/utils/formater-price'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { format, isValid } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Hammer, UserCircleIcon } from 'lucide-react'
+import { Pencil, Printer, UserCircleIcon } from 'lucide-react'
 import { MenuMobileAuth } from '../-components/menu-mobile'
 
 export const Route = createFileRoute('/_authenticated/budget/$budget-id')({
@@ -69,7 +76,7 @@ function RouteComponent() {
                                     <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
                                         {budgetData?.budget.customerName}
                                     </p>
-                                    <p className="text-xs font-mono text-muted-light dark:text-muted-dark truncate max-w-[150px]">
+                                    <p className="text-xs font-mono text-muted-light dark:text-muted-dark truncate max-w-37.5">
                                         {budgetData?.budget.customersId}
                                     </p>
                                 </div>
@@ -81,22 +88,32 @@ function RouteComponent() {
                             Serviços
                         </h2>
                         <div className="space-y-3">
-                            {budgetData?.budget.budgetsServices.map(service => (
-                                <div
-                                    key={service.id}
-                                    className="p-4 rounded-lg border shadow border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900"
-                                >
-                                    <div className="w-12 h-12 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition-colors">
-                                        <Hammer />
+                            <Accordion
+                                type="single"
+                                collapsible
+                                defaultValue={budgetData?.budget.budgetsServices[0].id}
+                            >
+                                {budgetData?.budget.budgetsServices.map(service => (
+                                    <AccordionItem value={service.id} key={service.id}>
+                                        <AccordionTrigger>{service.title}</AccordionTrigger>
+                                        <AccordionContent>{service.description}</AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                            <div className="flex gap-x-2">
+                                <Button asChild className="w-6/12">
+                                    <div className="flex items-center gap-2">
+                                        <Printer />
+                                        <span>PDF</span>
                                     </div>
-                                    <h3 className="font-medium text-zinc-900 dark:text-zinc-50">
-                                        {service.title}
-                                    </h3>
-                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                                        {service.description}
-                                    </p>
-                                </div>
-                            ))}
+                                </Button>
+                                <Button asChild className="w-6/12" variant="secondary">
+                                    <div className="flex items-center gap-2">
+                                        <Pencil />
+                                        <span>Editar Proposta</span>
+                                    </div>
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
