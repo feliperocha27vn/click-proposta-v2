@@ -2579,6 +2579,13 @@
                         "customersId": {
                           "type": "string"
                         },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "customerName": {
+                          "type": "string"
+                        },
                         "budgetsServices": {
                           "type": "array",
                           "items": {
@@ -2608,6 +2615,8 @@
                         "total",
                         "status",
                         "customersId",
+                        "createdAt",
+                        "customerName",
                         "budgetsServices"
                       ],
                       "additionalProperties": false

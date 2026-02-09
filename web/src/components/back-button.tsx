@@ -9,7 +9,7 @@ interface BackButtonProps {
 
 export function BackButton({ to, className = 'mb-4' }: BackButtonProps) {
     return (
-        <Link to={to} className="hidden sm:block xl:hidden">
+        <Link to={to} className="sm:block xl:hidden">
             <Button className={className}>
                 <ArrowLeft /> Voltar
             </Button>

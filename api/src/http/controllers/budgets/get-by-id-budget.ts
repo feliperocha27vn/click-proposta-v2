@@ -22,6 +22,8 @@ export const getByIdBudget: FastifyPluginAsyncZod = async app => {
               total: z.number(),
               status: z.string(),
               customersId: z.string(),
+              createdAt: z.date(),
+              customerName: z.string(),
               budgetsServices: z.array(
                 z.object({
                   id: z.string(),

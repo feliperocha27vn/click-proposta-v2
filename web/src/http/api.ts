@@ -578,7 +578,7 @@ pageIndex?: number;
 export type FetchManyBudgets200BudgetsItem = {
   id: string;
   total: number;
-  status: 'DRAFT' | 'SENT' | 'APPROVED' | 'REJECTED'
+  status: string;
   customerName: string;
 };
 
@@ -601,6 +601,8 @@ export type GetByIdBudget200Budget = {
   total: number;
   status: string;
   customersId: string;
+  createdAt: string;
+  customerName: string;
   budgetsServices: GetByIdBudget200BudgetBudgetsServicesItem[];
 };
 

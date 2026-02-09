@@ -1,4 +1,4 @@
-type BudgetsStatus = 'DRAFT' | 'SENT' | 'APPROVED' | 'REJECTED'
+export type BudgetsStatus = 'DRAFT' | 'SENT' | 'APPROVED' | 'REJECTED'
 
 interface BudgetStatusProps {
     status: BudgetsStatus

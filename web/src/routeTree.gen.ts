@@ -22,6 +22,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './pages/_authenticat
 import { Route as AuthenticatedBudgetsRouteImport } from './pages/_authenticated/budgets'
 import { Route as AuthenticatedProposalProposalIdRouteImport } from './pages/_authenticated/proposal/$proposal-id'
 import { Route as AuthenticatedClickAiCustomerIdRouteImport } from './pages/_authenticated/click-ai/$customer-id'
+import { Route as AuthenticatedBudgetBudgetIdRouteImport } from './pages/_authenticated/budget/$budget-id'
 import { Route as AuthenticatedBudgetCivilCustomerIdRouteImport } from './pages/_authenticated/budget-civil/$customer-id'
 import { Route as AuthenticatedCreateProposalSelectTypeProposalRouteImport } from './pages/_authenticated/_create-proposal/select-type-proposal'
 import { Route as AuthenticatedCreateProposalSelectCostumerRouteImport } from './pages/_authenticated/_create-proposal/select-costumer'
@@ -95,6 +96,12 @@ const AuthenticatedClickAiCustomerIdRoute =
     path: '/click-ai/$customer-id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedBudgetBudgetIdRoute =
+  AuthenticatedBudgetBudgetIdRouteImport.update({
+    id: '/budget/$budget-id',
+    path: '/budget/$budget-id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedBudgetCivilCustomerIdRoute =
   AuthenticatedBudgetCivilCustomerIdRouteImport.update({
     id: '/budget-civil/$customer-id',
@@ -135,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
   '/select-type-proposal': typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   '/budget-civil/$customer-id': typeof AuthenticatedBudgetCivilCustomerIdRoute
+  '/budget/$budget-id': typeof AuthenticatedBudgetBudgetIdRoute
   '/click-ai/$customer-id': typeof AuthenticatedClickAiCustomerIdRoute
   '/proposal/$proposal-id': typeof AuthenticatedProposalProposalIdRoute
 }
@@ -153,6 +161,7 @@ export interface FileRoutesByTo {
   '/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
   '/select-type-proposal': typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   '/budget-civil/$customer-id': typeof AuthenticatedBudgetCivilCustomerIdRoute
+  '/budget/$budget-id': typeof AuthenticatedBudgetBudgetIdRoute
   '/click-ai/$customer-id': typeof AuthenticatedClickAiCustomerIdRoute
   '/proposal/$proposal-id': typeof AuthenticatedProposalProposalIdRoute
 }
@@ -173,6 +182,7 @@ export interface FileRoutesById {
   '/_authenticated/_create-proposal/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
   '/_authenticated/_create-proposal/select-type-proposal': typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   '/_authenticated/budget-civil/$customer-id': typeof AuthenticatedBudgetCivilCustomerIdRoute
+  '/_authenticated/budget/$budget-id': typeof AuthenticatedBudgetBudgetIdRoute
   '/_authenticated/click-ai/$customer-id': typeof AuthenticatedClickAiCustomerIdRoute
   '/_authenticated/proposal/$proposal-id': typeof AuthenticatedProposalProposalIdRoute
 }
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/select-costumer'
     | '/select-type-proposal'
     | '/budget-civil/$customer-id'
+    | '/budget/$budget-id'
     | '/click-ai/$customer-id'
     | '/proposal/$proposal-id'
   fileRoutesByTo: FileRoutesByTo
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/select-costumer'
     | '/select-type-proposal'
     | '/budget-civil/$customer-id'
+    | '/budget/$budget-id'
     | '/click-ai/$customer-id'
     | '/proposal/$proposal-id'
   id:
@@ -230,6 +242,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_create-proposal/select-costumer'
     | '/_authenticated/_create-proposal/select-type-proposal'
     | '/_authenticated/budget-civil/$customer-id'
+    | '/_authenticated/budget/$budget-id'
     | '/_authenticated/click-ai/$customer-id'
     | '/_authenticated/proposal/$proposal-id'
   fileRoutesById: FileRoutesById
@@ -335,6 +348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClickAiCustomerIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/budget/$budget-id': {
+      id: '/_authenticated/budget/$budget-id'
+      path: '/budget/$budget-id'
+      fullPath: '/budget/$budget-id'
+      preLoaderRoute: typeof AuthenticatedBudgetBudgetIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/budget-civil/$customer-id': {
       id: '/_authenticated/budget-civil/$customer-id'
       path: '/budget-civil/$customer-id'
@@ -377,6 +397,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCreateProposalSelectCostumerRoute: typeof AuthenticatedCreateProposalSelectCostumerRoute
   AuthenticatedCreateProposalSelectTypeProposalRoute: typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   AuthenticatedBudgetCivilCustomerIdRoute: typeof AuthenticatedBudgetCivilCustomerIdRoute
+  AuthenticatedBudgetBudgetIdRoute: typeof AuthenticatedBudgetBudgetIdRoute
   AuthenticatedClickAiCustomerIdRoute: typeof AuthenticatedClickAiCustomerIdRoute
   AuthenticatedProposalProposalIdRoute: typeof AuthenticatedProposalProposalIdRoute
 }
@@ -396,6 +417,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedCreateProposalSelectTypeProposalRoute,
   AuthenticatedBudgetCivilCustomerIdRoute:
     AuthenticatedBudgetCivilCustomerIdRoute,
+  AuthenticatedBudgetBudgetIdRoute: AuthenticatedBudgetBudgetIdRoute,
   AuthenticatedClickAiCustomerIdRoute: AuthenticatedClickAiCustomerIdRoute,
   AuthenticatedProposalProposalIdRoute: AuthenticatedProposalProposalIdRoute,
 }
