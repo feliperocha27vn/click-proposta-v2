@@ -12,7 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { format, isValid } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { Pencil, Printer, UserCircleIcon } from 'lucide-react'
+import { Link as LinkIcon, Pencil, Printer, UserCircleIcon } from 'lucide-react'
 import { MenuMobileAuth } from '../-components/menu-mobile'
 
 export const Route = createFileRoute('/_authenticated/budget/$budget-id')({
@@ -114,6 +114,10 @@ function RouteComponent() {
                                     </div>
                                 </Button>
                             </div>
+                            <Button className="w-full">
+                                <LinkIcon />
+                                Compartilhar link da proposta
+                            </Button>
                         </div>
                     </div>
                 </div>

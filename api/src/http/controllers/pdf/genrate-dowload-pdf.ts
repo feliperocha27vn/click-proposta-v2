@@ -1,9 +1,9 @@
-import { verifyJwt } from '@/middlewares/verifyJwt'
-import { BudgetPdfDocument } from '@/pdf/templates/budget-pdf-document'
 import { renderToStream } from '@react-pdf/renderer'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import React from 'react'
 import z from 'zod'
+import { verifyJwt } from '@/middlewares/verifyJwt'
+import { BudgetPdfDocument } from '@/pdf/templates/budget-pdf-document'
 
 export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
   app.post(
@@ -56,7 +56,7 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
         reply.header('Content-Type', 'application/pdf')
         reply.header(
           'Content-Disposition',
-          'attachment; filename="proposta.pdf"'
+          `attachment; filename="${nameCustomer}.pdf"`
         )
 
         return reply.send(stream)
