@@ -18,7 +18,7 @@ export const createNewBudget: FastifyPluginAsyncZod = async app => {
           services: z.array(
             z.object({
               id: z.string(),
-              name: z.string(),
+              title: z.string(),
               description: z.string(),
             })
           ),

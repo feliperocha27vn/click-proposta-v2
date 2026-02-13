@@ -118,16 +118,17 @@ const styles = StyleSheet.create({
 })
 
 interface BudgetPdfDocumentProps {
-    imgUrl: string
-    nameUser: string
+    imgUrl: string | null
+    nameUser: string | null
     nameCustomer: string
     emailCustomer: string
     phoneCustomer: string
     total: string
     services: {
         id: string
-        name: string
+        title: string
         description: string
+        budgetsId: string | null
     }[]
 }
 
@@ -172,7 +173,7 @@ export function BudgetPdfDocument(props: BudgetPdfDocumentProps) {
                     {props.services.map((item, index) => (
                         <View key={item.id} style={styles.serviceItem} wrap={false}>
                             <Text style={styles.serviceTitle}>
-                                {index + 1}. {item.name}
+                                {index + 1}. {item.title}
                             </Text>
                             <Text style={styles.serviceDescription}>{item.description}</Text>
                         </View>

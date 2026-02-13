@@ -12,7 +12,7 @@ interface CreateNewBudgetUseCaseRequest {
   total: number
   services: {
     id: string
-    name: string
+    title: string
     description: string
   }[]
 }
@@ -56,7 +56,7 @@ export class CreateNewBudgetUseCase {
     await this.budgetsServicesRepository.createMany(
       services.map(service => ({
         budgetsId: budget.id,
-        title: service.name,
+        title: service.title,
         description: service.description,
       }))
     )

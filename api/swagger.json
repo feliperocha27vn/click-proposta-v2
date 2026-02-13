@@ -2332,17 +2332,31 @@
                         "id": {
                           "type": "string"
                         },
-                        "name": {
+                        "title": {
                           "type": "string"
                         },
                         "description": {
                           "type": "string"
+                        },
+                        "budgetsId": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
                         }
                       },
                       "required": [
                         "id",
-                        "name",
-                        "description"
+                        "title",
+                        "description",
+                        "budgetsId"
                       ]
                     }
                   }
@@ -2361,6 +2375,26 @@
           },
           "required": true
         },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/pdf/regenerate/{budgetId}": {
+      "get": {
+        "operationId": "regeneratePdfDocument",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "budgetId",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Default Response"
@@ -2400,7 +2434,7 @@
                         "id": {
                           "type": "string"
                         },
-                        "name": {
+                        "title": {
                           "type": "string"
                         },
                         "description": {
@@ -2409,7 +2443,7 @@
                       },
                       "required": [
                         "id",
-                        "name",
+                        "title",
                         "description"
                       ]
                     }

@@ -1,3 +1,4 @@
+import { regenerateBudgetPdf } from '@/api/generate-pdf'
 import { BackButton } from '@/components/back-button'
 import {
     Accordion,
@@ -6,14 +7,16 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { getByIdBudget } from '@/http/api'
+import { Skeleton } from '@/components/ui/skeleton'
+import { getByIdBudget, getMe } from '@/http/api'
 import { formaterPrice } from '@/utils/formater-price'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { format, isValid } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { Link as LinkIcon, Pencil, Printer, UserCircleIcon } from 'lucide-react'
 import { MenuMobileAuth } from '../-components/menu-mobile'
+import { env } from '../../../../env'
 
 export const Route = createFileRoute('/_authenticated/budget/$budget-id')({
     component: RouteComponent,
@@ -27,6 +30,11 @@ function RouteComponent() {
         queryFn: () => getByIdBudget(budgetId!),
     })
 
+    const { data: user } = useQuery({
+        queryKey: ['user'],
+        queryFn: getMe,
+    })
+
     const dateIsValid = isValid(new Date(budgetData?.budget.createdAt || ''))
 
     const createdAtFormatedDate = dateIsValid
@@ -34,6 +42,24 @@ function RouteComponent() {
             locale: ptBR,
         })
         : ''
+
+    const shareData = {
+        title: `Proposta #${budgetData?.budget.id?.slice(0, 8)} - Click Proposta`,
+        text: `Olá ${budgetData?.budget.customerName}, confira sua proposta de ${formaterPrice(budgetData?.budget.total || 0)}!`,
+        url: `${env.VITE_APP_URL}/public-proposal/${budgetId}?plan=${user?.user.plan}`,
+    }
+
+    const { mutate: regeneratePdfFn, isPending: isPendingPdf } = useMutation({
+        mutationFn: regenerateBudgetPdf,
+    })
+
+    async function handleShare() {
+        try {
+            await navigator.share(shareData)
+        } catch (error) {
+            console.error('Erro ao compartilhar:', error)
+        }
+    }
 
     return (
         <>
@@ -43,10 +69,10 @@ function RouteComponent() {
             </div>
             {isLoading ? (
                 <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <Skeleton className="h-8 w-8 rounded-full" />
                 </div>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 max-w-2xl mx-auto">
                     <div className="flex flex-col">
                         <span className="text-lg font-semibold">
                             Proposta #{budgetData?.budget.id?.slice(0, 8)}
@@ -101,11 +127,13 @@ function RouteComponent() {
                                 ))}
                             </Accordion>
                             <div className="flex gap-x-2">
-                                <Button asChild className="w-6/12">
-                                    <div className="flex items-center gap-2">
-                                        <Printer />
-                                        <span>PDF</span>
-                                    </div>
+                                <Button
+                                    className="w-6/12"
+                                    onClick={() => budgetId && regeneratePdfFn(budgetId)}
+                                    disabled={isPendingPdf}
+                                >
+                                    <Printer />
+                                    {isPendingPdf ? 'Gerando...' : 'PDF'}
                                 </Button>
                                 <Button asChild className="w-6/12" variant="secondary">
                                     <div className="flex items-center gap-2">
@@ -114,7 +142,7 @@ function RouteComponent() {
                                     </div>
                                 </Button>
                             </div>
-                            <Button className="w-full">
+                            <Button className="w-full" onClick={handleShare}>
                                 <LinkIcon />
                                 Compartilhar link da proposta
                             </Button>

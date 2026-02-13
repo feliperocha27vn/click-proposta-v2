@@ -80,7 +80,7 @@ function RouteComponent() {
     if (!exists) {
       append({
         id: data.id,
-        name: data.name || '',
+        title: data.name || '',
         description: data.description || '',
       })
     }
@@ -90,7 +90,10 @@ function RouteComponent() {
   function handleGeneratePdf(data: PostBudgetsBody) {
     generatePdfFn({
       imgUrl: user?.user.avatarUrl || '',
-      services: data.services,
+      services: data.services.map(service => ({
+        ...service,
+        budgetsId: null,
+      })),
       nameUser: user?.user.name || '',
       nameCustomer: customer?.customer.name || '',
       emailCustomer: customer?.customer.email || '',
@@ -138,7 +141,7 @@ function RouteComponent() {
                 <div className="w-full space-y-2">
                   <div>
                     <span className="font-light">Título</span>
-                    <Textarea {...register(`services.${index}.name`)} />
+                    <Textarea {...register(`services.${index}.title`)} />
                     <span className="font-light">Descrição</span>
                     <Textarea {...register(`services.${index}.description`)} />
                   </div>

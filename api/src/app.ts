@@ -14,6 +14,7 @@ import { routesBudgets } from './http/controllers/budgets/routes'
 import { routesCustomer } from './http/controllers/customer/routes'
 import { routesPayments } from './http/controllers/payments/routes'
 import { generatePdfDocument } from './http/controllers/pdf/genrate-dowload-pdf'
+import { regenaretePdfDocument } from './http/controllers/pdf/regenarete'
 import { routesProposalDraft } from './http/controllers/proposal-draft/routes'
 import { routesProposal } from './http/controllers/proposal/routes'
 import { routesService } from './http/controllers/services/routes'
@@ -75,4 +76,5 @@ app.register(routesCustomer)
 app.register(routesPayments)
 app.register(routesProposalDraft)
 app.register(generatePdfDocument)
+app.register(regenaretePdfDocument)
 app.register(routesBudgets)

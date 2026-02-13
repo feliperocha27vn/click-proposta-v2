@@ -1,3 +1,4 @@
+import { makeGetInfoForRegenaretePdfUseCase } from '@/factories/budgets/make-get-info-for-regenarete-pdf-use-case'
 import { verifyJwt } from '@/middlewares/verifyJwt'
 import { BudgetPdfDocument } from '@/pdf/templates/budget-pdf-document'
 import { renderToStream } from '@react-pdf/renderer'
@@ -5,43 +6,38 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import React from 'react'
 import z from 'zod'
 
-export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
-  app.post(
-    '/pdf/generate',
+export const regenaretePdfDocument: FastifyPluginAsyncZod = async app => {
+  app.get(
+    '/pdf/regenerate/:budgetId',
     {
       onRequest: [verifyJwt],
       schema: {
-        tags: ['PDF'],
-        body: z.object({
-          imgUrl: z.string(),
-          nameUser: z.string(),
-          nameCustomer: z.string(),
-          emailCustomer: z.string(),
-          phoneCustomer: z.string(),
-          total: z.string(),
-          services: z.array(
-            z.object({
-              id: z.string(),
-              title: z.string(),
-              description: z.string(),
-              budgetsId: z.string().nullable(),
-            })
-          ),
+        operationId: 'regeneratePdfDocument',
+        params: z.object({
+          budgetId: z.string(),
         }),
       },
     },
     async (request, reply) => {
-      const {
-        imgUrl,
-        nameUser,
-        nameCustomer,
-        emailCustomer,
-        phoneCustomer,
-        total,
-        services,
-      } = request.body
+      const { budgetId } = request.params
+
+      const getInfoForRegenaretePdfUseCase =
+        makeGetInfoForRegenaretePdfUseCase()
 
       try {
+        const {
+          imgUrl,
+          nameUser,
+          nameCustomer,
+          emailCustomer,
+          phoneCustomer,
+          total,
+          services,
+        } = await getInfoForRegenaretePdfUseCase.execute({
+          budgetId,
+          usersId: request.user.sub,
+        })
+
         const pdfDocument = React.createElement(BudgetPdfDocument, {
           imgUrl,
           nameUser,
