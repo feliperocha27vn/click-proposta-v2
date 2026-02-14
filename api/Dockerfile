@@ -58,10 +58,6 @@ RUN npx prisma generate
 # Copy built application from build stage
 COPY --from=build /app/dist ./dist
 
-# Copy the start script
-COPY start.sh ./
-RUN chmod +x start.sh && sed -i 's/\r$//' start.sh
-
 # Change ownership to nodejs user
 RUN chown -R nodejs:nodejs /app
 USER nodejs
@@ -77,4 +73,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENTRYPOINT ["dumb-init", "--"]
 
 # Start the application with migrations
-CMD ["./start.sh", "node", "dist/server.js"]
+CMD ["/bin/sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
