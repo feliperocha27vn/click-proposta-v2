@@ -5,7 +5,7 @@ import { env } from './env'
 
 app
   .listen({
-    port: env.PORT,
+    port: process.env.PORT ? Number(process.env.PORT) : env.PORT,
     host: '0.0.0.0',
   })
   .then(() => {
