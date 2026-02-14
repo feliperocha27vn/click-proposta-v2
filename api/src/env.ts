@@ -10,7 +10,7 @@ const envSchema = z.object({
   ABACATE_API_KEY: z.string(),
   GEMINI_API_KEY: z.string(),
   DATABASE_URL: z.string(),
-  DATABASE_URL_TEST: z.string(),
+  DATABASE_URL_TEST: z.string().optional(),
 })
 
 export const env = envSchema.parse(process.env)
