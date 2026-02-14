@@ -617,6 +617,45 @@ export type GetByIdBudget404 = {
   message: string;
 };
 
+export type GetPublicBudget200BudgetCustomer = {
+  name: string;
+};
+
+export type GetPublicBudget200BudgetUserName = string |  | null;
+
+export type GetPublicBudget200BudgetUserAvatarUrl = string |  | null;
+
+export type GetPublicBudget200BudgetUser = {
+  name: GetPublicBudget200BudgetUserName;
+  avatarUrl: GetPublicBudget200BudgetUserAvatarUrl;
+};
+
+export type GetPublicBudget200BudgetBudgetsServicesItem = {
+  id: string;
+  title: string;
+  description: string;
+};
+
+export type GetPublicBudget200Budget = {
+  id: string;
+  title: string;
+  description?: string;
+  total: number;
+  status: string;
+  createdAt: string;
+  customer: GetPublicBudget200BudgetCustomer;
+  user: GetPublicBudget200BudgetUser;
+  budgetsServices: GetPublicBudget200BudgetBudgetsServicesItem[];
+};
+
+export type GetPublicBudget200 = {
+  budget: GetPublicBudget200Budget;
+};
+
+export type GetPublicBudget404 = {
+  message: string;
+};
+
 export const createNewCustomer = (
     createNewCustomerBody: CreateNewCustomerBody,
  ) => {
@@ -859,6 +898,15 @@ export const postPdfGenerate = (
       );
     }
   
+export const regeneratePdfDocument = (
+    budgetId: string,
+ ) => {
+      return apiMutator<void>(
+      {url: `/pdf/regenerate/${budgetId}`, method: 'GET'
+    },
+      );
+    }
+  
 export const postBudgets = (
     postBudgetsBody: PostBudgetsBody,
  ) => {
@@ -889,6 +937,19 @@ export const getByIdBudget = (
       );
     }
   
+/**
+ * Fetch budget details for public viewing without authentication.
+ * @summary Get public budget details
+ */
+export const getPublicBudget = (
+    budgetId: string,
+ ) => {
+      return apiMutator<GetPublicBudget200>(
+      {url: `/public/budgets/${budgetId}`, method: 'GET'
+    },
+      );
+    }
+  
 export type CreateNewCustomerResult = NonNullable<Awaited<ReturnType<typeof createNewCustomer>>>
 export type FetchCustomersResult = NonNullable<Awaited<ReturnType<typeof fetchCustomers>>>
 export type SearchByNameEmailResult = NonNullable<Awaited<ReturnType<typeof searchByNameEmail>>>
@@ -913,6 +974,8 @@ export type ConfirmPaymentResult = NonNullable<Awaited<ReturnType<typeof confirm
 export type CreateProposalDraftResult = NonNullable<Awaited<ReturnType<typeof createProposalDraft>>>
 export type GetLastDraftProposalResult = NonNullable<Awaited<ReturnType<typeof getLastDraftProposal>>>
 export type PostPdfGenerateResult = NonNullable<Awaited<ReturnType<typeof postPdfGenerate>>>
+export type RegeneratePdfDocumentResult = NonNullable<Awaited<ReturnType<typeof regeneratePdfDocument>>>
 export type PostBudgetsResult = NonNullable<Awaited<ReturnType<typeof postBudgets>>>
 export type FetchManyBudgetsResult = NonNullable<Awaited<ReturnType<typeof fetchManyBudgets>>>
 export type GetByIdBudgetResult = NonNullable<Awaited<ReturnType<typeof getByIdBudget>>>
+export type GetPublicBudgetResult = NonNullable<Awaited<ReturnType<typeof getPublicBudget>>>

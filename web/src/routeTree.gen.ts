@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './pages/login'
 import { Route as AuthenticatedRouteImport } from './pages/_authenticated'
 import { Route as IndexRouteImport } from './pages/index'
 import { Route as PublicProposalProposalIdRouteImport } from './pages/public-proposal/$proposal-id'
+import { Route as PublicBudgetBudgetIdRouteImport } from './pages/public-budget/$budget-id'
 import { Route as AuthCallbackRouteImport } from './pages/auth/callback'
 import { Route as AuthenticatedSuccessPaymentRouteImport } from './pages/_authenticated/success-payment'
 import { Route as AuthenticatedProposalsRouteImport } from './pages/_authenticated/proposals'
@@ -48,6 +49,11 @@ const PublicProposalProposalIdRoute =
     path: '/public-proposal/$proposal-id',
     getParentRoute: () => rootRouteImport,
   } as any)
+const PublicBudgetBudgetIdRoute = PublicBudgetBudgetIdRouteImport.update({
+  id: '/public-budget/$budget-id',
+  path: '/public-budget/$budget-id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/proposals': typeof AuthenticatedProposalsRoute
   '/success-payment': typeof AuthenticatedSuccessPaymentRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/public-budget/$budget-id': typeof PublicBudgetBudgetIdRoute
   '/public-proposal/$proposal-id': typeof PublicProposalProposalIdRoute
   '/$new-proposal': typeof AuthenticatedCreateProposalNewProposalRoute
   '/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/proposals': typeof AuthenticatedProposalsRoute
   '/success-payment': typeof AuthenticatedSuccessPaymentRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/public-budget/$budget-id': typeof PublicBudgetBudgetIdRoute
   '/public-proposal/$proposal-id': typeof PublicProposalProposalIdRoute
   '/$new-proposal': typeof AuthenticatedCreateProposalNewProposalRoute
   '/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
@@ -177,6 +185,7 @@ export interface FileRoutesById {
   '/_authenticated/proposals': typeof AuthenticatedProposalsRoute
   '/_authenticated/success-payment': typeof AuthenticatedSuccessPaymentRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/public-budget/$budget-id': typeof PublicBudgetBudgetIdRoute
   '/public-proposal/$proposal-id': typeof PublicProposalProposalIdRoute
   '/_authenticated/_create-proposal/$new-proposal': typeof AuthenticatedCreateProposalNewProposalRoute
   '/_authenticated/_create-proposal/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
@@ -198,6 +207,7 @@ export interface FileRouteTypes {
     | '/proposals'
     | '/success-payment'
     | '/auth/callback'
+    | '/public-budget/$budget-id'
     | '/public-proposal/$proposal-id'
     | '/$new-proposal'
     | '/select-costumer'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/proposals'
     | '/success-payment'
     | '/auth/callback'
+    | '/public-budget/$budget-id'
     | '/public-proposal/$proposal-id'
     | '/$new-proposal'
     | '/select-costumer'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/_authenticated/proposals'
     | '/_authenticated/success-payment'
     | '/auth/callback'
+    | '/public-budget/$budget-id'
     | '/public-proposal/$proposal-id'
     | '/_authenticated/_create-proposal/$new-proposal'
     | '/_authenticated/_create-proposal/select-costumer'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  PublicBudgetBudgetIdRoute: typeof PublicBudgetBudgetIdRoute
   PublicProposalProposalIdRoute: typeof PublicProposalProposalIdRoute
 }
 
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/public-proposal/$proposal-id'
       fullPath: '/public-proposal/$proposal-id'
       preLoaderRoute: typeof PublicProposalProposalIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/public-budget/$budget-id': {
+      id: '/public-budget/$budget-id'
+      path: '/public-budget/$budget-id'
+      fullPath: '/public-budget/$budget-id'
+      preLoaderRoute: typeof PublicBudgetBudgetIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
@@ -431,6 +451,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  PublicBudgetBudgetIdRoute: PublicBudgetBudgetIdRoute,
   PublicProposalProposalIdRoute: PublicProposalProposalIdRoute,
 }
 export const routeTree = rootRouteImport
