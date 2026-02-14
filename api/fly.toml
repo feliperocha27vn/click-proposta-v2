@@ -23,4 +23,4 @@ primary_region = 'ams'
   memory_mb = 256
 
 [deploy]
-  release_command = "npx -y prisma migrate deploy"
+  release_command = "npx -y prisma db push"
