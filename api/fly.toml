@@ -1,15 +1,15 @@
-# fly.toml app configuration file generated for click-proposta-api on 2025-09-12T18:48:14Z
+# fly.toml app configuration file generated for click-proposta-v2-lfz--a on 2026-02-14T14:35:03Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'click-proposta-api'
-primary_region = 'gru'
+app = 'click-proposta-v2-lfz--a'
+primary_region = 'ams'
 
 [build]
 
 [http_service]
-  internal_port = 3333
+  internal_port = 8080
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
@@ -20,4 +20,4 @@ primary_region = 'gru'
   memory = '1gb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 1024
+  memory_mb = 256
