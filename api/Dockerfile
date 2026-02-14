@@ -60,7 +60,7 @@ COPY --from=build /app/dist ./dist
 
 # Copy the start script
 COPY start.sh ./
-RUN chmod +x start.sh
+RUN chmod +x start.sh && sed -i 's/\r$//' start.sh
 
 # Change ownership to nodejs user
 RUN chown -R nodejs:nodejs /app
