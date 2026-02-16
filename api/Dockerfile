@@ -1,40 +1,32 @@
 # Use the official Node.js 22 alpine image
 FROM node:22-alpine AS base
 
+# Enable pnpm via corepack
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
-
-# Copy Prisma schema
-COPY prisma ./prisma/
-
-# Generate Prisma client
-RUN npx prisma generate
+# Production dependencies stage
+FROM base AS prod-deps
+RUN pnpm install --prod --frozen-lockfile
 
 # Build stage
-FROM node:22-alpine AS build
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install all dependencies (including dev dependencies)
-RUN npm ci
-
-# Copy source code and config files
+FROM base AS build
+RUN pnpm install --frozen-lockfile
 COPY . .
-
+# Generate Prisma client (needs dev deps like prisma CLI)
+RUN pnpm prisma generate
 # Build the application
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
-FROM node:22-alpine AS production
+FROM base AS production
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
@@ -45,15 +37,11 @@ RUN adduser -S nodejs -u 1001
 
 WORKDIR /app
 
-# Copy package.json for production dependencies
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
-
-# Copy Prisma schema and generate client
-COPY prisma ./prisma/
-RUN npx prisma generate
+# Copy production dependencies from prod-deps stage
+COPY --from=prod-deps /app/node_modules ./node_modules
+# Copy generated Prisma client from build stage
+# The client is generated into node_modules/.prisma
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 
 # Copy built application from build stage
 COPY --from=build /app/dist ./dist
