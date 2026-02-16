@@ -1,6 +1,6 @@
 import { BackButton } from '@/components/back-button'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Hammer, Package, Sparkles } from 'lucide-react'
+import { Hammer, Package } from 'lucide-react'
 
 export const Route = createFileRoute(
   '/_authenticated/_create-proposal/select-type-proposal'
@@ -27,12 +27,12 @@ function RouteComponent() {
             <Package size={32} />
           </div>
         </Link>
-        <Link to="/select-costumer" search={{ type: 'proposal-with-ai' }}>
+        {/* <Link to="/select-costumer" search={{ type: 'proposal-with-ai' }}>
           <div className="flex items-center justify-evenly border-zinc rounded-lg shadow  w-full border py-2">
             <span className="font-medium text-xl">Proposta com IA</span>
             <Sparkles size={32} />
           </div>
-        </Link>
+        </Link> */}
       </div>
     </div>
   )

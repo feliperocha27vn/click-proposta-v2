@@ -28,7 +28,6 @@ import { Route as AuthenticatedBudgetProductsCustomerIdRouteImport } from './pag
 import { Route as AuthenticatedBudgetCivilCustomerIdRouteImport } from './pages/_authenticated/budget-civil/$customer-id'
 import { Route as AuthenticatedCreateProposalSelectTypeProposalRouteImport } from './pages/_authenticated/_create-proposal/select-type-proposal'
 import { Route as AuthenticatedCreateProposalSelectCostumerRouteImport } from './pages/_authenticated/_create-proposal/select-costumer'
-import { Route as AuthenticatedCreateProposalNewProposalRouteImport } from './pages/_authenticated/_create-proposal/$new-proposal'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -133,12 +132,6 @@ const AuthenticatedCreateProposalSelectCostumerRoute =
     path: '/select-costumer',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedCreateProposalNewProposalRoute =
-  AuthenticatedCreateProposalNewProposalRouteImport.update({
-    id: '/_create-proposal/$new-proposal',
-    path: '/$new-proposal',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -152,7 +145,6 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/public-budget/$budget-id': typeof PublicBudgetBudgetIdRoute
   '/public-proposal/$proposal-id': typeof PublicProposalProposalIdRoute
-  '/$new-proposal': typeof AuthenticatedCreateProposalNewProposalRoute
   '/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
   '/select-type-proposal': typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   '/budget-civil/$customer-id': typeof AuthenticatedBudgetCivilCustomerIdRoute
@@ -173,7 +165,6 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/public-budget/$budget-id': typeof PublicBudgetBudgetIdRoute
   '/public-proposal/$proposal-id': typeof PublicProposalProposalIdRoute
-  '/$new-proposal': typeof AuthenticatedCreateProposalNewProposalRoute
   '/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
   '/select-type-proposal': typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   '/budget-civil/$customer-id': typeof AuthenticatedBudgetCivilCustomerIdRoute
@@ -196,7 +187,6 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/public-budget/$budget-id': typeof PublicBudgetBudgetIdRoute
   '/public-proposal/$proposal-id': typeof PublicProposalProposalIdRoute
-  '/_authenticated/_create-proposal/$new-proposal': typeof AuthenticatedCreateProposalNewProposalRoute
   '/_authenticated/_create-proposal/select-costumer': typeof AuthenticatedCreateProposalSelectCostumerRoute
   '/_authenticated/_create-proposal/select-type-proposal': typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   '/_authenticated/budget-civil/$customer-id': typeof AuthenticatedBudgetCivilCustomerIdRoute
@@ -219,7 +209,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/public-budget/$budget-id'
     | '/public-proposal/$proposal-id'
-    | '/$new-proposal'
     | '/select-costumer'
     | '/select-type-proposal'
     | '/budget-civil/$customer-id'
@@ -240,7 +229,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/public-budget/$budget-id'
     | '/public-proposal/$proposal-id'
-    | '/$new-proposal'
     | '/select-costumer'
     | '/select-type-proposal'
     | '/budget-civil/$customer-id'
@@ -262,7 +250,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/public-budget/$budget-id'
     | '/public-proposal/$proposal-id'
-    | '/_authenticated/_create-proposal/$new-proposal'
     | '/_authenticated/_create-proposal/select-costumer'
     | '/_authenticated/_create-proposal/select-type-proposal'
     | '/_authenticated/budget-civil/$customer-id'
@@ -416,13 +403,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreateProposalSelectCostumerRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/_create-proposal/$new-proposal': {
-      id: '/_authenticated/_create-proposal/$new-proposal'
-      path: '/$new-proposal'
-      fullPath: '/$new-proposal'
-      preLoaderRoute: typeof AuthenticatedCreateProposalNewProposalRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
   }
 }
 
@@ -433,7 +413,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
   AuthenticatedProposalsRoute: typeof AuthenticatedProposalsRoute
   AuthenticatedSuccessPaymentRoute: typeof AuthenticatedSuccessPaymentRoute
-  AuthenticatedCreateProposalNewProposalRoute: typeof AuthenticatedCreateProposalNewProposalRoute
   AuthenticatedCreateProposalSelectCostumerRoute: typeof AuthenticatedCreateProposalSelectCostumerRoute
   AuthenticatedCreateProposalSelectTypeProposalRoute: typeof AuthenticatedCreateProposalSelectTypeProposalRoute
   AuthenticatedBudgetCivilCustomerIdRoute: typeof AuthenticatedBudgetCivilCustomerIdRoute
@@ -450,8 +429,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPlansRoute: AuthenticatedPlansRoute,
   AuthenticatedProposalsRoute: AuthenticatedProposalsRoute,
   AuthenticatedSuccessPaymentRoute: AuthenticatedSuccessPaymentRoute,
-  AuthenticatedCreateProposalNewProposalRoute:
-    AuthenticatedCreateProposalNewProposalRoute,
   AuthenticatedCreateProposalSelectCostumerRoute:
     AuthenticatedCreateProposalSelectCostumerRoute,
   AuthenticatedCreateProposalSelectTypeProposalRoute:
