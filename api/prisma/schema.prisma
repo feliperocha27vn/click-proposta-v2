@@ -138,9 +138,11 @@ model Budgets {
 }
 
 model BudgetsServices {
-  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title       String
-  description String @db.Text
+  description String   @db.Text
+  quantity    Int?
+  price       Decimal? @db.Decimal(10, 2)
 
   budgets   Budgets @relation(fields: [budgetsId], references: [id])
   budgetsId String  @map("budgets_id") @db.Uuid

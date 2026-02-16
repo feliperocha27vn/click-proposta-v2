@@ -21,6 +21,8 @@ interface GetByIdBudgetUseCaseReply {
       id: string
       title: string
       description: string
+      quantity: number | null
+      price: number | null
     }[]
   }
 }
@@ -66,7 +68,10 @@ export class GetByIdBudgetUseCase {
         customersId: budget.customersId,
         createdAt: budget.createdAt,
         customerName: customer.name,
-        budgetsServices,
+        budgetsServices: budgetsServices.map(service => ({
+          ...service,
+          price: service.price ? Number(service.price) : null,
+        })),
       },
     }
   }

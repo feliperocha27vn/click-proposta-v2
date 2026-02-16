@@ -66,9 +66,18 @@ function RouteComponent() {
             {loading ? (
               <Skeleton className="h-8 w-3/4 bg-zinc-700" />
             ) : (
-              <h1 className="text-3xl font-bold tracking-tight text-white">
-                {budgetData?.title}
-              </h1>
+              <>
+                <h1 className="text-3xl font-bold tracking-tight text-white">
+                  {budgetData?.title}
+                </h1>
+                {budgetData?.budgetsServices.some(
+                  s => s.price && s.price > 0
+                ) && (
+                  <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-blue-600 text-white hover:bg-blue-700 w-fit">
+                    Orçamento de Produtos
+                  </span>
+                )}
+              </>
             )}
           </div>
           <div className="flex items-center space-x-2 text-zinc-300">
@@ -90,7 +99,7 @@ function RouteComponent() {
               <Skeleton className="h-14 w-14 rounded-full" />
             ) : (
               <Avatar className="h-14 w-14 border-2 border-zinc-100">
-                <AvatarImage src={budgetData?.user.avatarUrl} />
+                <AvatarImage src={budgetData?.user.avatarUrl || undefined} />
                 <AvatarFallback className="bg-zinc-100 font-bold text-zinc-700">
                   {budgetData?.user.name?.charAt(0)}
                 </AvatarFallback>
@@ -137,8 +146,20 @@ function RouteComponent() {
                         <h4 className="font-medium text-zinc-900">
                           {service.title}
                         </h4>
-                        {/* If we had individual prices, they would go here. 
-                            For now, keeping it clean as per original logic. */}
+                        {(service.price ?? 0) > 0 && (
+                          <div className="text-right text-sm">
+                            {service.quantity && (
+                              <span className="block text-zinc-500">
+                                Qtd: {service.quantity}
+                              </span>
+                            )}
+                            {service.price && (
+                              <span className="block font-medium text-zinc-900">
+                                {formatterPrice.format(Number(service.price))}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <p className="text-sm text-zinc-500 leading-relaxed">
                         {service.description}

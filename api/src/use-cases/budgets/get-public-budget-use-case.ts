@@ -27,6 +27,8 @@ interface GetPublicBudgetUseCaseReply {
       id: string
       title: string
       description: string
+      quantity: number | null
+      price: number | null
     }[]
   }
 }
@@ -83,7 +85,10 @@ export class GetPublicBudgetUseCase {
           name: user.name,
           avatarUrl: user.avatarUrl,
         },
-        budgetsServices,
+        budgetsServices: budgetsServices.map(service => ({
+          ...service,
+          price: service.price ? Number(service.price) : null,
+        })),
       },
     }
   }

@@ -20,6 +20,8 @@ export const createNewBudget: FastifyPluginAsyncZod = async app => {
               id: z.string(),
               title: z.string(),
               description: z.string(),
+              quantity: z.number().optional().nullable(),
+              price: z.number().optional().nullable(),
             })
           ),
         }),

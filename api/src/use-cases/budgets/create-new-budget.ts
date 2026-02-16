@@ -14,6 +14,8 @@ interface CreateNewBudgetUseCaseRequest {
     id: string
     title: string
     description: string
+    price?: number | null
+    quantity?: number | null
   }[]
 }
 
@@ -58,6 +60,8 @@ export class CreateNewBudgetUseCase {
         budgetsId: budget.id,
         title: service.title,
         description: service.description,
+        price: service.price,
+        quantity: service.quantity,
       }))
     )
 

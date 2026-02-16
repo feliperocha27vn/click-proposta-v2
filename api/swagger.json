@@ -2338,6 +2338,32 @@
                         "description": {
                           "type": "string"
                         },
+                        "quantity": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
+                        },
+                        "price": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
+                        },
                         "budgetsId": {
                           "anyOf": [
                             {
@@ -2439,6 +2465,32 @@
                         },
                         "description": {
                           "type": "string"
+                        },
+                        "quantity": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
+                        },
+                        "price": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -2633,12 +2685,40 @@
                               },
                               "description": {
                                 "type": "string"
+                              },
+                              "quantity": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "nullable": true,
+                                    "enum": [
+                                      null
+                                    ]
+                                  }
+                                ]
+                              },
+                              "price": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "nullable": true,
+                                    "enum": [
+                                      null
+                                    ]
+                                  }
+                                ]
                               }
                             },
                             "required": [
                               "id",
                               "title",
-                              "description"
+                              "description",
+                              "quantity",
+                              "price"
                             ],
                             "additionalProperties": false
                           }
@@ -2797,12 +2877,40 @@
                               },
                               "description": {
                                 "type": "string"
+                              },
+                              "quantity": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "nullable": true,
+                                    "enum": [
+                                      null
+                                    ]
+                                  }
+                                ]
+                              },
+                              "price": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "nullable": true,
+                                    "enum": [
+                                      null
+                                    ]
+                                  }
+                                ]
                               }
                             },
                             "required": [
                               "id",
                               "title",
-                              "description"
+                              "description",
+                              "quantity",
+                              "price"
                             ],
                             "additionalProperties": false
                           }

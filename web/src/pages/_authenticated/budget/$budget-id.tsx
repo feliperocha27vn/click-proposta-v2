@@ -28,6 +28,7 @@ function RouteComponent() {
   const { data: budgetData, isLoading } = useQuery({
     queryKey: ['budget', budgetId],
     queryFn: () => getByIdBudget(budgetId!),
+    enabled: !!budgetId,
   })
 
   const dateIsValid = isValid(new Date(budgetData?.budget.createdAt || ''))
@@ -72,6 +73,13 @@ function RouteComponent() {
             <span className="text-lg font-semibold">
               Proposta #{budgetData?.budget.id?.slice(0, 8)}
             </span>
+            {budgetData?.budget.budgetsServices.some(
+              s => s.price && s.price > 0
+            ) && (
+              <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80 mt-1 w-fit bg-blue-600 text-white">
+                Orçamento de Produtos
+              </span>
+            )}
             <span className="text-sm text-muted-foreground">
               Criado em {createdAtFormatedDate}
             </span>
@@ -117,7 +125,35 @@ function RouteComponent() {
                 {budgetData?.budget.budgetsServices.map(service => (
                   <AccordionItem value={service.id} key={service.id}>
                     <AccordionTrigger>{service.title}</AccordionTrigger>
-                    <AccordionContent>{service.description}</AccordionContent>
+                    <AccordionContent>
+                      <div className="flex flex-col gap-2">
+                        <p>{service.description}</p>
+                        {(service.price ?? 0) > 0 && (
+                          <div className="flex gap-4 text-sm text-gray-500 mt-2 bg-gray-50 p-2 rounded-md">
+                            {service.quantity && (
+                              <span>
+                                <strong>Qtd:</strong> {service.quantity}
+                              </span>
+                            )}
+                            {service.price && (
+                              <span>
+                                <strong>Preço Unit:</strong>{' '}
+                                {formaterPrice(Number(service.price))}
+                              </span>
+                            )}
+                            {service.quantity && service.price && (
+                              <span>
+                                <strong>Total Item:</strong>{' '}
+                                {formaterPrice(
+                                  Number(service.price) *
+                                    Number(service.quantity)
+                                )}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>

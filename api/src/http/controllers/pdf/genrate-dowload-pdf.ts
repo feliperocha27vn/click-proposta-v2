@@ -24,6 +24,8 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
               id: z.string(),
               title: z.string(),
               description: z.string(),
+              quantity: z.number().nullable().optional(),
+              price: z.number().nullable().optional(),
               budgetsId: z.string().nullable(),
             })
           ),

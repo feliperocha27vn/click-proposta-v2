@@ -37,6 +37,8 @@ export const getPublicBudget: FastifyPluginAsyncZod = async app => {
                   id: z.string(),
                   title: z.string(),
                   description: z.string(),
+                  quantity: z.number().nullable(),
+                  price: z.number().nullable(),
                 })
               ),
             }),
