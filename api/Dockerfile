@@ -9,8 +9,8 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # Set the working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
+# Copy package files and .npmrc
+COPY package.json pnpm-lock.yaml .npmrc ./
 
 # Production dependencies stage
 FROM base AS prod-deps
@@ -20,7 +20,7 @@ RUN pnpm install --prod --frozen-lockfile
 FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . .
-# Generate Prisma client (needs dev deps like prisma CLI)
+# Generate Prisma client
 RUN pnpm prisma generate
 # Build the application
 RUN pnpm run build
@@ -39,9 +39,14 @@ WORKDIR /app
 
 # Copy production dependencies from prod-deps stage
 COPY --from=prod-deps /app/node_modules ./node_modules
+
 # Copy generated Prisma client from build stage
-# The client is generated into node_modules/.prisma
+# Note: Since node-linker=hoisted is used, we copy the .prisma folder
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=build /app/node_modules/@prisma/client ./node_modules/@prisma/client
+
+# Copy Prisma schema for migrations/db push
+COPY --from=build /app/prisma ./prisma
 
 # Copy built application from build stage
 COPY --from=build /app/dist ./dist
