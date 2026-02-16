@@ -1,4 +1,5 @@
-name = "click-proposta-web"
+# web/wrangler.toml
+name = 'click-proposta-v2'
 compatibility_date = "2026-02-16"
 
 [assets]
