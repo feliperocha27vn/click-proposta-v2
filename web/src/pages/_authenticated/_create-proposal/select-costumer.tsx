@@ -110,9 +110,7 @@ function RouteComponent() {
                 to={
                   type === 'budget-civil'
                     ? '/budget-civil/$customer-id'
-                    : type === 'budget-products'
-                      ? '/budget-products/$customer-id'
-                      : '/click-ai/$customer-id'
+                    : '/budget-products/$customer-id'
                 }
                 key={customer.id}
                 params={{ 'customer-id': customer.id }}

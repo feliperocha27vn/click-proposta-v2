@@ -1,0 +1,7 @@
+
+> web@0.0.0 build C:\Users\felip\Documents\eu_memo\www\click-proposta-v2\web
+> tsc -b && vite build
+
+src/pages/_authenticated/_create-proposal/-proposal.tsx(50,3): error TS2345: Argument of type '"/_authenticated/_create-proposal/$new-proposal"' is not assignable to parameter of type 'keyof FileRoutesByPath | undefined'.
+src/pages/_authenticated/_create-proposal/-proposal.tsx(56,11): error TS2339: Property 'new-proposal' does not exist on type '{ "budget-id"?: string | undefined; "proposal-id"?: string | undefined; "customer-id"?: string | undefined; }'.
+ÔÇëELIFECYCLEÔÇë Command failed with exit code 2.

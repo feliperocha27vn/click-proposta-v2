@@ -27,12 +27,6 @@ function RouteComponent() {
             <Package size={32} />
           </div>
         </Link>
-        {/* <Link to="/select-costumer" search={{ type: 'proposal-with-ai' }}>
-          <div className="flex items-center justify-evenly border-zinc rounded-lg shadow  w-full border py-2">
-            <span className="font-medium text-xl">Proposta com IA</span>
-            <Sparkles size={32} />
-          </div>
-        </Link> */}
       </div>
     </div>
   )
