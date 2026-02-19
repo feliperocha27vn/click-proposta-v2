@@ -1,13 +1,16 @@
-import imagePersonFillingOutForm from '@/assets/person-filling-out-form.png'
-import imagePersonWriteForm from '@/assets/person-write-form.png'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { useAuth } from '@/contexts/auth-context'
-import { type FetchCustomers200CustomersItem, fetchCustomers } from '@/http/api'
-import { createFileRoute } from '@tanstack/react-router'
-import { FileSearchCorner, NotebookPen, User } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { CardDashboard } from './-components/card-dashboard'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { Clock, CreditCard, DollarSign, FileText } from 'lucide-react'
 import { MenuMobileAuth } from './-components/menu-mobile'
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
@@ -17,100 +20,163 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 function RouteComponent() {
   const { session } = useAuth()
   const user = session?.user ?? null
-  const [customers, setCustomers] = useState<FetchCustomers200CustomersItem[]>(
-    []
-  )
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchCustomers().then(reply => {
-      setCustomers(reply.customers)
-      setLoading(false)
-    })
-  }, [])
+  const stats = [
+    {
+      title: 'Total de Propostas',
+      value: '12',
+      icon: FileText,
+      description: '+2 esse mês',
+    },
+    {
+      title: 'Propostas Aceitas',
+      value: '4',
+      icon: CreditCard,
+      description: '33% de taxa de conversão',
+    },
+    {
+      title: 'Propostas Pendentes',
+      value: '8',
+      icon: Clock,
+      description: '8 propostas aguardando aprovação',
+    },
+    {
+      title: 'Receita Pendente',
+      value: 'R$ 12.450,00',
+      icon: DollarSign,
+      description: 'Previsão para o próximo mês',
+    },
+  ]
+
+  const recentProposals = [
+    {
+      client: 'Acme Corp',
+      date: '19 Out, 2026',
+      amount: 'R$ 5.000,00',
+      status: 'Enviado',
+    },
+    {
+      client: 'TechStart Inc',
+      date: '18 Out, 2026',
+      amount: 'R$ 3.200,00',
+      status: 'Pendente',
+    },
+    {
+      client: 'Global Solutions',
+      date: '15 Out, 2026',
+      amount: 'R$ 8.500,00',
+      status: 'Aceito',
+    },
+    {
+      client: 'Local Bakery',
+      date: '12 Out, 2026',
+      amount: 'R$ 1.200,00',
+      status: 'Rascunho',
+    },
+    {
+      client: 'Consultoria Silva',
+      date: '10 Out, 2026',
+      amount: 'R$ 4.000,00',
+      status: 'Rejeitado',
+    },
+  ]
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 p-8 pt-6 min-h-screen font-inter">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-3 xl:hidden">
-          <Avatar>
-            <AvatarImage src={user?.user_metadata?.avatar_url} />
-            <AvatarFallback>
-              <Skeleton className="size-8 not-first:rounded-full" />
-            </AvatarFallback>
-          </Avatar>
-          {user ? (
-            <p className="xl:text-2xl">
-              Bem vindo(a), {user?.user_metadata?.full_name || user?.email}
-            </p>
-          ) : (
-            <Skeleton className="h-6 w-48" />
-          )}
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900">Painel</h2>
+        <div className="xl:hidden">
+            <MenuMobileAuth />
         </div>
-        <MenuMobileAuth />
       </div>
 
-      <div className="grid grid-cols-2 gap-x-2">
-        <CardDashboard
-          icon={<NotebookPen size={32} />}
-          title="Criar nova proposta"
-          titleButton="Criar"
-          link="/select-type-proposal"
-          image={imagePersonFillingOutForm}
-        />
-        <CardDashboard
-          icon={<FileSearchCorner size={32} />}
-          title="Visualizar propostas"
-          titleButton="Visualizar"
-          link="/proposals"
-          image={imagePersonWriteForm}
-        />
-      </div>
-
-      <h1 className="font-semibold text-2xl mb-3">Meus Clientes</h1>
-      <div className="relative">
-        <div className="space-y-2 md:grid md:grid-cols-2 md:gap-4">
-          {loading ? (
-            <>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-6/12 bg-zinc-400 md:h-20  md:w-full" />
-                <Skeleton className="h-2 w-8/12 bg-zinc-400 md:h-20 md:hidden" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-6/12 bg-zinc-400 md:h-20  md:w-full" />
-                <Skeleton className="h-2 w-8/12 bg-zinc-400 md:h-20 md:hidden" />
-              </div>
-              <div className="space-y-2 opacity-80">
-                <Skeleton className="h-4 w-6/12 bg-zinc-400 md:h-20  md:w-full" />
-                <Skeleton className="h-2 w-8/12 bg-zinc-400 md:h-20 md:hidden" />
-              </div>
-              <div className="space-y-2 opacity-60">
-                <Skeleton className="h-4 w-6/12 bg-zinc-400 md:h-20  md:w-full" />
-                <Skeleton className="h-2 w-8/12 bg-zinc-400 md:h-20 md:hidden" />
-              </div>
-            </>
-          ) : (
-            customers.map(customer => (
-              <div
-                key={customer.id}
-                className="border-b py-2 md:bg-neutral-100 md:p-5 md:rounded-lg md:shadow md:flex md:items-center md:gap-x-2 md:h-20"
-              >
-                <User className="hidden md:block size-10" />
-                <div className="md:space-y-2">
-                  <p className="font-semibold truncate w-10/12">
-                    {customer.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {customer.email}
-                  </p>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        <div className="col-span-4 lg:col-span-4">
+            <div className="h-full rounded-3xl bg-linear-to-br from-indigo-100 via-purple-100 to-indigo-50 p-8 flex flex-col justify-center gap-6 relative overflow-hidden border border-indigo-100/50 shadow-sm">
+                <div className="z-10 space-y-2">
+                    <h2 className="text-3xl font-bold text-slate-900">
+                        Bem vindo de volta, {user?.user_metadata?.full_name?.split(' ')[0] || 'Usuário'}!
+                    </h2>
+                    <p className="text-slate-600 max-w-md">
+                        Crie propostas profissionais em segundos.
+                    </p>
                 </div>
-              </div>
-            ))
-          )}
+                <div className="z-10">
+                    <Link to="/select-type-proposal">
+                        <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl px-6 py-6 shadow-indigo-200 shadow-lg transition-all hover:scale-105">
+                            Criar Nova Proposta
+                        </Button>
+                    </Link>
+                </div>
+                {/* Decorative glow */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-200/40 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-200/40 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
+            </div>
         </div>
-        {loading && (
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-white via-white/80 to-transparent pointer-events-none" />
-        )}
+
+        <div className="col-span-3 lg:col-span-3 grid grid-cols-2 gap-4">
+            {stats.map((stat, index) => (
+                <div key={index} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:border-slate-200 transition-colors">
+                    <div className="flex items-start justify-between">
+                        <div className={`p-3 rounded-xl ${
+                            index === 0 ? 'bg-blue-50 text-blue-600' :
+                            index === 1 ? 'bg-emerald-50 text-emerald-600' :
+                            index === 2 ? 'bg-amber-50 text-amber-600' :
+                            'bg-indigo-50 text-indigo-600'
+                        }`}>
+                            <stat.icon className="size-6" />
+                        </div>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-sm font-medium text-slate-500">{stat.title}</p>
+                        <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
+                    </div>
+                </div>
+            ))}
+        </div>
+      </div>
+
+      <div className="grid gap-4 grid-cols-1">
+        <Card className="col-span-1 border-slate-100 shadow-sm bg-white rounded-2xl overflow-hidden">
+          <CardHeader className="border-b border-slate-50 bg-white px-6 py-4">
+            <CardTitle className="text-lg font-semibold text-slate-900">Propostas Recentes</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-slate-100 bg-slate-50/50 hover:bg-slate-50/50">
+                  <TableHead className="text-xs font-medium uppercase text-slate-500 pl-6">Cliente</TableHead>
+                  <TableHead className="text-xs font-medium uppercase text-slate-500">Proposta</TableHead>
+                  <TableHead className="text-xs font-medium uppercase text-slate-500">Data</TableHead>
+                  <TableHead className="text-xs font-medium uppercase text-slate-500">Valor</TableHead>
+                  <TableHead className="text-xs font-medium uppercase text-slate-500">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentProposals.map((proposal, index) => (
+                  <TableRow key={index} className="border-slate-50 hover:bg-slate-50/50 transition-colors">
+                    <TableCell className="font-medium text-slate-900 pl-6 py-4">
+                      {proposal.client}
+                    </TableCell>
+                    <TableCell className="text-slate-600">Site Institucional</TableCell>
+                    <TableCell className="text-slate-600">{proposal.date}</TableCell>
+                    <TableCell className="font-medium text-slate-900">{proposal.amount}</TableCell>
+                    <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            proposal.status === 'Aceito' ? 'bg-emerald-100 text-emerald-700' :
+                            proposal.status === 'Enviado' ? 'bg-blue-100 text-blue-700' :
+                            proposal.status === 'Rejeitado' ? 'bg-red-100 text-red-700' :
+                            'bg-slate-100 text-slate-700'
+                        }`}>
+                            {proposal.status}
+                        </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

@@ -6,10 +6,10 @@ import {
   type GetProposalById200,
   type UpdateProposalBody,
 } from '@/http/api'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Edit3 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { env } from '../../../../env'
 import Logo from '../../../assets/logo.png'
 import { FormEditProposal } from './-components/form-edit-proposal'
@@ -19,9 +19,9 @@ export const Route = createFileRoute('/_authenticated/proposal/$proposal-id')({
 })
 
 function RouteComponent() {
+  const queryClient = useQueryClient()
   const { 'proposal-id': proposalId } = useParams({ strict: false })
-  const [proposal, setProposal] = useState<GetProposalById200>()
-  const [loading, setLoading] = useState(true)
+
   const [editModal, setEditModal] = useState<{
     isOpen: boolean
     field: keyof UpdateProposalBody | null
@@ -43,14 +43,11 @@ function RouteComponent() {
     console.log('ID da proposta não fornecido')
   }
 
-  useEffect(() => {
-    if (proposalId) {
-      getProposalById(proposalId).then(reply => {
-        setProposal(reply)
-        setLoading(false)
-      })
-    }
-  }, [proposalId])
+  const { data: proposal, isLoading: loading } = useQuery({
+    queryKey: ['proposal', proposalId],
+    queryFn: () => getProposalById(proposalId as string),
+    enabled: !!proposalId,
+  })
 
   const formaterPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -83,11 +80,17 @@ function RouteComponent() {
     field: keyof UpdateProposalBody,
     newValue: string
   ) {
-    if (proposal) {
-      setProposal({
-        ...proposal,
-        [field]: newValue,
-      })
+    if (proposal && proposalId) {
+      queryClient.setQueryData(
+        ['proposal', proposalId],
+        (oldData: GetProposalById200 | undefined) => {
+          if (!oldData) return oldData
+          return {
+            ...oldData,
+            [field]: newValue,
+          }
+        }
+      )
     }
   }
 

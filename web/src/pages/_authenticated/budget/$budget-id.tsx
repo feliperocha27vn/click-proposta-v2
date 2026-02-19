@@ -64,8 +64,40 @@ function RouteComponent() {
         <MenuMobileAuth />
       </div>
       {isLoading ? (
-        <div className="flex items-center justify-center">
-          <Skeleton className="h-8 w-8 rounded-full" />
+        <div className="space-y-4 max-w-2xl mx-auto">
+          <div className="flex flex-col space-y-2">
+            <Skeleton className="h-7 w-48 bg-zinc-200 dark:bg-zinc-800" />
+            <Skeleton className="h-5 w-32 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <Skeleton className="h-4 w-40 bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-6 rounded-lg shadow bg-zinc-50 border-zinc-200">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24 bg-zinc-200 dark:bg-zinc-800" />
+              <Skeleton className="h-9 w-32 bg-zinc-200 dark:bg-zinc-800" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20 bg-zinc-200 dark:bg-zinc-800" />
+              <div className="mt-2 flex items-center gap-2">
+                <Skeleton className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+                <div className="space-y-1">
+                  <Skeleton className="h-4 w-32 bg-zinc-200 dark:bg-zinc-800" />
+                  <Skeleton className="h-3 w-24 bg-zinc-200 dark:bg-zinc-800" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <Skeleton className="h-7 w-24 mb-4 bg-zinc-200 dark:bg-zinc-800" />
+            <div className="space-y-3">
+              <Skeleton className="h-14 w-full rounded-md bg-zinc-200 dark:bg-zinc-800" />
+              <Skeleton className="h-14 w-full rounded-md bg-zinc-200 dark:bg-zinc-800" />
+              <Skeleton className="h-14 w-full rounded-md bg-zinc-200 dark:bg-zinc-800" />
+            </div>
+            <div className="space-y-3 mt-6">
+              <Skeleton className="h-10 w-full rounded-md bg-zinc-200 dark:bg-zinc-800" />
+              <Skeleton className="h-10 w-full rounded-md bg-zinc-200 dark:bg-zinc-800" />
+            </div>
+          </div>
         </div>
       ) : (
         <div className="space-y-4 max-w-2xl mx-auto">

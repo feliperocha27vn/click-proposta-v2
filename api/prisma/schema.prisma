@@ -20,6 +20,7 @@ model User {
   isRegisterComplete Boolean         @default(false) @map("is_register_complete")
   phone              String?
   cnpj               String?
+  credits            Int? @default(2)
   Customers          Customers[]
   Payments           Payments[]
   ProposalDraft      ProposalDraft[]

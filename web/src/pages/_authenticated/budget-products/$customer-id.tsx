@@ -104,6 +104,13 @@ function RouteComponent() {
   }
 
   function handleGeneratePdf(data: PostBudgetsBody) {
+    createBudgetFn({
+      customerId: customerId || '',
+      userId: user?.user.id || '',
+      total: data.total,
+      services: data.services,
+    })
+
     generatePdfFn({
       imgUrl: user?.user.avatarUrl || '',
       services: data.services.map(service => ({
@@ -225,25 +232,15 @@ function RouteComponent() {
             />
           </div>
           <Button
-            className="w-full"
-            type="submit"
-            disabled={isPendingCreateBudget}
-          >
-            {isPendingCreateBudget
-              ? 'Salvando orçamento...'
-              : 'Salvar orçamento'}
-          </Button>
-          <Button
             type="button"
-            className="w-full"
-            variant="secondary"
-            disabled={isPending}
+             className="w-full bg-green-500 hover:bg-green-600"
+            disabled={isPending || isPendingCreateBudget}
             onClick={() => {
               const formData = getValues()
               handleGeneratePdf(formData)
             }}
           >
-            {isPending ? 'Gerando PDF...' : 'Baixar PDF'}
+            {isPending || isPendingCreateBudget ? 'Gerando PDF e Salvando...' : 'Baixar PDF e Salvar Orçamento'}
           </Button>
         </form>
       </div>

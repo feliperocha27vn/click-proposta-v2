@@ -8,9 +8,10 @@ import {
   fetchCustomers,
   searchByNameEmail,
 } from '@/http/api'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useSearch } from '@tanstack/react-router'
-import { Search, User } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { ChevronRight, Plus, Search, User } from 'lucide-react'
+import { useState } from 'react'
 import FormCreateNewCustomer from './-components/form-create-new-customer'
 
 export const Route = createFileRoute(
@@ -23,19 +24,22 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const [customers, setCustomers] = useState<FetchCustomers200CustomersItem[]>(
-    []
-  )
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
   const [createModal, setCreateModal] = useState(false)
   const [search, setSearch] = useState('')
+  const [appliedSearch, setAppliedSearch] = useState('')
 
-  useEffect(() => {
-    fetchCustomers().then(reply => {
-      setCustomers(reply.customers)
-      setLoading(false)
-    })
-  }, [])
+  const { data: customers = [], isLoading: loading } = useQuery({
+    queryKey: ['customers', appliedSearch],
+    queryFn: async () => {
+      if (appliedSearch) {
+        const reply = await searchByNameEmail({ search: appliedSearch })
+        return reply.customers as unknown as FetchCustomers200CustomersItem[]
+      }
+      const reply = await fetchCustomers()
+      return reply.customers
+    },
+  })
 
   function handleCreateClick() {
     setCreateModal(true)
@@ -46,18 +50,11 @@ function RouteComponent() {
   }
 
   function handleCreateSuccess() {
-    // Recarrega a lista de clientes
-    setLoading(true)
-    fetchCustomers().then(reply => {
-      setCustomers(reply.customers)
-      setLoading(false)
-    })
+    queryClient.invalidateQueries({ queryKey: ['customers'] })
   }
 
-  async function handleSearch(search: string) {
-    await searchByNameEmail({ search }).then(reply =>
-      setCustomers(reply.customers)
-    )
+  function handleSearch() {
+    setAppliedSearch(search)
   }
 
   const { type } = useSearch({
@@ -65,80 +62,113 @@ function RouteComponent() {
   })
 
   return (
-    <div className="space-y-4">
-      <div className="flex w-full">
-        <BackButton to="/select-type-proposal" className="mb-0" />
-        <div className="w-full flex justify-center font-semibold text-2xl">
-          <h1>Escolha o cliente</h1>
-        </div>
-      </div>
-      <div>
-        <div className="relative xl:w-4/12">
-          <Input
-            className="pe-9"
-            placeholder="Buscar cliente pelo nome ou email"
-            type="email"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleSearch(search)}
-          />
-          <button
-            className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-            type="submit"
-            title="Buscar"
-          >
-            <Search
-              size={16}
-              aria-hidden="true"
-              onClick={() => handleSearch(search)}
-            />
-          </button>
-        </div>
-      </div>
-      <ScrollArea className="relative h-120 rounded-md border p-4 w-full">
-        <div className="space-y-2 md:grid md:grid-cols-2 md:gap-4">
-          {loading ? (
-            <>
-              <Skeleton className="h-20 w-full rounded-lg bg-zinc-400" />
-              <Skeleton className="h-20 w-full rounded-lg bg-zinc-400" />
-              <Skeleton className="h-20 w-full rounded-lg bg-zinc-400 opacity-80" />
-              <Skeleton className="h-20 w-full rounded-lg bg-zinc-400 opacity-60" />
-            </>
-          ) : (
-            customers.map(customer => (
-              <Link
-                to={
-                  type === 'budget-civil'
-                    ? '/budget-civil/$customer-id'
-                    : '/budget-products/$customer-id'
+    <div className="min-h-screen font-inter">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="xl:hidden">
+              <BackButton to="/select-type-proposal" />
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              Escolha o cliente
+            </h1>
+          </div>
+
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              className="pl-10 h-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm"
+              placeholder="Buscar cliente pelo nome ou email"
+              type="text"
+              value={search}
+              onChange={e => {
+                setSearch(e.target.value)
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  handleSearch()
                 }
-                key={customer.id}
-                params={{ 'customer-id': customer.id }}
-                className="border-b py-2 bg-neutral-100 md:p-5 rounded-lg shadow flex items-center gap-x-2 h-20"
-              >
-                <User className="size-10" />
-                <div className="md:space-y-2">
-                  <p className="font-semibold truncate w-2/5">
-                    {customer.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {customer.email}
-                  </p>
-                </div>
-              </Link>
-            ))
-          )}
+              }}
+            />
+          </div>
         </div>
-        {loading && (
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-white via-white/80 to-transparent pointer-events-none" />
-        )}
-      </ScrollArea>
-      <Button
-        className="w-full cursor-pointer xl:w-4/12"
-        onClick={handleCreateClick}
-      >
-        Criar um novo cliente
-      </Button>
+
+        {/* Action Section */}
+        <div>
+          <Button
+            onClick={handleCreateClick}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 shadow-sm shadow-blue-200 transition-all hover:scale-105"
+          >
+            <Plus className="h-4 w-4" />
+            Novo Cliente
+          </Button>
+        </div>
+
+        {/* List Section */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <ScrollArea className="h-150 w-full">
+            {loading ? (
+              <div className="p-6 space-y-4">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="flex items-center gap-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-4 w-1/3" />
+                      <Skeleton className="h-3 w-1/4" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : customers.length > 0 ? (
+              <div className="divide-y divide-slate-100">
+                {customers.map(customer => (
+                  <Link
+                    key={customer.id}
+                    to={
+                      type === 'budget-civil'
+                        ? '/budget-civil/$customer-id'
+                        : '/budget-products/$customer-id'
+                    }
+                    params={{ 'customer-id': customer.id }}
+                    className="group flex flex-col md:flex-row md:items-center justify-between p-4 md:p-6 hover:bg-blue-50/50 transition-colors duration-200 gap-4 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                        <User className="h-6 w-6" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full items-center">
+                        <div>
+                          <p className="font-semibold text-slate-900">
+                            {customer.name}
+                          </p>
+                        </div>
+                        <div className="hidden md:block">
+                          <p className="text-sm text-slate-500">
+                            {customer.email}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="hidden md:flex items-center text-slate-300 group-hover:text-blue-500 transition-colors">
+                      <ChevronRight className="h-5 w-5" />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+                <User className="h-12 w-12 mb-4 text-slate-300" />
+                <p className="text-lg font-medium">Nenhum cliente encontrado</p>
+                <p className="text-sm">
+                  Tente buscar por outro termo ou cadastre um novo.
+                </p>
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+      </div>
 
       <FormCreateNewCustomer
         isOpen={createModal}

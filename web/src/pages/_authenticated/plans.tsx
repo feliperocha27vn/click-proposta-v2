@@ -97,7 +97,7 @@ function RouteComponent() {
                 <hr className="border-dashed" />
 
                 <ul className="list-outside space-y-3 text-sm">
-                  {['2 propostas', 'Painel de gestão', 'Suporte por Email'].map(
+                  {['2 Propostas / Orçamentos', 'Painel de gestão', 'Suporte por Email'].map(
                     item => (
                       <li key={item} className="flex items-center gap-2">
                         <Check className="size-3" />
@@ -122,9 +122,9 @@ function RouteComponent() {
 
               <div className="flex flex-col">
                 <CardHeader>
-                  <CardTitle className="font-medium">Pro</CardTitle>
+                  <CardTitle className="font-medium">Recarregue seus créditos</CardTitle>
                   <span className="my-3 block text-2xl font-semibold">
-                    R$ 9,99 / mês
+                    R$ 9,99
                   </span>
                 </CardHeader>
 
@@ -132,10 +132,9 @@ function RouteComponent() {
                   <hr className="border-dashed" />
                   <ul className="list-outside space-y-3 text-sm">
                     {[
-                      '20 propostas',
+                      '10 Propostas / Orçamentos',
                       'Painel de gestão',
                       'Suporte por Email',
-                      "Propostas sem marca d'água",
                       'Atualizações Mensais de Produtos',
                     ].map(item => (
                       <li key={item} className="flex items-center gap-2">
@@ -154,7 +153,7 @@ function RouteComponent() {
                   >
                     {userData?.user.plan === 'PRO'
                       ? 'Você já é um assinante'
-                      : 'Assinar'}
+                      : 'Comprar créditos'}
                   </Button>
                 </CardFooter>
               </div>
