@@ -35,7 +35,7 @@ export const confirmPayment: FastifyPluginAsyncZod = async app => {
               products: z.array(
                 z.object({
                   externalId: z.string(),
-                  id: z.string(),
+                  publicId: z.string(),
                   quantity: z.number(),
                 })
               ),

@@ -155,7 +155,6 @@ export function BudgetPdfDocument(props: BudgetPdfDocumentProps) {
             <Image style={styles.companyImage} src={props.imgUrl} />
             <View style={styles.companyNameBox}>
               <Text style={styles.companyName}>{props.nameUser}</Text>
-              <Text style={styles.companyCnpj}>CNPJ: 00.000.000/0000-00</Text>
             </View>
           </View>
           <Text style={styles.proposalTitle}>ORÇAMENTO</Text>

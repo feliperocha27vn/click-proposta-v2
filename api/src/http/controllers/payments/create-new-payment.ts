@@ -54,8 +54,13 @@ export const createNewPayment: FastifyPluginAsyncZod = async app => {
       })
 
       if (billing.error) {
-        console.log('Error creating billing:', billing.error)
-        return reply.status(500).send({ message: 'Error creating billing' })
+        console.error(
+          'Error creating billing:',
+          JSON.stringify(billing.error, null, 2)
+        )
+        return reply.status(500).send({
+          message: `Error creating billing: ${JSON.stringify(billing.error)}`,
+        })
       }
 
       const createPaymentUseCase = makeCreatePaymentUseCase()

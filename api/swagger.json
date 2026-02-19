@@ -2010,7 +2010,7 @@
                                 "externalId": {
                                   "type": "string"
                                 },
-                                "id": {
+                                "publicId": {
                                   "type": "string"
                                 },
                                 "quantity": {
@@ -2019,7 +2019,7 @@
                               },
                               "required": [
                                 "externalId",
-                                "id",
+                                "publicId",
                                 "quantity"
                               ]
                             }
