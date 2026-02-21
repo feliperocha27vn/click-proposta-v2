@@ -6,7 +6,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Link } from '@tanstack/react-router'
-import { Briefcase, DollarSign, FileArchive, Hammer, House } from 'lucide-react'
+import { Briefcase, DollarSign, FileArchive, House } from 'lucide-react'
 
 export function MenuMobileAuth() {
   return (
@@ -39,10 +39,6 @@ export function MenuMobileAuth() {
               <Link to="/plans" className="flex items-center gap-x-2">
                 <DollarSign />
                 <span>Planos</span>
-              </Link>
-              <Link to="/budgets" className="flex items-center gap-x-2">
-                <Hammer />
-                <span>Orçamentos</span>
               </Link>
             </nav>
           </SheetHeader>

@@ -70,11 +70,15 @@ function RouteComponent() {
             <div className="xl:hidden">
               <BackButton to="/select-type-proposal" />
             </div>
+            <h1 className="hidden md:block text-3xl font-bold tracking-tight text-slate-900">
+              Escolha o cliente
+            </h1>
+          </div>
+          <div className="flex justify-center md:hidden">
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">
               Escolha o cliente
             </h1>
           </div>
-
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input

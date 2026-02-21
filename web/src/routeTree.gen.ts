@@ -20,7 +20,6 @@ import { Route as AuthenticatedProposalsRouteImport } from './pages/_authenticat
 import { Route as AuthenticatedPlansRouteImport } from './pages/_authenticated/plans'
 import { Route as AuthenticatedMyServicesRouteImport } from './pages/_authenticated/my-services'
 import { Route as AuthenticatedDashboardRouteImport } from './pages/_authenticated/dashboard'
-import { Route as AuthenticatedBudgetsRouteImport } from './pages/_authenticated/budgets'
 import { Route as AuthenticatedProposalProposalIdRouteImport } from './pages/_authenticated/proposal/$proposal-id'
 import { Route as AuthenticatedBudgetBudgetIdRouteImport } from './pages/_authenticated/budget/$budget-id'
 import { Route as AuthenticatedBudgetProductsCustomerIdRouteImport } from './pages/_authenticated/budget-products/$customer-id'
@@ -84,11 +83,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedBudgetsRoute = AuthenticatedBudgetsRouteImport.update({
-  id: '/budgets',
-  path: '/budgets',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedProposalProposalIdRoute =
   AuthenticatedProposalProposalIdRouteImport.update({
     id: '/proposal/$proposal-id',
@@ -129,7 +123,6 @@ const AuthenticatedCreateProposalSelectCostumerRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/budgets': typeof AuthenticatedBudgetsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/my-services': typeof AuthenticatedMyServicesRoute
   '/plans': typeof AuthenticatedPlansRoute
@@ -148,7 +141,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/budgets': typeof AuthenticatedBudgetsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/my-services': typeof AuthenticatedMyServicesRoute
   '/plans': typeof AuthenticatedPlansRoute
@@ -169,7 +161,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/_authenticated/budgets': typeof AuthenticatedBudgetsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/my-services': typeof AuthenticatedMyServicesRoute
   '/_authenticated/plans': typeof AuthenticatedPlansRoute
@@ -190,7 +181,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
-    | '/budgets'
     | '/dashboard'
     | '/my-services'
     | '/plans'
@@ -209,7 +199,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
-    | '/budgets'
     | '/dashboard'
     | '/my-services'
     | '/plans'
@@ -229,7 +218,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/login'
-    | '/_authenticated/budgets'
     | '/_authenticated/dashboard'
     | '/_authenticated/my-services'
     | '/_authenticated/plans'
@@ -334,13 +322,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/budgets': {
-      id: '/_authenticated/budgets'
-      path: '/budgets'
-      fullPath: '/budgets'
-      preLoaderRoute: typeof AuthenticatedBudgetsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/proposal/$proposal-id': {
       id: '/_authenticated/proposal/$proposal-id'
       path: '/proposal/$proposal-id'
@@ -387,7 +368,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedBudgetsRoute: typeof AuthenticatedBudgetsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedMyServicesRoute: typeof AuthenticatedMyServicesRoute
   AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
@@ -402,7 +382,6 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedBudgetsRoute: AuthenticatedBudgetsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedMyServicesRoute: AuthenticatedMyServicesRoute,
   AuthenticatedPlansRoute: AuthenticatedPlansRoute,

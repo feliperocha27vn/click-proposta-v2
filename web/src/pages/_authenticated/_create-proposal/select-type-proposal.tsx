@@ -12,10 +12,10 @@ function SelectProposalTypePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 font-inter">
       <div className="w-full max-w-4xl space-y-12">
-        <div className="flex items-center justify-start xl:hidden absolute top-6 left-6">
-            <BackButton to="/dashboard" />
+        <div className="flex items-center justify-start xl:hidden top-6 left-6">
+          <BackButton to="/dashboard" />
         </div>
-        
+
         <div className="text-center space-y-4 mt-8 xl:mt-0">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             O que você deseja orçar hoje?
@@ -27,8 +27,8 @@ function SelectProposalTypePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Civil Budget Card */}
-          <Link 
-            to="/select-costumer" 
+          <Link
+            to="/select-costumer"
             search={{ type: 'budget-civil' }}
             className="group relative flex flex-col items-center p-10 bg-white rounded-3xl border border-slate-200 shadow-sm hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 text-center space-y-8"
           >
@@ -40,14 +40,15 @@ function SelectProposalTypePage() {
                 Orçamento Civil
               </h3>
               <p className="text-slate-500 leading-relaxed max-w-xs mx-auto">
-                Elabore propostas detalhadas para projetos de construção, reformas e serviços de engenharia.
+                Elabore propostas detalhadas para projetos de construção,
+                reformas e serviços de engenharia.
               </p>
             </div>
           </Link>
 
           {/* Products Budget Card */}
-          <Link 
-            to="/select-costumer" 
+          <Link
+            to="/select-costumer"
             search={{ type: 'budget-products' }}
             className="group relative flex flex-col items-center p-10 bg-white rounded-3xl border border-slate-200 shadow-sm hover:border-amber-200 hover:shadow-xl hover:shadow-amber-900/5 transition-all duration-300 text-center space-y-8"
           >
@@ -59,7 +60,8 @@ function SelectProposalTypePage() {
                 Orçamento de Produtos
               </h3>
               <p className="text-slate-500 leading-relaxed max-w-xs mx-auto">
-                Crie cotações precisas para venda de produtos, materiais e itens comerciais.
+                Crie cotações precisas para venda de produtos, materiais e itens
+                comerciais.
               </p>
             </div>
           </Link>

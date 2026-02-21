@@ -161,7 +161,9 @@ function AuthenticatedLayout() {
               </Avatar>
               <div>
                 <p>{userData?.user.name}</p>
-                <span className='text-sm font-medium'>20 Créditos restantes</span>
+                <span className="text-sm font-medium">
+                  10 Créditos restantes
+                </span>
               </div>
               <Button
                 variant="outline"
