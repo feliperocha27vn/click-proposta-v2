@@ -13,11 +13,17 @@ import { useForm } from 'react-hook-form'
 interface FormCompleteCustomerProps {
   isOpen: boolean
   onClose: () => void
+  customerName?: string
+  isRegisterComplete?: boolean
+  selectedPlan?: string
 }
 
 export default function FormCompleteCustomer({
   isOpen,
   onClose,
+  customerName: _customerName,
+  isRegisterComplete: _isRegisterComplete,
+  selectedPlan: _selectedPlan,
 }: FormCompleteCustomerProps) {
   const { register, handleSubmit, reset } = useForm<CompleteRegisterBody>()
   const queryClient = useQueryClient()
