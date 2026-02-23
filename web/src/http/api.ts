@@ -146,9 +146,9 @@ export type GetDataForPayment500 = {
   message: string;
 };
 
-export type GetMe200UserName = string |  | null;
+export type GetMe200UserName = string | null;
 
-export type GetMe200UserAvatarUrl = string |  | null;
+export type GetMe200UserAvatarUrl = string | null;
 
 export type GetMe200UserPlan = typeof GetMe200UserPlan[keyof typeof GetMe200UserPlan];
 
@@ -196,7 +196,7 @@ export type CreateService500 = {
   statusCode: number;
 };
 
-export type FetchManyServices200ServicesItemDescription = string |  | null;
+export type FetchManyServices200ServicesItemDescription = string | null;
 
 export type FetchManyServices200ServicesItem = {
   id: string;
@@ -237,7 +237,7 @@ export type UpdateService500 = {
   statusCode: number;
 };
 
-export type CreateProposalBodyUrlLogoImage = string |  | null;
+export type CreateProposalBodyUrlLogoImage = string | null;
 
 export type CreateProposalBodyServicesItem = {
   /**
@@ -309,21 +309,21 @@ export type FetchMinimalDetailsProposal500 = {
   message: string;
 };
 
-export type GetProposalById200UrlLogoImage = string |  | null;
+export type GetProposalById200UrlLogoImage = string | null;
 
-export type GetProposalById200WelcomeDescription = string |  | null;
+export type GetProposalById200WelcomeDescription = string | null;
 
-export type GetProposalById200WhyUs = string |  | null;
+export type GetProposalById200WhyUs = string | null;
 
-export type GetProposalById200Challenge = string |  | null;
+export type GetProposalById200Challenge = string | null;
 
-export type GetProposalById200Solution = string |  | null;
+export type GetProposalById200Solution = string | null;
 
-export type GetProposalById200Results = string |  | null;
+export type GetProposalById200Results = string | null;
 
-export type GetProposalById200Discount = number |  | null;
+export type GetProposalById200Discount = number | null;
 
-export type GetProposalById200TotalPrice = string |  | null;
+export type GetProposalById200TotalPrice = string | null;
 
 export type GetProposalById200ServicesItem = {
   price: string;
@@ -352,15 +352,15 @@ export type GetProposalById500 = {
   error: string;
 };
 
-export type UpdateProposalBodyWelcomeDescription = string |  | null;
+export type UpdateProposalBodyWelcomeDescription = string | null;
 
-export type UpdateProposalBodyWhyUs = string |  | null;
+export type UpdateProposalBodyWhyUs = string | null;
 
-export type UpdateProposalBodyChallenge = string |  | null;
+export type UpdateProposalBodyChallenge = string | null;
 
-export type UpdateProposalBodySolution = string |  | null;
+export type UpdateProposalBodySolution = string | null;
 
-export type UpdateProposalBodyResults = string |  | null;
+export type UpdateProposalBodyResults = string | null;
 
 export type UpdateProposalBody = {
   title?: string;
@@ -545,11 +545,11 @@ export type GetLastDraftProposal500 = {
   message: string;
 };
 
-export type PostPdfGenerateBodyServicesItemQuantity = number |  | null;
+export type PostPdfGenerateBodyServicesItemQuantity = number | null;
 
-export type PostPdfGenerateBodyServicesItemPrice = number |  | null;
+export type PostPdfGenerateBodyServicesItemPrice = number | null;
 
-export type PostPdfGenerateBodyServicesItemBudgetsId = string |  | null;
+export type PostPdfGenerateBodyServicesItemBudgetsId = string | null;
 
 export type PostPdfGenerateBodyServicesItem = {
   id: string;
@@ -570,9 +570,9 @@ export type PostPdfGenerateBody = {
   services: PostPdfGenerateBodyServicesItem[];
 };
 
-export type PostBudgetsBodyServicesItemQuantity = number |  | null;
+export type PostBudgetsBodyServicesItemQuantity = number | null;
 
-export type PostBudgetsBodyServicesItemPrice = number |  | null;
+export type PostBudgetsBodyServicesItemPrice = number | null;
 
 export type PostBudgetsBodyServicesItem = {
   id: string;
@@ -614,9 +614,9 @@ export type FetchManyBudgets404 = {
   message: string;
 };
 
-export type GetByIdBudget200BudgetBudgetsServicesItemQuantity = number |  | null;
+export type GetByIdBudget200BudgetBudgetsServicesItemQuantity = number | null;
 
-export type GetByIdBudget200BudgetBudgetsServicesItemPrice = number |  | null;
+export type GetByIdBudget200BudgetBudgetsServicesItemPrice = number | null;
 
 export type GetByIdBudget200BudgetBudgetsServicesItem = {
   id: string;
@@ -648,18 +648,18 @@ export type GetPublicBudget200BudgetCustomer = {
   name: string;
 };
 
-export type GetPublicBudget200BudgetUserName = string |  | null;
+export type GetPublicBudget200BudgetUserName = string | null;
 
-export type GetPublicBudget200BudgetUserAvatarUrl = string |  | null;
+export type GetPublicBudget200BudgetUserAvatarUrl = string | null;
 
 export type GetPublicBudget200BudgetUser = {
   name: GetPublicBudget200BudgetUserName;
   avatarUrl: GetPublicBudget200BudgetUserAvatarUrl;
 };
 
-export type GetPublicBudget200BudgetBudgetsServicesItemQuantity = number |  | null;
+export type GetPublicBudget200BudgetBudgetsServicesItemQuantity = number | null;
 
-export type GetPublicBudget200BudgetBudgetsServicesItemPrice = number |  | null;
+export type GetPublicBudget200BudgetBudgetsServicesItemPrice = number | null;
 
 export type GetPublicBudget200BudgetBudgetsServicesItem = {
   id: string;
