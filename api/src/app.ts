@@ -13,6 +13,7 @@ import { env } from './env'
 import { routesBudgets } from './http/controllers/budgets/routes'
 import { routesCustomer } from './http/controllers/customer/routes'
 import { routesPayments } from './http/controllers/payments/routes'
+import { generatePdfProduct } from './http/controllers/pdf/generate-pdf-product'
 import { generatePdfDocument } from './http/controllers/pdf/genrate-dowload-pdf'
 import { regenaretePdfDocument } from './http/controllers/pdf/regenarete'
 import { routesProposalDraft } from './http/controllers/proposal-draft/routes'
@@ -76,5 +77,6 @@ app.register(routesCustomer)
 app.register(routesPayments)
 app.register(routesProposalDraft)
 app.register(generatePdfDocument)
+app.register(generatePdfProduct)
 app.register(regenaretePdfDocument)
 app.register(routesBudgets)

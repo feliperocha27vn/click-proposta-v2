@@ -1,7 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
+import { getCompleteRegister } from '@/http/api'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Clock, CreditCard, DollarSign, FileText } from 'lucide-react'
+import { CreditCard, FileText } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import FormCompleteCustomer from './-components/form-complete-customer'
+import { LoadingValidationModal } from './-components/loading-validation-modal'
 import { MenuMobileAuth } from './-components/menu-mobile'
 import { MobileRecentProposals } from './-components/mobile-recent-proposals'
 import {
@@ -16,6 +21,19 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 function RouteComponent() {
   const { session } = useAuth()
   const user = session?.user ?? null
+  const [completeModal, setCompleteModal] = useState(false)
+
+  const { data: registerStatus, isLoading: loadingValidation } = useQuery({
+    queryKey: ['complete-register'],
+    queryFn: getCompleteRegister,
+    staleTime: Infinity,
+  })
+
+  useEffect(() => {
+    if (registerStatus && !registerStatus.isRegisterComplete) {
+      setCompleteModal(true)
+    }
+  }, [registerStatus])
 
   const stats = [
     {
@@ -27,16 +45,6 @@ function RouteComponent() {
       title: 'Propostas Aceitas',
       value: '4',
       icon: CreditCard,
-    },
-    {
-      title: 'Propostas Pendentes',
-      value: '8',
-      icon: Clock,
-    },
-    {
-      title: 'Receita Pendente',
-      value: 'R$ 12.450,00',
-      icon: DollarSign,
     },
   ]
 
@@ -154,6 +162,12 @@ function RouteComponent() {
         <RecentProposalsTable proposals={recentProposals} />
       </div>
       <MobileRecentProposals proposals={recentProposals} />
+
+      <FormCompleteCustomer
+        isOpen={completeModal}
+        onClose={() => setCompleteModal(false)}
+      />
+      <LoadingValidationModal isOpen={loadingValidation} />
     </div>
   )
 }

@@ -329,6 +329,11 @@
                     "type": "string",
                     "minLength": 11,
                     "maxLength": 11
+                  },
+                  "cnpj": {
+                    "type": "string",
+                    "minLength": 14,
+                    "maxLength": 18
                   }
                 },
                 "required": [
@@ -350,6 +355,25 @@
             }
           },
           "406": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {
@@ -2393,6 +2417,100 @@
                   "nameCustomer",
                   "emailCustomer",
                   "phoneCustomer",
+                  "total",
+                  "services"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/pdf/generate-product": {
+      "post": {
+        "operationId": "generatePdfProduct",
+        "tags": [
+          "PDF"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "string"
+                  },
+                  "services": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
+                        },
+                        "price": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
+                        },
+                        "budgetsId": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "nullable": true,
+                              "enum": [
+                                null
+                              ]
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "description",
+                        "budgetsId"
+                      ]
+                    }
+                  }
+                },
+                "required": [
                   "total",
                   "services"
                 ]

@@ -31,4 +31,5 @@ export interface UsersRepository {
   getCompleteRegister(userId: string): Promise<Partial<User> | null>
   getDataForPayment(userId: string): Promise<UserForPaymentData | null>
   changePlan(userId: string): Promise<void>
+  getDataForCreatePdfProduct(userId: string): Promise<Partial<User> | null>
 }

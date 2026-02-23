@@ -1,23 +1,20 @@
+import { makeGetDataForCreatePdfProductUseCase } from '@/factories/users/make-get-data-for-create-pdf-product-use-case'
 import { verifyJwt } from '@/middlewares/verifyJwt'
-import { BudgetPdfDocument } from '@/pdf/templates/budget-pdf-document'
+import { BudgetPdfProducts } from '@/pdf/templates/budget-pdf-products'
 import { renderToStream } from '@react-pdf/renderer'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import React from 'react'
 import z from 'zod'
 
-export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
+export const generatePdfProduct: FastifyPluginAsyncZod = async app => {
   app.post(
-    '/pdf/generate',
+    '/pdf/generate-product',
     {
       onRequest: [verifyJwt],
       schema: {
         tags: ['PDF'],
+        operationId: 'generatePdfProduct',
         body: z.object({
-          imgUrl: z.string(),
-          nameUser: z.string(),
-          nameCustomer: z.string(),
-          emailCustomer: z.string(),
-          phoneCustomer: z.string(),
           total: z.string(),
           services: z.array(
             z.object({
@@ -33,23 +30,19 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const {
-        imgUrl,
-        nameUser,
-        nameCustomer,
-        emailCustomer,
-        phoneCustomer,
-        total,
-        services,
-      } = request.body
+      const { total, services } = request.body
 
       try {
-        const pdfDocument = React.createElement(BudgetPdfDocument, {
-          imgUrl,
-          nameUser,
-          nameCustomer,
-          emailCustomer,
-          phoneCustomer,
+        const getDataUseCase = makeGetDataForCreatePdfProductUseCase()
+        const { user } = await getDataUseCase.execute({
+          userId: request.user.sub,
+        })
+
+        const pdfDocument = React.createElement(BudgetPdfProducts, {
+          phone: user.phone,
+          email: user.email,
+          cnpj: user.cnpj,
+          imgUrl: user.avatarUrl,
           total,
           services,
           // biome-ignore lint/suspicious/noExplicitAny: necessário para compatibilidade com @react-pdf/renderer
@@ -60,12 +53,12 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
         reply.header('Content-Type', 'application/pdf')
         reply.header(
           'Content-Disposition',
-          `attachment; filename="${nameCustomer}.pdf"`
+          'attachment; filename="orcamento-produtos.pdf"'
         )
 
         return reply.send(stream)
       } catch (error) {
-        console.error('Erro ao gerar PDF:', error)
+        console.error('Erro ao gerar PDF de produtos:', error)
         reply.status(500).send({
           error: 'Erro ao gerar PDF',
           message: error instanceof Error ? error.message : 'Erro desconhecido',

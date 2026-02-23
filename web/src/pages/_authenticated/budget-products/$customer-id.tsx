@@ -1,4 +1,4 @@
-import { generatePdf } from '@/api/generate-pdf'
+import { generatePdfProduct } from '@/api/generate-pdf-product'
 import { BackButton } from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -59,7 +59,7 @@ function RouteComponent() {
   })
 
   const { mutate: generatePdfFn, isPending } = useMutation({
-    mutationFn: generatePdf,
+    mutationFn: generatePdfProduct,
   })
 
   const {
@@ -112,15 +112,11 @@ function RouteComponent() {
     })
 
     generatePdfFn({
-      imgUrl: user?.user.avatarUrl || '',
+      customerName: customer?.customer.name || 'cliente',
       services: data.services.map(service => ({
         ...service,
         budgetsId: null,
       })),
-      nameUser: user?.user.name || '',
-      nameCustomer: customer?.customer.name || '',
-      emailCustomer: customer?.customer.email || '',
-      phoneCustomer: customer?.customer.phone || '',
       total: String(data.total),
     })
   }
@@ -233,14 +229,16 @@ function RouteComponent() {
           </div>
           <Button
             type="button"
-             className="w-full bg-green-500 hover:bg-green-600"
+            className="w-full bg-green-500 hover:bg-green-600"
             disabled={isPending || isPendingCreateBudget}
             onClick={() => {
               const formData = getValues()
               handleGeneratePdf(formData)
             }}
           >
-            {isPending || isPendingCreateBudget ? 'Gerando PDF e Salvando...' : 'Baixar PDF e Salvar Orçamento'}
+            {isPending || isPendingCreateBudget
+              ? 'Gerando PDF e Salvando...'
+              : 'Baixar PDF e Salvar Orçamento'}
           </Button>
         </form>
       </div>

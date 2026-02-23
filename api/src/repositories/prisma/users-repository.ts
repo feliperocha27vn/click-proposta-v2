@@ -138,4 +138,22 @@ export class PrismaUsersRepository implements UsersRepository {
       updatedUser.plan
     )
   }
+
+  async getDataForCreatePdfProduct(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        phone: true,
+        email: true,
+        cnpj: true,
+        avatarUrl: true,
+      },
+    })
+
+    if (!user) {
+      return null
+    }
+
+    return user
+  }
 }
