@@ -14,131 +14,141 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
   },
 
-  // Header
-  header: {
+  // ── Tabela única que envolve tudo ──
+  outerTable: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+  },
+
+  // ── Linha de cabeçalho (logo + info da empresa) ──
+  headerRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
-    paddingBottom: 16,
+    padding: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: '#ccc',
+    gap: 14,
   },
   logo: {
     width: 80,
     height: 80,
     objectFit: 'contain',
   },
+  logoPlaceholder: {
+    width: 80,
+    height: 80,
+  },
   companyInfo: {
     flex: 1,
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
   },
   companyPhone: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#111',
+    color: '#facc15',
     textAlign: 'center',
   },
   companyAddress: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#444',
     textAlign: 'center',
   },
   companyCnpj: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#111',
+    color: '#dc2626',
     textAlign: 'center',
   },
   companyEmail: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#444',
     textAlign: 'center',
   },
 
-  // Table
-  table: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  tableRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
+  // ── Colunas da tabela de itens ──
   tableHeaderRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     backgroundColor: '#f9f9f9',
   },
+  tableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
   colItem: {
     flex: 3,
-    padding: 8,
+    padding: 10,
     borderRightWidth: 1,
     borderRightColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   colQty: {
     flex: 1,
-    padding: 8,
+    padding: 10,
     borderRightWidth: 1,
     borderRightColor: '#ccc',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   colValue: {
     flex: 1.5,
-    padding: 8,
-    alignItems: 'flex-start',
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerText: {
-    fontSize: 10,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
+    textAlign: 'center',
   },
   cellText: {
-    fontSize: 9,
+    fontSize: 13,
     color: '#444',
     lineHeight: 1.5,
+    textAlign: 'center',
   },
   cellTextCenter: {
-    fontSize: 9,
+    fontSize: 13,
     color: '#444',
     textAlign: 'center',
   },
 
-  // Total row
+  // ── Linha de total ──
   totalRow: {
     flexDirection: 'row',
   },
   totalLabelCell: {
     flex: 3,
-    padding: 10,
+    padding: 12,
     borderRightWidth: 1,
     borderRightColor: '#ccc',
-  },
-  totalLabelCellQty: {
-    flex: 1,
-    borderRightWidth: 1,
-    borderRightColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   totalValueCell: {
-    flex: 1,
-    padding: 10,
-    alignItems: 'center',
+    flex: 2.5,
+    padding: 12,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   totalLabel: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#111',
     textAlign: 'center',
   },
   totalValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#111',
+    textAlign: 'center',
   },
 })
 
@@ -175,7 +185,7 @@ function formatPhone(raw: string): string {
   if (digits.length === 10) {
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
   }
-  return raw // devolve original se não bater
+  return raw
 }
 
 /** 00.000.000/0000-00 */
@@ -189,36 +199,35 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header}>
-          {props.imgUrl ? (
-            <Image style={styles.logo} src={props.imgUrl} />
-          ) : (
-            <View style={styles.logo} />
-          )}
-          <View style={styles.companyInfo}>
-            {props.phone && (
-              <Text style={styles.companyPhone}>
-                Fone: {formatPhone(props.phone)}
-              </Text>
+        <View style={styles.outerTable}>
+          {/* ── Cabeçalho (primeira linha da tabela) ── */}
+          <View style={styles.headerRow}>
+            {props.imgUrl ? (
+              <Image style={styles.logo} src={props.imgUrl} />
+            ) : (
+              <View style={styles.logoPlaceholder} />
             )}
-            {props.address && (
-              <Text style={styles.companyAddress}>{props.address}</Text>
-            )}
-            {props.cnpj && (
-              <Text style={styles.companyCnpj}>
-                CNPJ {formatCnpj(props.cnpj)}
-              </Text>
-            )}
-            {props.email && (
-              <Text style={styles.companyEmail}>E-Mail: {props.email}</Text>
-            )}
+            <View style={styles.companyInfo}>
+              {props.phone && (
+                <Text style={styles.companyPhone}>
+                  Fone: {formatPhone(props.phone)}
+                </Text>
+              )}
+              {props.address && (
+                <Text style={styles.companyAddress}>{props.address}</Text>
+              )}
+              {props.cnpj && (
+                <Text style={styles.companyCnpj}>
+                  CNPJ {formatCnpj(props.cnpj)}
+                </Text>
+              )}
+              {props.email && (
+                <Text style={styles.companyEmail}>E-Mail: {props.email}</Text>
+              )}
+            </View>
           </View>
-        </View>
 
-        {/* Table */}
-        <View style={styles.table}>
-          {/* Table Header */}
+          {/* ── Cabeçalho das colunas ── */}
           <View style={styles.tableHeaderRow}>
             <View style={styles.colItem}>
               <Text style={styles.headerText}>Item</Text>
@@ -231,7 +240,7 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
             </View>
           </View>
 
-          {/* Table Rows */}
+          {/* ── Linhas dos itens ── */}
           {props.services.map(item => (
             <View key={item.id} style={styles.tableRow} wrap={false}>
               <View style={styles.colItem}>
@@ -253,7 +262,7 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
             </View>
           ))}
 
-          {/* Total Row */}
+          {/* ── Linha de total ── */}
           <View style={styles.totalRow}>
             <View style={styles.totalLabelCell}>
               <Text style={styles.totalLabel}>Total</Text>
