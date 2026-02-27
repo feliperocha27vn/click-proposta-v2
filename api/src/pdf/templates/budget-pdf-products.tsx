@@ -146,7 +146,7 @@ const styles = {
   totalValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#0de21e',
+    color: '#111',
     textAlign: 'center',
   },
 } as const
