@@ -147,6 +147,7 @@ export class PrismaUsersRepository implements UsersRepository {
         email: true,
         cnpj: true,
         avatarUrl: true,
+        address: true,
       },
     })
 

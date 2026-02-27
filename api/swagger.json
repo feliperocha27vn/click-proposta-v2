@@ -334,11 +334,27 @@
                     "type": "string",
                     "minLength": 14,
                     "maxLength": 18
+                  },
+                  "street": {
+                    "type": "string"
+                  },
+                  "number": {
+                    "type": "string"
+                  },
+                  "neighborhood": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
                   }
                 },
                 "required": [
                   "phone",
-                  "cpf"
+                  "cpf",
+                  "street",
+                  "number",
+                  "neighborhood",
+                  "city"
                 ]
               }
             }

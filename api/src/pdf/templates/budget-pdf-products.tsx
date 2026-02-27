@@ -14,21 +14,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica',
   },
 
-  // ── Tabela única que envolve tudo ──
-  outerTable: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-  },
-
-  // ── Linha de cabeçalho (logo + info da empresa) ──
-  headerRow: {
+  // ── Cabeçalho solto, SEM borda ──
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    marginBottom: 16,
     gap: 14,
   },
   logo: {
@@ -66,6 +56,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#444',
     textAlign: 'center',
+  },
+
+  // ── Tabela de itens com borda ──
+  outerTable: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
   },
 
   // ── Colunas da tabela de itens ──
@@ -199,35 +197,36 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={styles.outerTable}>
-          {/* ── Cabeçalho (primeira linha da tabela) ── */}
-          <View style={styles.headerRow}>
-            {props.imgUrl ? (
-              <Image style={styles.logo} src={props.imgUrl} />
-            ) : (
-              <View style={styles.logoPlaceholder} />
+        {/* ── Cabeçalho FORA da tabela, sem borda ── */}
+        <View style={styles.header}>
+          {props.imgUrl ? (
+            <Image style={styles.logo} src={props.imgUrl} />
+          ) : (
+            <View style={styles.logoPlaceholder} />
+          )}
+          <View style={styles.companyInfo}>
+            {props.phone && (
+              <Text style={styles.companyPhone}>
+                Fone: {formatPhone(props.phone)}
+              </Text>
             )}
-            <View style={styles.companyInfo}>
-              {props.phone && (
-                <Text style={styles.companyPhone}>
-                  Fone: {formatPhone(props.phone)}
-                </Text>
-              )}
-              {props.address && (
-                <Text style={styles.companyAddress}>{props.address}</Text>
-              )}
-              {props.cnpj && (
-                <Text style={styles.companyCnpj}>
-                  CNPJ {formatCnpj(props.cnpj)}
-                </Text>
-              )}
-              {props.email && (
-                <Text style={styles.companyEmail}>E-Mail: {props.email}</Text>
-              )}
-            </View>
+            {props.address && (
+              <Text style={styles.companyAddress}>{props.address}</Text>
+            )}
+            {props.cnpj && (
+              <Text style={styles.companyCnpj}>
+                CNPJ {formatCnpj(props.cnpj)}
+              </Text>
+            )}
+            {props.email && (
+              <Text style={styles.companyEmail}>E-Mail: {props.email}</Text>
+            )}
           </View>
+        </View>
 
-          {/* ── Cabeçalho das colunas ── */}
+        {/* ── Tabela de itens COM borda ── */}
+        <View style={styles.outerTable}>
+          {/* Cabeçalho das colunas */}
           <View style={styles.tableHeaderRow}>
             <View style={styles.colItem}>
               <Text style={styles.headerText}>Item</Text>
@@ -236,11 +235,11 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
               <Text style={styles.headerText}>Quantidade</Text>
             </View>
             <View style={styles.colValue}>
-              <Text style={styles.headerText}>Valor</Text>
+              <Text style={styles.headerText}> Unitário</Text>
             </View>
           </View>
 
-          {/* ── Linhas dos itens ── */}
+          {/* Linhas dos itens */}
           {props.services.map(item => (
             <View key={item.id} style={styles.tableRow} wrap={false}>
               <View style={styles.colItem}>
@@ -262,7 +261,7 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
             </View>
           ))}
 
-          {/* ── Linha de total ── */}
+          {/* Linha de total */}
           <View style={styles.totalRow}>
             <View style={styles.totalLabelCell}>
               <Text style={styles.totalLabel}>Total</Text>

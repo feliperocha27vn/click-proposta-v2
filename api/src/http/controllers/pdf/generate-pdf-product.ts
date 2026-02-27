@@ -45,6 +45,7 @@ export const generatePdfProduct: FastifyPluginAsyncZod = async app => {
           imgUrl: user.avatarUrl,
           total,
           services,
+          address: user.address,
           // biome-ignore lint/suspicious/noExplicitAny: necessário para compatibilidade com @react-pdf/renderer
         }) as React.ReactElement<any>
 

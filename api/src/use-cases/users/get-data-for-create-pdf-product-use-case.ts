@@ -11,6 +11,7 @@ interface GetDataForCreatePdfProductUseCaseResponse {
     email: string
     avatarUrl: string
     cnpj: string
+    address: string
   }
 }
 
@@ -32,6 +33,7 @@ export class GetDataForCreatePdfProductUseCase {
         email: user.email ?? '',
         avatarUrl: user.avatarUrl ?? '',
         cnpj: user.cnpj ?? '',
+        address: user.address ?? '',
       },
     }
   }

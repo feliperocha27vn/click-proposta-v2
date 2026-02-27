@@ -17,6 +17,10 @@ export const completeRegister: FastifyPluginAsyncZod = async app => {
           phone: z.string().min(10).max(11),
           cpf: z.string().min(11).max(11),
           cnpj: z.string().min(14).max(18).optional(),
+          street: z.string(),
+          number: z.string(),
+          neighborhood: z.string(),
+          city: z.string(),
         }),
         response: {
           204: z.void(),
@@ -33,7 +37,8 @@ export const completeRegister: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const { phone, cpf, cnpj } = request.body
+      const { phone, cpf, cnpj, street, number, neighborhood, city } =
+        request.body
 
       const completRegisterUserUseCase = makeCompleteRegisterUserUseCase()
 
@@ -43,6 +48,10 @@ export const completeRegister: FastifyPluginAsyncZod = async app => {
           phone,
           cpf,
           cnpj,
+          street,
+          number,
+          neighborhood,
+          city,
         })
 
         return reply.status(204).send()

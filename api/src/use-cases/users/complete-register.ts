@@ -7,6 +7,10 @@ interface CompleteRegisterUserUseCaseRequest {
   phone: string
   cpf: string
   cnpj?: string
+  street: string
+  number: string
+  neighborhood: string
+  city: string
 }
 
 export class CompleteRegisterUserUseCase {
@@ -17,15 +21,22 @@ export class CompleteRegisterUserUseCase {
     phone,
     cpf,
     cnpj,
+    street,
+    number,
+    neighborhood,
+    city,
   }: CompleteRegisterUserUseCaseRequest) {
     if (!isValidCPF(cpf)) {
       throw new CpfNotIsValid()
     }
 
+    const address = `${street}, ${number}, ${neighborhood} - ${city}`
+
     await this.usersRepository.completeRegister(userId, {
       cpf: cpf.replace(/\D/g, ''),
       cnpj,
       phone,
+      address,
       isRegisterComplete: true,
     })
   }
