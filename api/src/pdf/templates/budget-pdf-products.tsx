@@ -1,13 +1,6 @@
-import {
-  Document,
-  Image,
-  Page,
-  StyleSheet,
-  Text,
-  View,
-} from '@react-pdf/renderer'
+import { Document, Image, Page, Text, View } from '@react-pdf/renderer'
 
-const styles = StyleSheet.create({
+const styles = {
   page: {
     padding: 30,
     backgroundColor: '#fff',
@@ -94,6 +87,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  colValueMiddle: {
+    flex: 1.5,
+    padding: 10,
+    borderRightWidth: 1,
+    borderRightColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   colValue: {
     flex: 1.5,
     padding: 10,
@@ -145,10 +146,10 @@ const styles = StyleSheet.create({
   totalValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#111',
+    color: '#0de21e',
     textAlign: 'center',
   },
-})
+} as const
 
 interface BudgetPdfProductsProps {
   phone: string
@@ -234,8 +235,11 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
             <View style={styles.colQty}>
               <Text style={styles.headerText}>Quantidade</Text>
             </View>
+            <View style={styles.colValueMiddle}>
+              <Text style={styles.headerText}>Valor Unitário</Text>
+            </View>
             <View style={styles.colValue}>
-              <Text style={styles.headerText}> Unitário</Text>
+              <Text style={styles.headerText}>Total Item</Text>
             </View>
           </View>
 
@@ -253,9 +257,16 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
                   {item.quantity ?? '-'}
                 </Text>
               </View>
-              <View style={styles.colValue}>
+              <View style={styles.colValueMiddle}>
                 <Text style={styles.cellText}>
                   {item.price ? formatCurrency(Number(item.price)) : '-'}
+                </Text>
+              </View>
+              <View style={styles.colValue}>
+                <Text style={styles.cellText}>
+                  {item.price != null && item.quantity != null
+                    ? formatCurrency(Number(item.price) * Number(item.quantity))
+                    : '-'}
                 </Text>
               </View>
             </View>
