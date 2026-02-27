@@ -264,7 +264,7 @@ export function BudgetPdfProducts(props: BudgetPdfProductsProps) {
           {/* Linha de total */}
           <View style={styles.totalRow}>
             <View style={styles.totalLabelCell}>
-              <Text style={styles.totalLabel}>Total</Text>
+              <Text style={styles.totalLabel}>Valor Total do Orçamento</Text>
             </View>
             <View style={styles.totalValueCell}>
               <Text style={styles.totalValue}>
