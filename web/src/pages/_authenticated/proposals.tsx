@@ -19,13 +19,11 @@ function RouteComponent() {
   const { data: budgetsData, isLoading: isLoadingBudgets } = useQuery({
     queryKey: ['budgets'],
     queryFn: () => fetchManyBudgets(),
-    staleTime: Infinity,
   })
 
   const { data: proposalsData, isLoading: isLoadingProposals } = useQuery({
     queryKey: ['proposals'],
     queryFn: () => fetchMinimalDetailsProposal(),
-    staleTime: Infinity,
   })
 
   const hasBudgets = budgetsData?.budgets && budgetsData.budgets.length > 0

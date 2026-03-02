@@ -124,4 +124,23 @@ export class PrismaProposalRepository implements ProposalRepository {
       data: { status: 'REJECTED' },
     })
   }
+
+  async countAcceptedProposalsAndTotalProposals(
+    userId: string
+  ): Promise<{ accepted: number; total: number }> {
+    const acceptedProposals = await prisma.proposal.count({
+      where: {
+        userId,
+        status: 'APPROVED',
+      },
+    })
+
+    const totalProposals = await prisma.proposal.count({
+      where: {
+        userId,
+      },
+    })
+
+    return { accepted: acceptedProposals, total: totalProposals }
+  }
 }

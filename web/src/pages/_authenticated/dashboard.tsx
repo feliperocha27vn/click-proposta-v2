@@ -130,7 +130,7 @@ function RouteComponent() {
           {stats.map((stat, index) => (
             <div
               key={stat.title}
-              className="bg-white flex flex-col gap-3 p-4 md:p-5 rounded-2xl  shadow-sm hover:border-slate-200 transition-colors"
+              className="bg-white flex flex-col gap-3 p-4 md:p-5 rounded-2xl  shadow-sm hover:border-slate-200 transition-colors xl:justify-evenly"
             >
               <div
                 className={`p-2.5 rounded-xl w-fit ${
@@ -143,7 +143,7 @@ function RouteComponent() {
                         : 'bg-indigo-50 text-indigo-600 border border-indigo-200'
                 }`}
               >
-                <stat.icon className="size-5 md:size-6" />
+                <stat.icon className="size-5 md:size-6 xl:size-7" />
               </div>
               <div className="space-y-0.5">
                 <p className="text-xs md:text-sm font-medium text-slate-500">

@@ -12,7 +12,7 @@ import {
   postBudgets,
 } from '@/http/api'
 import { DialogServicesDetail } from '@/pages/_authenticated/budget-civil/-components/dialog-services-detail'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
@@ -25,6 +25,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+  const queryClient = useQueryClient()
   const { register, handleSubmit, control, getValues, setValue } =
     useForm<PostBudgetsBody>({
       defaultValues: {
@@ -68,6 +69,10 @@ function RouteComponent() {
     isSuccess,
   } = useMutation({
     mutationFn: postBudgets,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({ queryKey: ['proposals'] })
+    },
   })
 
   const { fields, append, remove } = useFieldArray({

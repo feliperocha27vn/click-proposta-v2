@@ -48,4 +48,8 @@ export interface ProposalRepository {
   confirmSending(id: string, userId: string): Promise<void>
   approveProposal(id: string): Promise<void>
   recusedProposal(id: string): Promise<void>
+  countAcceptedProposalsAndTotalProposals(userId: string): Promise<{
+    accepted: number
+    total: number
+  }>
 }
