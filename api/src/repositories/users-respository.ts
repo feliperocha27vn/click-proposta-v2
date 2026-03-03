@@ -32,4 +32,5 @@ export interface UsersRepository {
   getDataForPayment(userId: string): Promise<UserForPaymentData | null>
   changePlan(userId: string): Promise<void>
   getDataForCreatePdfProduct(userId: string): Promise<Partial<User> | null>
+  getUserByPhone(phone: string): Promise<Partial<User> | null>
 }

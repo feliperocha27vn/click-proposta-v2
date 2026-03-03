@@ -11,6 +11,7 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string(),
   DATABASE_URL: z.string(),
   DATABASE_URL_TEST: z.string().optional(),
+  BOT_SERVICE_TOKEN: z.string(),
 })
 
 export const env = envSchema.parse(process.env)
