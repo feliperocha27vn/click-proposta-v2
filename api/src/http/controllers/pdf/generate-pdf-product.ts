@@ -10,33 +10,57 @@ export const generatePdfProduct: FastifyPluginAsyncZod = async app => {
   app.post(
     '/pdf/generate-product',
     {
-      onRequest: [verifyJwt],
+      onRequest: async (request, reply) => {
+        const authHeader = request.headers.authorization
+        if (authHeader?.startsWith('Bearer ')) {
+          const token = authHeader.split(' ')[1]
+          if (token === process.env.BOT_SERVICE_TOKEN) {
+            return // É o bot, pode passar!
+          }
+        }
+        // Se não for o bot, verifica como usuário normal (JWT)
+        return verifyJwt(request, reply)
+      },
       schema: {
         tags: ['PDF'],
         operationId: 'generatePdfProduct',
         body: z.object({
+          userId: z.string().optional(), // O bot precisará enviar para acharmos os dados
           total: z.string(),
           services: z.array(
             z.object({
-              id: z.string(),
+              id: z.string().optional(),
               title: z.string(),
-              description: z.string(),
+              description: z.string().optional(),
               quantity: z.number().nullable().optional(),
               price: z.number().nullable().optional(),
-              budgetsId: z.string().nullable(),
+              budgetsId: z.string().nullable().optional(),
             })
           ),
         }),
       },
     },
     async (request, reply) => {
-      const { total, services } = request.body
+      const { total, services, userId } = request.body
 
       try {
         const getDataUseCase = makeGetDataForCreatePdfProductUseCase()
+        const targetUserId = userId || request.user?.sub
+
+        if (!targetUserId) {
+          return reply.status(400).send({ message: 'User ID is required' })
+        }
+
         const { user } = await getDataUseCase.execute({
-          userId: request.user.sub,
+          userId: targetUserId,
         })
+
+        const normalizedServices = services.map(s => ({
+          ...s,
+          id: s.id ?? Math.random().toString(),
+          description: s.description ?? '',
+          budgetsId: s.budgetsId ?? null,
+        }))
 
         const pdfDocument = React.createElement(BudgetPdfProducts, {
           phone: user.phone,
@@ -44,7 +68,7 @@ export const generatePdfProduct: FastifyPluginAsyncZod = async app => {
           cnpj: user.cnpj,
           imgUrl: user.avatarUrl,
           total,
-          services,
+          services: normalizedServices,
           address: user.address,
           // biome-ignore lint/suspicious/noExplicitAny: necessário para compatibilidade com @react-pdf/renderer
         }) as React.ReactElement<any>

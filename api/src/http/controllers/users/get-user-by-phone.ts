@@ -1,18 +1,18 @@
 import { ResourceNotFoundError } from '@/errors/resource-not-found-error'
 import { makeGetUserByPhoneUseCase } from '@/factories/users/make-get-user-by-phone-use-case'
-import { verifyJwt } from '@/middlewares/verifyJwt'
+import { verifyServiceToken } from '@/middlewares/verify-service-token'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 
 export const getUserByPhone: FastifyPluginAsyncZod = async app => {
   app.get(
-    '/phone',
+    '/verify-phone',
     {
-      onRequest: [verifyJwt],
+      onRequest: [verifyServiceToken],
       schema: {
         tags: ['Users'],
         operationId: 'getUserByPhone',
-        params: z.object({
+        querystring: z.object({
           phone: z.string(),
         }),
         response: {
@@ -32,7 +32,11 @@ export const getUserByPhone: FastifyPluginAsyncZod = async app => {
       },
     },
     async (request, reply) => {
-      const { phone } = request.params
+      let { phone } = request.query
+
+      if (phone.startsWith('55')) {
+        phone = phone.slice(2)
+      }
 
       try {
         const getUserByPhoneUseCase = makeGetUserByPhoneUseCase()
@@ -47,7 +51,11 @@ export const getUserByPhone: FastifyPluginAsyncZod = async app => {
           return reply.status(404).send({ message: error.message })
         }
 
-        return reply.status(500).send({ message: 'Internal server error.' })
+        console.error(error)
+
+        return reply.status(500).send({
+          message: error instanceof Error ? error.message : 'Unknown error',
+        })
       }
     }
   )

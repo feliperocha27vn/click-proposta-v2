@@ -717,7 +717,7 @@
         }
       }
     },
-    "/phone": {
+    "/verify-phone": {
       "get": {
         "operationId": "getUserByPhone",
         "tags": [
@@ -728,7 +728,7 @@
             "schema": {
               "type": "string"
             },
-            "in": "path",
+            "in": "query",
             "name": "phone",
             "required": true
           }
@@ -2484,6 +2484,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
                   "imgUrl": {
                     "type": "string"
                   },
@@ -2557,20 +2560,12 @@
                         }
                       },
                       "required": [
-                        "id",
-                        "title",
-                        "description",
-                        "budgetsId"
+                        "title"
                       ]
                     }
                   }
                 },
                 "required": [
-                  "imgUrl",
-                  "nameUser",
-                  "nameCustomer",
-                  "emailCustomer",
-                  "phoneCustomer",
                   "total",
                   "services"
                 ]
@@ -2598,6 +2593,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
                   "total": {
                     "type": "string"
                   },
@@ -2656,10 +2654,7 @@
                         }
                       },
                       "required": [
-                        "id",
-                        "title",
-                        "description",
-                        "budgetsId"
+                        "title"
                       ]
                     }
                   }
