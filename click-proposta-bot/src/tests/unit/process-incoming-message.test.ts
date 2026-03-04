@@ -10,48 +10,42 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockApi, mockApiGet, mockApiPost } from '../mocks/axios.mock'
 import {
-  MockSendPdfUseCase,
-  MockSendTextUseCase,
+  MockEvolutionMessagingProvider,
   mockSendPdf,
   mockSendText,
 } from '../mocks/evolution.mock'
-import { MockGeminiService, mockExtractBudgetItems } from '../mocks/gemini.mock'
+import {
+  MockGeminiAiProvider,
+  mockExtractBudgetItems,
+} from '../mocks/gemini.mock'
 import { mockRedis } from '../mocks/redis.mock'
 
 // --- Mocks de módulos ANTES dos imports que dependem deles ---
 vi.mock('../../lib/redis', () => ({ redis: mockRedis }))
 vi.mock('../../lib/axios', () => ({ api: mockApi }))
-vi.mock('../../use-cases/evolution/send-text', () => ({
-  SendTextUseCase: MockSendTextUseCase,
+vi.mock('../../providers/messaging/evolution-messaging-provider', () => ({
+  EvolutionMessagingProvider: MockEvolutionMessagingProvider,
 }))
-vi.mock('../../use-cases/evolution/send-pdf', () => ({
-  SendPdfUseCase: MockSendPdfUseCase,
-}))
-vi.mock('../../lib/gemini', () => ({
-  GeminiService: MockGeminiService,
+vi.mock('../../providers/ai/gemini-ai-provider', () => ({
+  GeminiAiProvider: MockGeminiAiProvider,
 }))
 
-import { GeminiService } from '../../lib/gemini'
+import { GeminiAiProvider } from '../../providers/ai/gemini-ai-provider'
+import { EvolutionMessagingProvider } from '../../providers/messaging/evolution-messaging-provider'
 import type { SessionRepository } from '../../repositories/session-repository'
 import { HandleAwaitingTypeUseCase } from '../../use-cases/bot/handle-awaiting-type'
 import { HandleCollectingItemsUseCase } from '../../use-cases/bot/handle-collecting-items'
 import { HandleConfirmingUseCase } from '../../use-cases/bot/handle-confirming'
 import { HandleNewUserUseCase } from '../../use-cases/bot/handle-new-user'
 import { ProcessIncomingMessageUseCase } from '../../use-cases/bot/process-incoming-message'
-import { SendPdfUseCase } from '../../use-cases/evolution/send-pdf'
-import { SendTextUseCase } from '../../use-cases/evolution/send-text'
 
 function makeService(sessionRepo: SessionRepository) {
   return new ProcessIncomingMessageUseCase(
     sessionRepo,
     new HandleNewUserUseCase(sessionRepo),
     new HandleAwaitingTypeUseCase(sessionRepo),
-    new HandleCollectingItemsUseCase(sessionRepo, new GeminiService()),
-    new HandleConfirmingUseCase(
-      sessionRepo,
-      new SendTextUseCase(),
-      new SendPdfUseCase()
-    )
+    new HandleCollectingItemsUseCase(sessionRepo, new GeminiAiProvider()),
+    new HandleConfirmingUseCase(sessionRepo, new EvolutionMessagingProvider())
   )
 }
 

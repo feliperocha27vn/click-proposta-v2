@@ -1,7 +1,7 @@
 /**
- * Testes unitários do GeminiService
+ * Testes unitários do GeminiAiProvider
  *
- * O cliente do Gemini (`lib/gemini`) é mockado, então
+ * O cliente do Gemini é mockado, então
  * nenhuma chamada real à API da Google é feita.
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -21,7 +21,7 @@ vi.mock('@google/genai', async importOriginal => {
   }
 })
 
-import { GeminiService } from '../../lib/gemini'
+import { GeminiAiProvider } from '../../providers/ai/gemini-ai-provider'
 
 // Helper: monta a resposta fake do Gemini no novo formato { _raciocinio, items }
 function makeFakeResponse(
@@ -34,12 +34,12 @@ function makeFakeResponse(
 }
 
 // ---------------------------------------------------------------------------
-describe('GeminiService', () => {
-  let service: GeminiService
+describe('GeminiAiProvider', () => {
+  let service: GeminiAiProvider
 
   beforeEach(() => {
     vi.clearAllMocks()
-    service = new GeminiService()
+    service = new GeminiAiProvider()
   })
 
   // =========================================================================

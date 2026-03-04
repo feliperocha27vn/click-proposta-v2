@@ -17,28 +17,20 @@ import {
 } from 'vitest'
 import { mockApi, mockApiGet } from '../mocks/axios.mock'
 import {
-  MockGetBase64MediaUseCase,
-  MockSendPdfUseCase,
-  MockSendTextUseCase,
+  MockEvolutionMessagingProvider,
   mockGetBase64Media,
   mockSendText,
 } from '../mocks/evolution.mock'
-import { MockGeminiService, mockTranscribeAudio } from '../mocks/gemini.mock'
+import { MockGeminiAiProvider, mockTranscribeAudio } from '../mocks/gemini.mock'
 import { mockRedis } from '../mocks/redis.mock'
 
 vi.mock('../../lib/redis', () => ({ redis: mockRedis }))
 vi.mock('../../lib/axios', () => ({ api: mockApi }))
-vi.mock('../../use-cases/evolution/send-text', () => ({
-  SendTextUseCase: MockSendTextUseCase,
+vi.mock('../../providers/messaging/evolution-messaging-provider', () => ({
+  EvolutionMessagingProvider: MockEvolutionMessagingProvider,
 }))
-vi.mock('../../use-cases/evolution/send-pdf', () => ({
-  SendPdfUseCase: MockSendPdfUseCase,
-}))
-vi.mock('../../use-cases/evolution/get-base64-media', () => ({
-  GetBase64MediaUseCase: MockGetBase64MediaUseCase,
-}))
-vi.mock('../../lib/gemini', () => ({
-  GeminiService: MockGeminiService,
+vi.mock('../../providers/ai/gemini-ai-provider', () => ({
+  GeminiAiProvider: MockGeminiAiProvider,
 }))
 
 import { app } from '../../app'

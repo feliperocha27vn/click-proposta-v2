@@ -1,11 +1,10 @@
 import { env } from '../../env'
 import { api } from '../../lib/axios'
+import type { MessagingProvider } from '../../providers/messaging/messaging-provider'
 import type {
   ChatSession,
   SessionRepository,
 } from '../../repositories/session-repository'
-import type { SendPdfUseCase } from '../evolution/send-pdf'
-import type { SendTextUseCase } from '../evolution/send-text'
 
 interface HandleConfirmingUseCaseRequest {
   instanceName: string
@@ -17,8 +16,7 @@ interface HandleConfirmingUseCaseRequest {
 export class HandleConfirmingUseCase {
   constructor(
     private sessionRepository: SessionRepository,
-    private sendTextUseCase: SendTextUseCase,
-    private sendPdfUseCase: SendPdfUseCase
+    private messagingProvider: MessagingProvider
   ) {}
 
   async execute({
@@ -29,7 +27,7 @@ export class HandleConfirmingUseCase {
   }: HandleConfirmingUseCaseRequest): Promise<string | null> {
     if (text.toLowerCase() === 'sim') {
       try {
-        await this.sendTextUseCase.execute({
+        await this.messagingProvider.sendText({
           instanceName,
           phone,
           text: '⏳ Gerando seu orçamento em PDF... Aguarde só um instante!',
@@ -87,7 +85,7 @@ export class HandleConfirmingUseCase {
         )
         const fileName = `orcamento-${budgetType}-${Date.now()}.pdf`
 
-        await this.sendPdfUseCase.execute({
+        await this.messagingProvider.sendPdf({
           instanceName,
           phone,
           base64Pdf,

@@ -1,8 +1,8 @@
+import type { AiProvider } from '../../providers/ai/ai-provider'
 import type {
   ChatSession,
   SessionRepository,
 } from '../../repositories/session-repository'
-import { GeminiService } from '../../lib/gemini'
 
 interface HandleCollectingItemsUseCaseRequest {
   session: ChatSession
@@ -13,7 +13,7 @@ interface HandleCollectingItemsUseCaseRequest {
 export class HandleCollectingItemsUseCase {
   constructor(
     private sessionRepository: SessionRepository,
-    private geminiService: GeminiService
+    private aiProvider: AiProvider
   ) {}
 
   async execute({
@@ -28,8 +28,8 @@ export class HandleCollectingItemsUseCase {
         return '⚠️ Você ainda não enviou nenhum item.\n\nMe mande os itens antes de finalizar:\n_Exemplo: 3x tinta acrílica branca — R$ 45,00_'
       }
 
-      // 1. Chamar o Gemini pra extrair a lista estruturada de itens
-      const extractedItems = await this.geminiService.extractBudgetItems(
+      // 1. Chamar a IA pra extrair a lista estruturada de itens
+      const extractedItems = await this.aiProvider.extractBudgetItems(
         currentData,
         session.budgetType || 'product'
       )

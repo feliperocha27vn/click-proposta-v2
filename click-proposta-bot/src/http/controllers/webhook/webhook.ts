@@ -1,13 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { makeProcessIncomingMessageUseCase } from '../../../factories/make-process-incoming-message-use-case'
-import { GeminiService } from '../../../lib/gemini'
-import { GetBase64MediaUseCase } from '../../../use-cases/evolution/get-base64-media'
-import { SendTextUseCase } from '../../../use-cases/evolution/send-text'
+import { GeminiAiProvider } from '../../../providers/ai/gemini-ai-provider'
+import { EvolutionMessagingProvider } from '../../../providers/messaging/messaging-provider'
 
-const geminiService = new GeminiService()
-const getBase64MediaUseCase = new GetBase64MediaUseCase()
-const sendTextUseCase = new SendTextUseCase()
+const aiProvider = new GeminiAiProvider()
+const messagingProvider = new EvolutionMessagingProvider()
 
 export async function webhookRoutes(app: FastifyInstance) {
   app.post('/webhook', async (request, reply) => {
@@ -54,7 +52,7 @@ export async function webhookRoutes(app: FastifyInstance) {
           const messageId = body.data.key.id
           if (messageId) {
             console.log(`[Webhook] Baixando áudio da mensagem ${messageId}...`)
-            const media = await getBase64MediaUseCase.execute({
+            const media = await messagingProvider.getBase64Media({
               instanceName,
               messageId,
               remoteJid: body.data.key.remoteJid,
@@ -63,7 +61,7 @@ export async function webhookRoutes(app: FastifyInstance) {
 
             if (media) {
               console.log('[Webhook] Áudio baixado, iniciando transcrição...')
-              text = await geminiService.transcribeAudio(
+              text = await aiProvider.transcribeAudio(
                 media.base64,
                 media.mimetype
               )
@@ -92,7 +90,7 @@ export async function webhookRoutes(app: FastifyInstance) {
 
       if (botResponse) {
         console.log(`[Bot] Resposta para ${phone}: ${botResponse}`)
-        await sendTextUseCase.execute({
+        await messagingProvider.sendText({
           instanceName,
           phone,
           text: botResponse,

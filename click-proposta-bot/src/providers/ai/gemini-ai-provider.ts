@@ -1,21 +1,18 @@
 import { GoogleGenAI } from '@google/genai'
-import { env } from '../env'
+import { env } from '../../env'
 import {
   budgetExtractionSchema,
   buildExtractionPrompt,
   type ExtractedItem,
   type GeminiExtractionResponse,
-} from './gemini-schemas'
+} from '../../lib/gemini-schemas'
+import type { AiProvider } from './ai-provider'
 
 export const gemini = new GoogleGenAI({
   apiKey: env.GEMINI_API_KEY,
 })
 
-export class GeminiService {
-  /**
-   * Extrai de forma inteligente os itens de um orçamento usando o Gemini.
-   * Utiliza Chain-of-Thought via campo _raciocinio para maior precisão.
-   */
+export class GeminiAiProvider implements AiProvider {
   async extractBudgetItems(
     text: string,
     budgetType: 'product' | 'civil'
@@ -29,7 +26,6 @@ export class GeminiService {
         config: {
           responseMimeType: 'application/json',
           responseSchema: budgetExtractionSchema,
-          // Temperatura 0: sem criatividade, extração determinística
           temperature: 0,
         },
       })
@@ -40,7 +36,6 @@ export class GeminiService {
         return []
       }
 
-      // O retorno agora é { _raciocinio, items } — extraímos apenas os items
       const parsed = JSON.parse(jsonText) as GeminiExtractionResponse
 
       console.log(
@@ -56,9 +51,7 @@ export class GeminiService {
       return []
     }
   }
-  /**
-   * Transcreve um áudio em base64 recebido pelo WhatsApp.
-   */
+
   async transcribeAudio(
     base64Audio: string,
     mimeType: string
@@ -83,7 +76,7 @@ export class GeminiService {
           },
         ],
         config: {
-          temperature: 0, // Transcrição determinística
+          temperature: 0,
         },
       })
 
