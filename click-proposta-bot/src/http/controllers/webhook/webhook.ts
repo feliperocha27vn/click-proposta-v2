@@ -1,14 +1,13 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { SessionRepository } from '../../../repositories/session-repository'
-import { EvolutionService } from '../../../services/evolution-service'
-import { GeminiService } from '../../../services/gemini-service'
-import { StateMachineService } from '../../../services/state-machine-service'
+import { makeProcessIncomingMessageUseCase } from '../../../factories/make-process-incoming-message-use-case'
+import { GeminiService } from '../../../lib/gemini'
+import { GetBase64MediaUseCase } from '../../../use-cases/evolution/get-base64-media'
+import { SendTextUseCase } from '../../../use-cases/evolution/send-text'
 
-const sessionRepository = new SessionRepository()
-const stateMachineService = new StateMachineService(sessionRepository)
-const evolutionService = new EvolutionService()
 const geminiService = new GeminiService()
+const getBase64MediaUseCase = new GetBase64MediaUseCase()
+const sendTextUseCase = new SendTextUseCase()
 
 export async function webhookRoutes(app: FastifyInstance) {
   app.post('/webhook', async (request, reply) => {
@@ -55,12 +54,12 @@ export async function webhookRoutes(app: FastifyInstance) {
           const messageId = body.data.key.id
           if (messageId) {
             console.log(`[Webhook] Baixando áudio da mensagem ${messageId}...`)
-            const media = await evolutionService.getBase64Media(
+            const media = await getBase64MediaUseCase.execute({
               instanceName,
               messageId,
-              body.data.key.remoteJid,
-              body.data.key.fromMe
-            )
+              remoteJid: body.data.key.remoteJid,
+              fromMe: body.data.key.fromMe,
+            })
 
             if (media) {
               console.log('[Webhook] Áudio baixado, iniciando transcrição...')
@@ -83,16 +82,21 @@ export async function webhookRoutes(app: FastifyInstance) {
         `[Webhook] Mensagem recebida de ${phone} [${instanceName}]: ${text}`
       )
 
-      // 2. Chama a Máquina de Estados e espera a resposta
-      const botResponse = await stateMachineService.processIncomingMessage(
+      // 2. Chama a Máquina de Estados (Use Case Orquestrador) e espera a resposta
+      const processIncomingMessageUseCase = makeProcessIncomingMessageUseCase()
+      const botResponse = await processIncomingMessageUseCase.execute({
         instanceName,
         phone,
-        text
-      )
+        text,
+      })
 
       if (botResponse) {
         console.log(`[Bot] Resposta para ${phone}: ${botResponse}`)
-        await evolutionService.sendText(instanceName, phone, botResponse)
+        await sendTextUseCase.execute({
+          instanceName,
+          phone,
+          text: botResponse,
+        })
       }
 
       return reply.status(200).send()

@@ -8,8 +8,12 @@ export const mockSendText = vi.fn().mockResolvedValue(undefined)
 export const mockSendPdf = vi.fn().mockResolvedValue(undefined)
 export const mockGetBase64Media = vi.fn().mockResolvedValue(null)
 
-export class MockEvolutionService {
-  sendText = mockSendText
-  sendPdf = mockSendPdf
-  getBase64Media = mockGetBase64Media
+export class MockSendTextUseCase {
+  execute = mockSendText
+}
+export class MockSendPdfUseCase {
+  execute = mockSendPdf
+}
+export class MockGetBase64MediaUseCase {
+  execute = mockGetBase64Media
 }

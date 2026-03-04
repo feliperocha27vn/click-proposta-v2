@@ -17,7 +17,9 @@ import {
 } from 'vitest'
 import { mockApi, mockApiGet } from '../mocks/axios.mock'
 import {
-  MockEvolutionService,
+  MockGetBase64MediaUseCase,
+  MockSendPdfUseCase,
+  MockSendTextUseCase,
   mockGetBase64Media,
   mockSendText,
 } from '../mocks/evolution.mock'
@@ -26,10 +28,16 @@ import { mockRedis } from '../mocks/redis.mock'
 
 vi.mock('../../lib/redis', () => ({ redis: mockRedis }))
 vi.mock('../../lib/axios', () => ({ api: mockApi }))
-vi.mock('../../services/evolution-service', () => ({
-  EvolutionService: MockEvolutionService,
+vi.mock('../../use-cases/evolution/send-text', () => ({
+  SendTextUseCase: MockSendTextUseCase,
 }))
-vi.mock('../../services/gemini-service', () => ({
+vi.mock('../../use-cases/evolution/send-pdf', () => ({
+  SendPdfUseCase: MockSendPdfUseCase,
+}))
+vi.mock('../../use-cases/evolution/get-base64-media', () => ({
+  GetBase64MediaUseCase: MockGetBase64MediaUseCase,
+}))
+vi.mock('../../lib/gemini', () => ({
   GeminiService: MockGeminiService,
 }))
 
@@ -179,12 +187,12 @@ describe('POST /webhook', () => {
 
       expect(response.status).toBe(200)
       // O EvolutionService foi chamado para baixar a mídia
-      expect(mockGetBase64Media).toHaveBeenCalledWith(
-        'minha-instancia',
-        'msg-123',
-        '5511999999999@s.whatsapp.net',
-        false
-      )
+      expect(mockGetBase64Media).toHaveBeenCalledWith({
+        instanceName: 'minha-instancia',
+        messageId: 'msg-123',
+        remoteJid: '5511999999999@s.whatsapp.net',
+        fromMe: false,
+      })
       // O GeminiService foi chamado para transcrever
       expect(mockTranscribeAudio).toHaveBeenCalledWith(
         'fake-base64',
@@ -208,11 +216,11 @@ describe('POST /webhook', () => {
 
       expect(response.status).toBe(200)
       // Verifica que a Evolution API recebeu a resposta do bot
-      expect(mockSendText).toHaveBeenCalledWith(
-        'minha-instancia',
-        '5511999999999',
-        expect.stringContaining('Felipe')
-      )
+      expect(mockSendText).toHaveBeenCalledWith({
+        instanceName: 'minha-instancia',
+        phone: '5511999999999',
+        text: expect.stringContaining('Felipe'),
+      })
     })
 
     it('deve remover o @s.whatsapp.net do número do telefone', async () => {
@@ -224,9 +232,11 @@ describe('POST /webhook', () => {
 
       // Verifica que o phone enviado ao sendText não tem o sufixo do WhatsApp
       expect(mockSendText).toHaveBeenCalledWith(
-        expect.any(String),
-        '5511999999999', // SEM @s.whatsapp.net
-        expect.any(String)
+        expect.objectContaining({
+          instanceName: expect.any(String),
+          phone: '5511999999999', // SEM @s.whatsapp.net
+          text: expect.any(String),
+        })
       )
     })
 
@@ -241,11 +251,11 @@ describe('POST /webhook', () => {
         .send(buildWebhookPayload())
 
       expect(response.status).toBe(200)
-      expect(mockSendText).toHaveBeenCalledWith(
-        'minha-instancia',
-        '5511999999999',
-        expect.stringContaining('Click Proposta')
-      )
+      expect(mockSendText).toHaveBeenCalledWith({
+        instanceName: 'minha-instancia',
+        phone: '5511999999999',
+        text: expect.stringContaining('Click Proposta'),
+      })
     })
 
     it('deve responder 200 e enviar msg de erro em falhas genéricas', async () => {
@@ -256,11 +266,11 @@ describe('POST /webhook', () => {
         .send(buildWebhookPayload())
 
       expect(response.status).toBe(200)
-      expect(mockSendText).toHaveBeenCalledWith(
-        'minha-instancia',
-        '5511999999999',
-        expect.stringContaining('deu errado')
-      )
+      expect(mockSendText).toHaveBeenCalledWith({
+        instanceName: 'minha-instancia',
+        phone: '5511999999999',
+        text: expect.stringContaining('deu errado'),
+      })
     })
   })
 })

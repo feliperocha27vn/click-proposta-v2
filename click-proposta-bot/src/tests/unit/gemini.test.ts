@@ -11,15 +11,17 @@ const { mockGenerateContent } = vi.hoisted(() => ({
   mockGenerateContent: vi.fn(),
 }))
 
-vi.mock('../../lib/gemini', () => ({
-  gemini: {
-    models: {
-      generateContent: mockGenerateContent,
+vi.mock('@google/genai', async importOriginal => {
+  const actual = await importOriginal<typeof import('@google/genai')>()
+  return {
+    ...actual,
+    GoogleGenAI: class {
+      models = { generateContent: mockGenerateContent }
     },
-  },
-}))
+  }
+})
 
-import { GeminiService } from '../../services/gemini-service'
+import { GeminiService } from '../../lib/gemini'
 
 // Helper: monta a resposta fake do Gemini no novo formato { _raciocinio, items }
 function makeFakeResponse(

@@ -10,7 +10,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockApi, mockApiGet, mockApiPost } from '../mocks/axios.mock'
 import {
-  MockEvolutionService,
+  MockSendPdfUseCase,
+  MockSendTextUseCase,
   mockSendPdf,
   mockSendText,
 } from '../mocks/evolution.mock'
@@ -20,15 +21,39 @@ import { mockRedis } from '../mocks/redis.mock'
 // --- Mocks de módulos ANTES dos imports que dependem deles ---
 vi.mock('../../lib/redis', () => ({ redis: mockRedis }))
 vi.mock('../../lib/axios', () => ({ api: mockApi }))
-vi.mock('../../services/evolution-service', () => ({
-  EvolutionService: MockEvolutionService,
+vi.mock('../../use-cases/evolution/send-text', () => ({
+  SendTextUseCase: MockSendTextUseCase,
 }))
-vi.mock('../../services/gemini-service', () => ({
+vi.mock('../../use-cases/evolution/send-pdf', () => ({
+  SendPdfUseCase: MockSendPdfUseCase,
+}))
+vi.mock('../../lib/gemini', () => ({
   GeminiService: MockGeminiService,
 }))
 
+import { GeminiService } from '../../lib/gemini'
 import type { SessionRepository } from '../../repositories/session-repository'
-import { StateMachineService } from '../../services/state-machine-service'
+import { HandleAwaitingTypeUseCase } from '../../use-cases/bot/handle-awaiting-type'
+import { HandleCollectingItemsUseCase } from '../../use-cases/bot/handle-collecting-items'
+import { HandleConfirmingUseCase } from '../../use-cases/bot/handle-confirming'
+import { HandleNewUserUseCase } from '../../use-cases/bot/handle-new-user'
+import { ProcessIncomingMessageUseCase } from '../../use-cases/bot/process-incoming-message'
+import { SendPdfUseCase } from '../../use-cases/evolution/send-pdf'
+import { SendTextUseCase } from '../../use-cases/evolution/send-text'
+
+function makeService(sessionRepo: SessionRepository) {
+  return new ProcessIncomingMessageUseCase(
+    sessionRepo,
+    new HandleNewUserUseCase(sessionRepo),
+    new HandleAwaitingTypeUseCase(sessionRepo),
+    new HandleCollectingItemsUseCase(sessionRepo, new GeminiService()),
+    new HandleConfirmingUseCase(
+      sessionRepo,
+      new SendTextUseCase(),
+      new SendPdfUseCase()
+    )
+  )
+}
 
 // Helper: cria um mock do sessionRepository com vi.fn() nos 3 métodos
 function makeSessionRepo(overrides: Partial<SessionRepository> = {}) {
@@ -44,7 +69,7 @@ const INSTANCE = 'minha-instancia'
 const PHONE = '5511999999999'
 
 // ---------------------------------------------------------------------------
-describe('StateMachineService', () => {
+describe('ProcessIncomingMessageUseCase', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockRedis.flush()
@@ -54,17 +79,17 @@ describe('StateMachineService', () => {
   describe('processIncomingMessage — usuário novo (sem sessão)', () => {
     it('deve saudar o usuário pelo nome quando o telefone existe na API', async () => {
       const sessionRepo = makeSessionRepo()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockApiGet.mockResolvedValueOnce({
         data: { user: { id: 'user-123', name: 'Felipe' } },
       })
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Oi'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Oi',
+      })
 
       expect(response).toContain('Felipe')
       expect(response).toContain('1')
@@ -77,30 +102,34 @@ describe('StateMachineService', () => {
 
     it('deve usar "cliente" no nome quando o usuário não tem nome cadastrado', async () => {
       const sessionRepo = makeSessionRepo()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockApiGet.mockResolvedValueOnce({
         data: { user: { id: 'user-123', name: null } },
       })
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Oi'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Oi',
+      })
 
       expect(response).toContain('cliente')
     })
 
     it('deve remover o código 55 ao consultar a API para número brasileiro de 13 dígitos', async () => {
       const sessionRepo = makeSessionRepo()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockApiGet.mockResolvedValueOnce({
         data: { user: { id: 'u1', name: 'Teste' } },
       })
 
-      await service.processIncomingMessage(INSTANCE, '5511999999999', 'Oi')
+      await service.execute({
+        instanceName: INSTANCE,
+        phone: '5511999999999',
+        text: 'Oi',
+      })
 
       expect(mockApiGet).toHaveBeenCalledWith(
         '/verify-phone',
@@ -112,18 +141,18 @@ describe('StateMachineService', () => {
 
     it('deve informar sobre cadastro com link quando o telefone não existe (404)', async () => {
       const sessionRepo = makeSessionRepo()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockApiGet.mockRejectedValueOnce({
         response: { status: 404 },
         message: 'Not Found',
       })
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Oi'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Oi',
+      })
 
       expect(response).toContain('Click Proposta')
       expect(response).toContain('https://click-proposta.umdoce.dev.br/login')
@@ -132,18 +161,18 @@ describe('StateMachineService', () => {
 
     it('deve retornar mensagem de erro empática para falhas de API diferentes de 404', async () => {
       const sessionRepo = makeSessionRepo()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockApiGet.mockRejectedValueOnce({
         response: { status: 500 },
         message: 'Internal Server Error',
       })
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Oi'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Oi',
+      })
 
       expect(response).toContain('deu errado')
     })
@@ -163,13 +192,13 @@ describe('StateMachineService', () => {
 
     it('deve aceitar "1" como seleção de produto', async () => {
       const sessionRepo = makeRepoWithState('AWAITING_TYPE')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        '1'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: '1',
+      })
 
       expect(response).toContain('itens')
       expect(sessionRepo.saveSession).toHaveBeenCalledWith(
@@ -183,13 +212,13 @@ describe('StateMachineService', () => {
 
     it('deve aceitar "produto" por extenso', async () => {
       const sessionRepo = makeRepoWithState('AWAITING_TYPE')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'quero orçamento de produto'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'quero orçamento de produto',
+      })
 
       expect(response).toContain('itens')
       expect(sessionRepo.saveSession).toHaveBeenCalledWith(
@@ -200,13 +229,13 @@ describe('StateMachineService', () => {
 
     it('deve aceitar "2" como seleção de serviço civil', async () => {
       const sessionRepo = makeRepoWithState('AWAITING_TYPE')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        '2'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: '2',
+      })
 
       expect(response).toContain('itens')
       expect(sessionRepo.saveSession).toHaveBeenCalledWith(
@@ -220,13 +249,13 @@ describe('StateMachineService', () => {
 
     it('deve aceitar "serviço civil" por extenso', async () => {
       const sessionRepo = makeRepoWithState('AWAITING_TYPE')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'serviço civil'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'serviço civil',
+      })
 
       expect(response).toContain('itens')
       expect(sessionRepo.saveSession).toHaveBeenCalledWith(
@@ -237,13 +266,13 @@ describe('StateMachineService', () => {
 
     it('deve mostrar as opções novamente se a resposta não for reconhecida', async () => {
       const sessionRepo = makeRepoWithState('AWAITING_TYPE')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'não sei'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'não sei',
+      })
 
       expect(response).toContain('Não entendi')
       expect(response).toContain('*1*')
@@ -268,13 +297,13 @@ describe('StateMachineService', () => {
 
     it('deve acumular texto enviado pelo usuário e confirmar com "Anotado"', async () => {
       const sessionRepo = makeRepoCollecting('item anterior')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        '2 caixas de parafuso'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: '2 caixas de parafuso',
+      })
 
       expect(response).toContain('Anotado')
       expect(sessionRepo.saveSession).toHaveBeenCalledWith(
@@ -287,13 +316,13 @@ describe('StateMachineService', () => {
 
     it('deve reclamar se o usuário enviar 1 sem ter adicionado nenhum item', async () => {
       const sessionRepo = makeRepoCollecting('')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        '1'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: '1',
+      })
 
       expect(response).toContain('nenhum item')
       expect(response).toContain('Exemplo')
@@ -302,18 +331,18 @@ describe('StateMachineService', () => {
 
     it('deve chamar o Gemini e avançar para CONFIRMING quando digitar 1 com itens', async () => {
       const sessionRepo = makeRepoCollecting('2x parafuso R$5\n1x cimento R$30')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockExtractBudgetItems.mockResolvedValueOnce([
         { title: 'parafuso', amount: 2, price: 5 },
         { title: 'cimento', amount: 1, price: 30 },
       ])
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        '1'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: '1',
+      })
 
       expect(mockExtractBudgetItems).toHaveBeenCalledOnce()
       expect(response).toContain('Resumo')
@@ -327,15 +356,15 @@ describe('StateMachineService', () => {
 
     it('deve mostrar exemplo de formato se o Gemini não extrair nenhum item', async () => {
       const sessionRepo = makeRepoCollecting('texto incompreensível ###')
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockExtractBudgetItems.mockResolvedValueOnce([])
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        '1'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: '1',
+      })
 
       expect(response).toContain('Não consegui identificar')
       expect(response).toContain('Exemplo')
@@ -361,21 +390,23 @@ describe('StateMachineService', () => {
 
     it('"Sim" — deve enviar msg de progresso, gerar PDF e enviar pelo WhatsApp', async () => {
       const sessionRepo = makeRepoConfirming()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       const fakePdfBuffer = Buffer.from('fake-pdf-content')
       mockApiPost.mockResolvedValueOnce({ data: fakePdfBuffer })
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Sim'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Sim',
+      })
 
       expect(mockSendText).toHaveBeenCalledWith(
-        INSTANCE,
-        PHONE,
-        expect.stringContaining('Aguarde')
+        expect.objectContaining({
+          instanceName: INSTANCE,
+          phone: PHONE,
+          text: expect.stringContaining('Aguarde'),
+        })
       )
       expect(mockApiPost).toHaveBeenCalledWith(
         '/pdf/generate-product',
@@ -389,11 +420,15 @@ describe('StateMachineService', () => {
 
     it('"Sim" — deve usar o endpoint /pdf/generate para budgetType = civil', async () => {
       const sessionRepo = makeRepoConfirming({ budgetType: 'civil' })
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockApiPost.mockResolvedValueOnce({ data: Buffer.from('pdf') })
 
-      await service.processIncomingMessage(INSTANCE, PHONE, 'Sim')
+      await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Sim',
+      })
 
       expect(mockApiPost).toHaveBeenCalledWith(
         '/pdf/generate',
@@ -411,13 +446,13 @@ describe('StateMachineService', () => {
           extractedItems: null,
         }),
       })
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Sim'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Sim',
+      })
 
       expect(response).toContain('Ops!')
       expect(sessionRepo.clearSession).toHaveBeenCalledWith(PHONE)
@@ -425,15 +460,15 @@ describe('StateMachineService', () => {
 
     it('"Sim" — deve limpar sessão e orientar nova tentativa se a API de PDF falhar', async () => {
       const sessionRepo = makeRepoConfirming()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
       mockApiPost.mockRejectedValueOnce(new Error('API indisponível'))
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Sim'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Sim',
+      })
 
       expect(response).toContain('Não conseguimos gerar')
       expect(sessionRepo.clearSession).toHaveBeenCalledWith(PHONE)
@@ -441,13 +476,13 @@ describe('StateMachineService', () => {
 
     it('"Não" — deve cancelar o orçamento e limpar a sessão', async () => {
       const sessionRepo = makeRepoConfirming()
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'Não'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Não',
+      })
 
       expect(response).toContain('cancelado')
       expect(response).toContain('Oi')
@@ -465,13 +500,13 @@ describe('StateMachineService', () => {
           state: 'ESTADO_INVALIDO_QUALQUER',
         }),
       })
-      const service = new StateMachineService(sessionRepo)
+      const service = makeService(sessionRepo)
 
-      const response = await service.processIncomingMessage(
-        INSTANCE,
-        PHONE,
-        'qualquer coisa'
-      )
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'qualquer coisa',
+      })
 
       expect(sessionRepo.clearSession).toHaveBeenCalledWith(PHONE)
       expect(response).toContain('Reiniciamos')
