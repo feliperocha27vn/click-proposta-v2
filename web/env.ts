@@ -1,14 +1,9 @@
-import z from 'zod'
-
-const envSchema = z.object({
-  VITE_SUPABASE_URL: z.url(),
-  VITE_SUPABASE_ANON_KEY: z.string().min(32).max(256),
-  VITE_API_URL: z.url(),
-  VITE_APP_URL: z.url(),
-})
-
-// Usar import.meta.env no ambiente do browser/Vite, process.env no Node.js
-const envSource =
-  typeof import.meta !== 'undefined' ? import.meta.env : process.env
-
-export const env = envSchema.parse(envSource)
+// As variáveis VITE_ são substituídas inline pelo Vite em build-time.
+// Usando import.meta.env direto para que os NOMES das variáveis
+// não apareçam como strings literais no bundle de produção.
+export const env = {
+  VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL as string,
+  VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
+  VITE_API_URL: import.meta.env.VITE_API_URL as string,
+  VITE_APP_URL: import.meta.env.VITE_APP_URL as string,
+} as const
