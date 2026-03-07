@@ -17,13 +17,14 @@ import {
 import {
   MockGeminiAiProvider,
   mockExtractBudgetItems,
+  mockExtractTotalValue,
 } from '../mocks/gemini.mock'
 import { mockRedis } from '../mocks/redis.mock'
 
 // --- Mocks de módulos ANTES dos imports que dependem deles ---
 vi.mock('../../lib/redis', () => ({ redis: mockRedis }))
 vi.mock('../../lib/axios', () => ({ api: mockApi }))
-vi.mock('../../providers/messaging/evolution-messaging-provider', () => ({
+vi.mock('../../providers/messaging/messaging-provider', () => ({
   EvolutionMessagingProvider: MockEvolutionMessagingProvider,
 }))
 vi.mock('../../providers/ai/gemini-ai-provider', () => ({
@@ -31,8 +32,10 @@ vi.mock('../../providers/ai/gemini-ai-provider', () => ({
 }))
 
 import { GeminiAiProvider } from '../../providers/ai/gemini-ai-provider'
-import { EvolutionMessagingProvider } from '../../providers/messaging/evolution-messaging-provider'
+import { EvolutionMessagingProvider } from '../../providers/messaging/messaging-provider'
 import type { SessionRepository } from '../../repositories/session-repository'
+import { HandleAwaitingCustomerNameUseCase } from '../../use-cases/bot/handle-awaiting-customer-name'
+import { HandleAwaitingTotalValueUseCase } from '../../use-cases/bot/handle-awaiting-total-value'
 import { HandleAwaitingTypeUseCase } from '../../use-cases/bot/handle-awaiting-type'
 import { HandleCollectingItemsUseCase } from '../../use-cases/bot/handle-collecting-items'
 import { HandleConfirmingUseCase } from '../../use-cases/bot/handle-confirming'
@@ -40,11 +43,14 @@ import { HandleNewUserUseCase } from '../../use-cases/bot/handle-new-user'
 import { ProcessIncomingMessageUseCase } from '../../use-cases/bot/process-incoming-message'
 
 function makeService(sessionRepo: SessionRepository) {
+  const aiProvider = new GeminiAiProvider()
   return new ProcessIncomingMessageUseCase(
     sessionRepo,
     new HandleNewUserUseCase(sessionRepo),
     new HandleAwaitingTypeUseCase(sessionRepo),
-    new HandleCollectingItemsUseCase(sessionRepo, new GeminiAiProvider()),
+    new HandleAwaitingCustomerNameUseCase(sessionRepo),
+    new HandleAwaitingTotalValueUseCase(sessionRepo, aiProvider),
+    new HandleCollectingItemsUseCase(sessionRepo, aiProvider),
     new HandleConfirmingUseCase(sessionRepo, new EvolutionMessagingProvider())
   )
 }
@@ -231,11 +237,11 @@ describe('ProcessIncomingMessageUseCase', () => {
         text: '2',
       })
 
-      expect(response).toContain('itens')
+      expect(response).toContain('nome do cliente')
       expect(sessionRepo.saveSession).toHaveBeenCalledWith(
         PHONE,
         expect.objectContaining({
-          state: 'COLLECTING_ITEMS',
+          state: 'AWAITING_CUSTOMER_NAME',
           budgetType: 'civil',
         })
       )
@@ -251,7 +257,7 @@ describe('ProcessIncomingMessageUseCase', () => {
         text: 'serviço civil',
       })
 
-      expect(response).toContain('itens')
+      expect(response).toContain('nome do cliente')
       expect(sessionRepo.saveSession).toHaveBeenCalledWith(
         PHONE,
         expect.objectContaining({ budgetType: 'civil' })
@@ -272,6 +278,40 @@ describe('ProcessIncomingMessageUseCase', () => {
       expect(response).toContain('*1*')
       expect(response).toContain('*2*')
       expect(sessionRepo.saveSession).not.toHaveBeenCalled()
+    })
+  })
+
+  // =========================================================================
+  describe('processIncomingMessage — estado AWAITING_CUSTOMER_NAME', () => {
+    function makeRepoAwaitingName() {
+      return makeSessionRepo({
+        getSession: vi.fn().mockResolvedValue({
+          phone: PHONE,
+          state: 'AWAITING_CUSTOMER_NAME',
+          userId: 'user-123',
+          budgetType: 'civil',
+        }),
+      })
+    }
+
+    it('deve salvar o nome do cliente e avançar para COLLECTING_ITEMS', async () => {
+      const sessionRepo = makeRepoAwaitingName()
+      const service = makeService(sessionRepo)
+
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'Empresa XYZ',
+      })
+
+      expect(response).toContain('serviços do orçamento')
+      expect(sessionRepo.saveSession).toHaveBeenCalledWith(
+        PHONE,
+        expect.objectContaining({
+          state: 'COLLECTING_ITEMS',
+          customerName: 'Empresa XYZ',
+        })
+      )
     })
   })
 
@@ -362,6 +402,91 @@ describe('ProcessIncomingMessageUseCase', () => {
 
       expect(response).toContain('Não consegui identificar')
       expect(response).toContain('Exemplo')
+    })
+
+    it('deve avançar para AWAITING_TOTAL_VALUE para budgetType = civil', async () => {
+      const sessionRepo = makeSessionRepo({
+        getSession: vi.fn().mockResolvedValue({
+          phone: PHONE,
+          state: 'COLLECTING_ITEMS',
+          userId: 'user-123',
+          budgetType: 'civil',
+          collectedData: 'serviço de pintura',
+        }),
+      })
+      const service = makeService(sessionRepo)
+
+      mockExtractBudgetItems.mockResolvedValueOnce([
+        { title: 'pintura', amount: 1, price: 0 },
+      ])
+
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: '1',
+      })
+
+      expect(response).toContain('valor total')
+      expect(sessionRepo.saveSession).toHaveBeenCalledWith(
+        PHONE,
+        expect.objectContaining({ state: 'AWAITING_TOTAL_VALUE' })
+      )
+    })
+  })
+
+  // =========================================================================
+  describe('processIncomingMessage — estado AWAITING_TOTAL_VALUE', () => {
+    function makeRepoAwaitingTotal() {
+      return makeSessionRepo({
+        getSession: vi.fn().mockResolvedValue({
+          phone: PHONE,
+          state: 'AWAITING_TOTAL_VALUE',
+          userId: 'user-123',
+          budgetType: 'civil',
+        }),
+      })
+    }
+
+    it('deve aceitar valor numérico, salvar e avançar para CONFIRMING', async () => {
+      const sessionRepo = makeRepoAwaitingTotal()
+      const service = makeService(sessionRepo)
+
+      mockExtractTotalValue.mockResolvedValueOnce(1500.5)
+
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'R$ 1.500,50',
+      })
+
+      expect(response).toContain('1.500,50')
+      expect(response).toContain('Confirmo')
+      expect(sessionRepo.saveSession).toHaveBeenCalledWith(
+        PHONE,
+        expect.objectContaining({
+          state: 'CONFIRMING',
+          totalValue: 1500.5,
+        })
+      )
+    })
+
+    it('deve reclamar se o valor for inválido', async () => {
+      const sessionRepo = makeRepoAwaitingTotal()
+      const service = makeService(sessionRepo)
+
+      mockExtractTotalValue.mockResolvedValueOnce(null)
+
+      const response = await service.execute({
+        instanceName: INSTANCE,
+        phone: PHONE,
+        text: 'não sei o preço',
+      })
+
+      expect(response).toContain('Não consegui entender')
+      expect(sessionRepo.saveSession).not.toHaveBeenCalledWith(
+        PHONE,
+        expect.objectContaining({ state: 'CONFIRMING' })
+      )
     })
   })
 

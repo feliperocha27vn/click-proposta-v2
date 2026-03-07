@@ -26,7 +26,7 @@ import { mockRedis } from '../mocks/redis.mock'
 
 vi.mock('../../lib/redis', () => ({ redis: mockRedis }))
 vi.mock('../../lib/axios', () => ({ api: mockApi }))
-vi.mock('../../providers/messaging/evolution-messaging-provider', () => ({
+vi.mock('../../providers/messaging/messaging-provider', () => ({
   EvolutionMessagingProvider: MockEvolutionMessagingProvider,
 }))
 vi.mock('../../providers/ai/gemini-ai-provider', () => ({
@@ -36,21 +36,38 @@ vi.mock('../../providers/ai/gemini-ai-provider', () => ({
 import { app } from '../../app'
 
 // Payload base que a Evolution API envia
-function buildWebhookPayload(overrides: Record<string, unknown> = {}) {
+function buildWebhookPayload(overrides: any = {}) {
+  const baseData = {
+    key: {
+      remoteJid: '5511999999999@s.whatsapp.net',
+      fromMe: false,
+      id: 'msg-' + Math.random().toString(36).substring(7),
+    },
+    pushName: 'Felipe',
+  }
+
+  // Se não for passado nenhum tipo de mensagem nos overrides, usa o default 'Oi'
+  const defaultMessage =
+    !overrides.data?.message || Object.keys(overrides.data.message).length === 0
+      ? { conversation: 'Oi' }
+      : {}
+
   return {
     event: 'messages.upsert',
     instance: 'minha-instancia',
+    ...overrides,
     data: {
+      ...baseData,
+      ...overrides.data,
       key: {
-        remoteJid: '5511999999999@s.whatsapp.net',
-        fromMe: false,
+        ...baseData.key,
+        ...overrides.data?.key,
       },
       message: {
-        conversation: 'Oi',
+        ...defaultMessage,
+        ...overrides.data?.message,
       },
-      pushName: 'Felipe',
     },
-    ...overrides,
   }
 }
 
@@ -119,6 +136,59 @@ describe('POST /webhook', () => {
 
       // A Evolution API não pode receber 500, o webhook sempre responde 200
       expect(response.status).toBe(200)
+    })
+
+    it('deve responder 200 e ignorar se for uma mensagem de grupo', async () => {
+      const response = await request(app.server)
+        .post('/webhook')
+        .send(
+          buildWebhookPayload({
+            data: {
+              key: { remoteJid: '12345678@g.us' },
+            },
+          })
+        )
+
+      expect(response.status).toBe(200)
+      expect(mockApiGet).not.toBeCalled()
+    })
+
+    it('deve responder 200 e ignorar se for uma mensagem de broadcast', async () => {
+      const response = await request(app.server)
+        .post('/webhook')
+        .send(
+          buildWebhookPayload({
+            data: {
+              key: { remoteJid: 'status@broadcast' },
+            },
+          })
+        )
+
+      expect(response.status).toBe(200)
+      expect(mockApiGet).not.toBeCalled()
+    })
+  })
+
+  // =========================================================================
+  describe('idempotência', () => {
+    it('não deve processar a mesma mensagem duas vezes', async () => {
+      mockApiGet.mockResolvedValue({
+        data: { user: { id: 'u1', name: 'Teste' } },
+      })
+
+      const payload = buildWebhookPayload({
+        data: { key: { id: 'msg-idempotencia' } },
+      })
+
+      // Primeira vez: processa
+      const res1 = await request(app.server).post('/webhook').send(payload)
+      expect(res1.status).toBe(200)
+      expect(mockApiGet).toHaveBeenCalledTimes(1)
+
+      // Segunda vez: ignora (idempotência)
+      const res2 = await request(app.server).post('/webhook').send(payload)
+      expect(res2.status).toBe(200)
+      expect(mockApiGet).toHaveBeenCalledTimes(1) // Continua sendo 1
     })
   })
 
@@ -207,12 +277,17 @@ describe('POST /webhook', () => {
         .send(buildWebhookPayload())
 
       expect(response.status).toBe(200)
-      // Verifica que a Evolution API recebeu a resposta do bot
       expect(mockSendText).toHaveBeenCalledWith({
         instanceName: 'minha-instancia',
         phone: '5511999999999',
         text: expect.stringContaining('Felipe'),
       })
+      // Verifica novo response pedindo para escolher tipo de orçamento.
+      expect(mockSendText).toHaveBeenCalledWith(
+        expect.objectContaining({
+          text: expect.stringContaining('Responda com *1* ou *2*'),
+        })
+      )
     })
 
     it('deve remover o @s.whatsapp.net do número do telefone', async () => {
@@ -243,11 +318,13 @@ describe('POST /webhook', () => {
         .send(buildWebhookPayload())
 
       expect(response.status).toBe(200)
-      expect(mockSendText).toHaveBeenCalledWith({
-        instanceName: 'minha-instancia',
-        phone: '5511999999999',
-        text: expect.stringContaining('Click Proposta'),
-      })
+      expect(mockSendText).toHaveBeenCalledWith(
+        expect.objectContaining({
+          instanceName: 'minha-instancia',
+          phone: '5511999999999',
+          text: expect.stringContaining('Click Proposta'),
+        })
+      )
     })
 
     it('deve responder 200 e enviar msg de erro em falhas genéricas', async () => {
@@ -258,11 +335,13 @@ describe('POST /webhook', () => {
         .send(buildWebhookPayload())
 
       expect(response.status).toBe(200)
-      expect(mockSendText).toHaveBeenCalledWith({
-        instanceName: 'minha-instancia',
-        phone: '5511999999999',
-        text: expect.stringContaining('deu errado'),
-      })
+      expect(mockSendText).toHaveBeenCalledWith(
+        expect.objectContaining({
+          instanceName: 'minha-instancia',
+          phone: '5511999999999',
+          text: expect.stringContaining('deu errado'),
+        })
+      )
     })
   })
 })

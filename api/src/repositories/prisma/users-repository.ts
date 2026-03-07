@@ -23,6 +23,8 @@ export class PrismaUsersRepository implements UsersRepository {
         email: true,
         avatarUrl: true,
         isRegisterComplete: true,
+        cnpj: true,
+        address: true,
       },
     })
 
@@ -144,6 +146,7 @@ export class PrismaUsersRepository implements UsersRepository {
       where: { id: userId },
       select: {
         phone: true,
+        name: true,
         email: true,
         cnpj: true,
         avatarUrl: true,

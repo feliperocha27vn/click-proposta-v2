@@ -8,6 +8,7 @@ interface GetDataForCreatePdfProductUseCaseRequest {
 interface GetDataForCreatePdfProductUseCaseResponse {
   user: {
     phone: string
+    name: string | null
     email: string
     avatarUrl: string
     cnpj: string
@@ -30,6 +31,7 @@ export class GetDataForCreatePdfProductUseCase {
     return {
       user: {
         phone: user.phone ?? '',
+        name: user.name ?? null,
         email: user.email ?? '',
         avatarUrl: user.avatarUrl ?? '',
         cnpj: user.cnpj ?? '',

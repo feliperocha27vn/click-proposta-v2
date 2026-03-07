@@ -1,12 +1,37 @@
 import axios from 'axios'
 import { env } from '../../env'
-import type {
-  Base64MediaResponse,
-  GetBase64MediaParams,
-  MessagingProvider,
-  SendPdfParams,
-  SendTextParams,
-} from './messaging-provider'
+export interface SendTextParams {
+  instanceName: string
+  phone: string
+  text: string
+}
+
+export interface SendPdfParams {
+  instanceName: string
+  phone: string
+  base64Pdf: string
+  fileName: string
+}
+
+export interface GetBase64MediaParams {
+  instanceName: string
+  messageId: string
+  remoteJid: string
+  fromMe: boolean
+}
+
+export interface Base64MediaResponse {
+  base64: string
+  mimetype: string
+}
+
+export interface MessagingProvider {
+  sendText(params: SendTextParams): Promise<void>
+  sendPdf(params: SendPdfParams): Promise<void>
+  getBase64Media(
+    params: GetBase64MediaParams
+  ): Promise<Base64MediaResponse | null>
+}
 
 const evolutionApi = axios.create({
   baseURL: env.EVOLUTION_API_URL,

@@ -8,118 +8,158 @@ import {
 } from '@react-pdf/renderer'
 
 const styles = StyleSheet.create({
-  page: { padding: 30, backgroundColor: '#fff' },
+  page: {
+    padding: 30,
+    backgroundColor: '#FFFFFF',
+    fontFamily: 'Helvetica',
+    fontSize: 10,
+    color: '#000',
+  },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 20,
-    borderBottomWidth: 3,
-    borderBottomColor: '#007bff',
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#000',
+    paddingBottom: 10,
   },
-  companyBox: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    marginBottom: 8,
-    borderRadius: 4,
+  logoContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 10,
-  },
-  companyName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 4,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  companyCnpj: {
-    fontSize: 10,
-    color: '#e3f2fd',
-  },
-  proposalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#007bff',
-    textAlign: 'right',
-    paddingVertical: 8,
-  },
-  section: { marginBottom: 18 },
-  sectionTitle: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-    paddingBottom: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  text: { fontSize: 10, color: '#666', marginBottom: 4, lineHeight: 1.4 },
-  table: { width: '100%', marginTop: 10 },
-  tableRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    paddingVertical: 10,
-    minHeight: 40,
-  },
-  tableHeader: {
-    fontWeight: 'bold',
-    backgroundColor: '#f5f5f5',
-    paddingVertical: 12,
-    borderBottomWidth: 2,
-    borderBottomColor: '#007bff',
-  },
-  tableCell: {
-    fontSize: 10,
-    color: '#555',
-    paddingHorizontal: 5,
-    flexWrap: 'wrap',
-    lineHeight: 1.4,
-  },
-  serviceItem: {
-    marginBottom: 10,
-    padding: 8,
-    backgroundColor: '#fafafa',
-    borderLeftWidth: 3,
-    borderLeftColor: '#007bff',
-    borderRadius: 2,
-  },
-  serviceTitle: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 6,
-  },
-  serviceDescription: {
-    fontSize: 9.5,
-    color: '#666',
-    lineHeight: 1.5,
-    textAlign: 'justify',
-  },
-  totalSection: {
-    alignItems: 'flex-end',
-    marginTop: 20,
-    paddingTop: 12,
-    borderTopWidth: 2,
-    borderTopColor: '#007bff',
-  },
-  total: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#007bff',
+    alignItems: 'center',
   },
   companyImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 5,
+    width: 80,
+    height: 80,
   },
-  companyNameBox: {
+  companyInfo: {
     flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  companyName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  companySubText: {
+    fontSize: 10,
+    color: '#333',
+    marginTop: 2,
+  },
+  titleSection: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  mainTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  docNumber: {
+    fontSize: 8,
+    color: '#666',
+    marginTop: 2,
+  },
+  customerBox: {
+    marginVertical: 15,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#000',
+  },
+  customerTitle: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 5,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ccc',
+    paddingBottom: 2,
+  },
+  customerText: {
+    fontSize: 11,
+  },
+  table: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#000',
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#f2f2f2',
+    borderBottomWidth: 1,
+    borderBottomColor: '#000',
+    fontWeight: 'bold',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#eee',
+    minHeight: 30,
+  },
+  cellItem: {
+    width: '10%',
+    padding: 5,
+    borderRightWidth: 1,
+    borderRightColor: '#000',
+    textAlign: 'center',
+  },
+  cellDesc: {
+    width: '90%',
+    padding: 8,
+  },
+  headerText: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    padding: 5,
+  },
+  itemTitle: {
+    fontWeight: 'bold',
+    fontSize: 10,
+    marginBottom: 4,
+  },
+  itemDesc: {
+    fontSize: 9,
+    color: '#333',
+    lineHeight: 1.4,
+  },
+  footer: {
+    marginTop: 30,
+  },
+  totalBox: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  totalLabel: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  totalValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    padding: 5,
+    backgroundColor: '#f2f2f2',
+    borderWidth: 1,
+    borderColor: '#000',
+    minWidth: 100,
+    textAlign: 'right',
+  },
+  observations: {
+    marginTop: 20,
+    fontSize: 8,
+    color: '#666',
+    fontStyle: 'italic',
   },
 })
 
 interface BudgetPdfDocumentProps {
   imgUrl: string | null
   nameUser: string | null
+  documentUser?: string | null
+  addressUser?: string | null
   nameCustomer: string
   emailCustomer: string
   phoneCustomer: string
@@ -147,72 +187,79 @@ export function BudgetPdfDocument(props: BudgetPdfDocumentProps) {
   }
 
   return (
-    <Document title={`Proposta ${props.nameCustomer}`}>
+    <Document title={`Orçamento - ${props.nameCustomer}`}>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
+        {/* Header Tradicional */}
         <View style={styles.header}>
-          <View style={styles.companyBox}>
-            <Image style={styles.companyImage} src={props.imgUrl} />
-            <View style={styles.companyNameBox}>
+          <View style={styles.logoContainer}>
+            {props.imgUrl && (
+              <Image style={styles.companyImage} src={props.imgUrl} />
+            )}
+            <View style={styles.companyInfo}>
               <Text style={styles.companyName}>{props.nameUser}</Text>
+              {props.documentUser && (
+                <Text style={styles.companySubText}>
+                  CNPJ: {props.documentUser}
+                </Text>
+              )}
+              {props.addressUser && (
+                <Text style={styles.companySubText}>{props.addressUser}</Text>
+              )}
             </View>
           </View>
-          <Text style={styles.proposalTitle}>ORÇAMENTO</Text>
+          <View style={styles.titleSection}>
+            <Text style={styles.mainTitle}>ORÇAMENTO</Text>
+            <Text style={styles.docNumber}>
+              Data: {new Date().toLocaleDateString('pt-BR')}
+            </Text>
+          </View>
         </View>
 
-        {/* Cliente */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Cliente</Text>
-          <Text style={styles.text}>Nome: {props.nameCustomer}</Text>
-          <Text style={styles.text}>Email: {props.emailCustomer}</Text>
-          <Text style={styles.text}>Telefone: {props.phoneCustomer}</Text>
+        {/* Box do Cliente */}
+        <View style={styles.customerBox}>
+          <Text style={styles.customerTitle}>Dados do Cliente</Text>
+          <Text style={styles.customerText}>
+            Destinatário: {props.nameCustomer}
+          </Text>
         </View>
 
-        {/* Itens */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Itens da Proposta</Text>
+        {/* Tabela de Serviços */}
+        <View style={styles.table}>
+          <View style={styles.tableHeader}>
+            <Text style={[styles.cellItem, styles.headerText]}>Item</Text>
+            <Text style={[styles.cellDesc, styles.headerText]}>
+              Descrição dos Serviços
+            </Text>
+          </View>
+
           {props.services.map((item, index) => (
-            <View key={item.id} style={styles.serviceItem} wrap={false}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginBottom: 6,
-                }}
-              >
-                <Text style={{ ...styles.serviceTitle, flex: 1 }}>
-                  {index + 1}. {item.title}
-                </Text>
-                <View style={{ flexDirection: 'row', gap: 15 }}>
-                  {item.price && item.price > 0 ? (
-                    <>
-                      {item.quantity && (
-                        <Text style={{ fontSize: 10, color: '#555' }}>
-                          Qtd: {item.quantity}
-                        </Text>
-                      )}
-                      <Text
-                        style={{
-                          fontSize: 10,
-                          color: '#555',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {formatCurrency(Number(item.price))}
-                      </Text>
-                    </>
-                  ) : null}
-                </View>
+            <View key={item.id} style={styles.tableRow} wrap={false}>
+              <Text style={styles.cellItem}>
+                {String(index + 1).padStart(2, '0')}
+              </Text>
+              <View style={styles.cellDesc}>
+                <Text style={styles.itemTitle}>{item.title}</Text>
+                {item.description && (
+                  <Text style={styles.itemDesc}>{item.description}</Text>
+                )}
               </View>
-              <Text style={styles.serviceDescription}>{item.description}</Text>
             </View>
           ))}
         </View>
 
-        {/* Total */}
-        <View style={styles.totalSection}>
-          <Text style={styles.total}>
-            Total: {formatCurrency(Number(props.total))}
+        {/* Rodapé com Total */}
+        <View style={styles.footer}>
+          <View style={styles.totalBox}>
+            <Text style={styles.totalLabel}>VALOR TOTAL DO ORÇAMENTO:</Text>
+            <Text style={styles.totalValue}>
+              {formatCurrency(Number(props.total))}
+            </Text>
+          </View>
+
+          <Text style={styles.observations}>
+            * Este orçamento tem validade de 10 dias a partir da data de
+            emissão. As condições de pagamento serão combinadas diretamente com
+            o prestador.
           </Text>
         </View>
       </Page>

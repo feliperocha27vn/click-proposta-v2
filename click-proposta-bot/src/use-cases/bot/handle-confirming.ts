@@ -45,45 +45,60 @@ export class HandleConfirmingUseCase {
           title: string
           amount: number
           price: number
+          description?: string
         }
 
         // Calcula o valor total do orçamento informando 0 se a Gemini não achou preço
-        const totalValue = items.reduce(
+        const calculatedTotal = items.reduce(
           (acc: number, item: BudgetItem) =>
             acc + (item.price || 0) * (item.amount || 1),
           0
         )
 
+        const finalTotal = session.totalValue || calculatedTotal
+
         // Mapeia os itens da Gemini para o formato exato que a API espera (services)
         const mappedServices = items.map((item: BudgetItem) => ({
           title: item.title,
-          description: '',
+          description: item.description || '',
           quantity: item.amount || 1,
           price: item.price || 0,
         }))
 
-        const endpoint =
-          budgetType === 'product' ? '/pdf/generate-product' : '/pdf/generate'
+        const isCivil = budgetType === 'civil'
+        const endpoint = isCivil ? '/pdf/generate' : '/pdf/generate-product'
 
-        const response = await api.post(
-          endpoint,
-          {
-            userId: session.userId,
-            total: String(totalValue),
-            services: mappedServices,
+        const payload: Record<string, unknown> = {
+          userId: session.userId,
+          total: String(finalTotal),
+          services: mappedServices,
+        }
+
+        if (isCivil && session.customerName) {
+          payload.nameCustomer = session.customerName
+        }
+
+        const response = await api.post(endpoint, payload, {
+          headers: {
+            Authorization: `Bearer ${env.BOT_SERVICE_TOKEN}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${env.BOT_SERVICE_TOKEN}`,
-            },
-            responseType: 'arraybuffer',
-          }
-        )
+          responseType: 'arraybuffer',
+        })
 
         const base64Pdf = Buffer.from(response.data, 'binary').toString(
           'base64'
         )
-        const fileName = `orcamento-${budgetType}-${Date.now()}.pdf`
+        const sanitizeFilename = (name: string) => {
+          return name
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-zA-Z0-9]/g, '_')
+        }
+
+        const customerPart = session.customerName
+          ? `-${sanitizeFilename(session.customerName)}`
+          : ''
+        const fileName = `orcamento-${budgetType}${customerPart}.pdf`
 
         await this.messagingProvider.sendPdf({
           instanceName,

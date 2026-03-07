@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { makeProcessIncomingMessageUseCase } from '../../../factories/make-process-incoming-message-use-case'
+import { redis } from '../../../lib/redis'
 import { GeminiAiProvider } from '../../../providers/ai/gemini-ai-provider'
 import { EvolutionMessagingProvider } from '../../../providers/messaging/messaging-provider'
 
@@ -36,7 +37,31 @@ export async function webhookRoutes(app: FastifyInstance) {
       }
 
       const instanceName = body.instance
-      const phone = body.data.key.remoteJid.replace('@s.whatsapp.net', '')
+      const remoteJid = body.data.key.remoteJid
+      const messageId = body.data.key.id
+
+      // 1.1 Filtragem de JID: Ignora se for grupo (@g.us) ou broadcast (@broadcast)
+      if (
+        !remoteJid.endsWith('@s.whatsapp.net') &&
+        !remoteJid.endsWith('@c.us')
+      ) {
+        return reply.status(200).send()
+      }
+
+      // 1.2 Idempotência: Evita processar a mesma mensagem mais de uma vez (webhook duplicado)
+      if (messageId) {
+        const lockKey = `msg:processed:${messageId}`
+        const isProcessed = await redis.get(lockKey)
+
+        if (isProcessed) {
+          return reply.status(200).send()
+        }
+
+        // Marca como processada por 1 minuto (tempo suficiente para evitar duplicatas da Evolution)
+        await redis.set(lockKey, 'true', 'EX', 60)
+      }
+
+      const phone = remoteJid.split('@')[0].split(':')[0]
 
       // Extrai o texto da mensagem (A Evolution API envia em vários formatos dependendo se é texto puro, resposta, etc)
       const messageData = body.data.message

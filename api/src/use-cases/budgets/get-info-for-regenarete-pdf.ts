@@ -12,6 +12,8 @@ interface GetInfoForRegenaretePdfUseCaseRequest {
 interface GetInfoForRegenaretePdfUseCaseResponse {
   imgUrl: string | null
   nameUser: string | null
+  documentUser: string | null
+  addressUser: string | null
   nameCustomer: string
   emailCustomer: string
   phoneCustomer: string
@@ -60,6 +62,8 @@ export class GetInfoForRegenaretePdfUseCase {
     return {
       imgUrl: user.avatarUrl,
       nameUser: user.name,
+      documentUser: user.cnpj,
+      addressUser: user.address,
       nameCustomer: customer.name,
       emailCustomer: customer.email,
       phoneCustomer: customer.phone,

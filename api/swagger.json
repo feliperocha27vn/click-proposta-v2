@@ -2493,6 +2493,12 @@
                   "nameUser": {
                     "type": "string"
                   },
+                  "documentUser": {
+                    "type": "string"
+                  },
+                  "addressUser": {
+                    "type": "string"
+                  },
                   "nameCustomer": {
                     "type": "string"
                   },

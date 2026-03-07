@@ -27,6 +27,8 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
           userId: z.string().optional(),
           imgUrl: z.string().optional(),
           nameUser: z.string().optional(),
+          documentUser: z.string().optional(),
+          addressUser: z.string().optional(),
           nameCustomer: z.string().optional(),
           emailCustomer: z.string().optional(),
           phoneCustomer: z.string().optional(),
@@ -48,6 +50,8 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
       const {
         imgUrl,
         nameUser,
+        documentUser,
+        addressUser,
         nameCustomer,
         emailCustomer,
         phoneCustomer,
@@ -63,11 +67,12 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
           return reply.status(400).send({ message: 'User ID is required' })
         }
 
-        // Recupera os dados do dono do bot se estiverem faltando no body
         let finalNameUser = nameUser
         let finalImgUrl = imgUrl
         let finalPhone = phoneCustomer
         let finalEmail = emailCustomer
+        let finalDocumentUser = documentUser
+        let finalAddressUser = addressUser
 
         if (!nameUser || !imgUrl) {
           const getDataUseCase = makeGetDataForCreatePdfProductUseCase()
@@ -75,10 +80,12 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
             userId: targetUserId,
           })
 
-          finalNameUser = user.phone
+          finalNameUser = user.name || user.phone
           finalPhone = user.phone
           finalEmail = user.email
           finalImgUrl = user.avatarUrl
+          finalDocumentUser = user.cnpj
+          finalAddressUser = user.address
         }
 
         const normalizedServices = services.map(s => ({
@@ -91,6 +98,8 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
         const pdfDocument = React.createElement(BudgetPdfDocument, {
           imgUrl: finalImgUrl || '',
           nameUser: finalNameUser || 'Usuário Click Proposta',
+          documentUser: finalDocumentUser || '',
+          addressUser: finalAddressUser || '',
           nameCustomer: nameCustomer || 'Cliente',
           emailCustomer: finalEmail || '',
           phoneCustomer: finalPhone || '',
@@ -101,10 +110,19 @@ export const generatePdfDocument: FastifyPluginAsyncZod = async app => {
 
         const stream = await renderToStream(pdfDocument)
 
+        const sanitizeFilename = (name: string) => {
+          return name
+            .normalize('NFD') // Normaliza para decompor acentos
+            .replace(/[\u0300-\u036f]/g, '') // Remove os acentos
+            .replace(/[^a-zA-Z0-9]/g, '_') // Substitui caracteres especiais por underline
+        }
+
+        const safeFilename = `${sanitizeFilename(nameCustomer || 'orcamento')}.pdf`
+
         reply.header('Content-Type', 'application/pdf')
         reply.header(
           'Content-Disposition',
-          `attachment; filename="${nameCustomer}.pdf"`
+          `attachment; filename="${safeFilename}"`
         )
 
         return reply.send(stream)

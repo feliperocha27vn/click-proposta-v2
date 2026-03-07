@@ -1,0 +1,161 @@
+
+> click-proposta-bot@1.0.0 test
+> vitest run
+
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90mC:/Users/felip/Documents/eu_memo/www/click-proposta-v2/click-proposta-bot[39m
+
+[90mstdout[2m | src/tests/unit/session-repository.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (1) from .env.test -- tip: ÔÜí´©Å secrets for agents: https://dotenvx.com/as2
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (1) from .env.test -- tip: ­ƒöÉ prevent committing .env to code: https://dotenvx.com/precommit
+
+[90mstdout[2m | src/tests/unit/process-incoming-message.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (1) from .env.test -- tip: ÔÜÖ´©Å  load multiple .env files with { path: ['.env.local', '.env'] }
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts
+[22m[39m[dotenv@17.3.1] injecting env (1) from .env.test -- tip: ­ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+
+ [32mÔ£ô[39m src/tests/unit/session-repository.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [31mÔØ»[39m src/tests/unit/process-incoming-message.test.ts [2m([22m[2m0 test[22m[2m)[22m
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve extrair itens simples de uma mensagem clara
+[22m[39m[Gemini] Racioc├¡nio: Racioc├¡nio de teste....
+[Gemini] Extra├º├úo Sucedida: 1 itens encontrados em "manda 3 pastilha de freio"
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve extrair m├║ltiplos itens de uma mensagem com g├¡rias
+[22m[39m[Gemini] Racioc├¡nio: Racioc├¡nio de teste....
+[Gemini] Extra├º├úo Sucedida: 2 itens encontrados em "fala meu truta blz me ve ai um par de pneu aro 15 e meia duz"
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve extrair item com pre├ºo expl├¡cito
+[22m[39m[Gemini] Racioc├¡nio: Racioc├¡nio de teste....
+[Gemini] Extra├º├úo Sucedida: 1 itens encontrados em "5 sacos de cimento 50kg cada um custou R$35,50"
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve retornar price null quando o pre├ºo n├úo for informado
+[22m[39m[Gemini] Racioc├¡nio: Racioc├¡nio de teste....
+[Gemini] Extra├º├úo Sucedida: 1 itens encontrados em "1000 tijolos"
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve retornar array vazio quando o campo items estiver ausente na resposta
+[22m[39m[Gemini] Racioc├¡nio: Algo saiu errado...
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve passar o budgetType correto no prompt para or├ºamento civil
+[22m[39m[Gemini] Racioc├¡nio: Racioc├¡nio de teste....
+[Gemini] Extra├º├úo Sucedida: 1 itens encontrados em "instala├º├úo de pia"
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve passar o budgetType correto no prompt para or├ºamento de produtos
+[22m[39m[Gemini] Racioc├¡nio: Racioc├¡nio de teste....
+[Gemini] Extra├º├úo Sucedida: 1 itens encontrados em "10 parafusos"
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mextractBudgetItems[2m > [22m[2mdeve chamar o Gemini com temperatura 0 para extra├º├úo determin├¡stica
+[22m[39m[Gemini] Racioc├¡nio: Racioc├¡nio de teste....
+[Gemini] Extra├º├úo Sucedida: 1 itens encontrados em "um item"
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mtranscribeAudio[2m > [22m[2mdeve transcrever ├íudio em base64 com sucesso
+[22m[39m[Gemini] ├üudio transcrito com sucesso: "este ├® um teste de transcri├º├úo de ├íudio..."
+
+[90mstdout[2m | src/tests/unit/gemini-ai-provider.test.ts[2m > [22m[2mGeminiAiProvider[2m > [22m[2mtranscribeAudio[2m > [22m[2mdeve retornar string vazia caso o retorno seja nulo
+[22m[39m[Gemini] ├üudio transcrito com sucesso: "..."
+
+ [32mÔ£ô[39m src/tests/unit/gemini-ai-provider.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfiltragem e ignorar mensagens[2m > [22m[2mdeve responder 200 e ignorar mensagens sem texto (ex: imagem, sticker)
+[22m[39m[Webhook] Mensagem n├úo suportada recebida de 5511999999999
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mextra├º├úo do texto da mensagem[2m > [22m[2mdeve processar texto via extendedTextMessage (formato alternativo)
+[22m[39m[Webhook] Mensagem recebida de 5511999999999 [minha-instancia]: mensagem estendida
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mextra├º├úo do texto da mensagem[2m > [22m[2mdeve processar texto via extendedTextMessage (formato alternativo)
+[22m[39m[UseCase: HandleNewUser] Verificando telefone no backend: 11999999999 (URL: http://localhost:3333/verify-phone)
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mextra├º├úo do texto da mensagem[2m > [22m[2mdeve processar texto via extendedTextMessage (formato alternativo)
+[22m[39m[Bot] Resposta para 5511999999999: ­ƒæï Ol├í, *User Ext*! Que bom ter voc├¬ aqui.
+
+Para come├ºar, qual o tipo do seu or├ºamento?
+
+*1* ÔÇö Produtos
+*2* ÔÇö Servi├ºo Civil
+
+Responda com *1* ou *2*.
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mextra├º├úo do texto da mensagem[2m > [22m[2mdeve processar ├íudio via audioMessage
+[22m[39m[Webhook] Baixando ├íudio da mensagem msg-123...
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mextra├º├úo do texto da mensagem[2m > [22m[2mdeve processar ├íudio via audioMessage
+[22m[39m[Webhook] Mensagem n├úo suportada recebida de 5511999999999
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mhappy path ÔÇö deve chamar API, salvar sess├úo e enviar sauda├º├úo
+[22m[39m[Webhook] Mensagem recebida de 5511999999999 [minha-instancia]: Oi
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mhappy path ÔÇö deve chamar API, salvar sess├úo e enviar sauda├º├úo
+[22m[39m[UseCase: HandleNewUser] Verificando telefone no backend: 11999999999 (URL: http://localhost:3333/verify-phone)
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mhappy path ÔÇö deve chamar API, salvar sess├úo e enviar sauda├º├úo
+[22m[39m[Bot] Resposta para 5511999999999: ­ƒæï Ol├í, *User Audio*! Que bom ter voc├¬ aqui.
+
+Para come├ºar, qual o tipo do seu or├ºamento?
+
+*1* ÔÇö Produtos
+*2* ÔÇö Servi├ºo Civil
+
+Responda com *1* ou *2*.
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve remover o @s.whatsapp.net do n├║mero do telefone
+[22m[39m[Webhook] Mensagem recebida de 5511999999999 [minha-instancia]: Oi
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve remover o @s.whatsapp.net do n├║mero do telefone
+[22m[39m[UseCase: HandleNewUser] Verificando telefone no backend: 11999999999 (URL: http://localhost:3333/verify-phone)
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve remover o @s.whatsapp.net do n├║mero do telefone
+[22m[39m[Bot] Resposta para 5511999999999: ­ƒæï Ol├í, *Felipe*! Que bom ter voc├¬ aqui.
+
+Para come├ºar, qual o tipo do seu or├ºamento?
+
+*1* ÔÇö Produtos
+*2* ÔÇö Servi├ºo Civil
+
+Responda com *1* ou *2*.
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve responder 200 e enviar msg de cadastro quando usu├írio n├úo encontrado (404)
+[22m[39m[Webhook] Mensagem recebida de 5511999999999 [minha-instancia]: Oi
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve responder 200 e enviar msg de cadastro quando usu├írio n├úo encontrado (404)
+[22m[39m[UseCase: HandleNewUser] Verificando telefone no backend: 11999999999 (URL: http://localhost:3333/verify-phone)
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve responder 200 e enviar msg de cadastro quando usu├írio n├úo encontrado (404)
+[22m[39m[Bot] Resposta para 5511999999999: ­ƒæï Ol├í, *Teste*! Que bom ter voc├¬ aqui.
+
+Para come├ºar, qual o tipo do seu or├ºamento?
+
+*1* ÔÇö Produtos
+*2* ÔÇö Servi├ºo Civil
+
+Responda com *1* ou *2*.
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve responder 200 e enviar msg de erro em falhas gen├®ricas
+[22m[39m[Webhook] Mensagem recebida de 5511999999999 [minha-instancia]: Oi
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve responder 200 e enviar msg de erro em falhas gen├®ricas
+[22m[39m[UseCase: HandleNewUser] Verificando telefone no backend: 11999999999 (URL: http://localhost:3333/verify-phone)
+
+[90mstdout[2m | src/tests/integration/webhook.test.ts[2m > [22m[2mPOST /webhook[2m > [22m[2mfluxo de novo usu├írio[2m > [22m[2mdeve responder 200 e enviar msg de erro em falhas gen├®ricas
+[22m[39m[Bot] Resposta para 5511999999999: ­ƒÿò Hmm, n├úo encontrei seu n├║mero no *Click Proposta*.
+
+Para usar o bot, voc├¬ precisa ter uma conta ativa. Crie a sua em:
+­ƒæë https://click-proposta.umdoce.dev.br/login
+
+ [31mÔØ»[39m src/tests/integration/webhook.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 123[2mms[22m[39m
+       [32mÔ£ô[39m deve responder 200 e ignorar eventos que n├úo sejam messages.upsert[32m 19[2mms[22m[39m
+       [32mÔ£ô[39m deve responder 200 e ignorar mensagens enviadas pelo pr├│prio bot (fromMe: true)[32m 8[2mms[22m[39m
+       [32mÔ£ô[39m deve responder 200 e ignorar mensagens sem texto (ex: imagem, sticker)[32m 3[2mms[22m[39m
+       [32mÔ£ô[39m deve responder 200 mesmo se o body for inv├ílido (Zod parse error)[32m 6[2mms[22m[39m
+       [32mÔ£ô[39m deve processar texto via extendedTextMessage (formato alternativo)[32m 25[2mms[22m[39m
+[31m       [31m├ù[31m deve processar ├íudio via audioMessage[39m[32m 13[2mms[22m[39m
+[31m       [31m├ù[31m happy path ÔÇö deve chamar API, salvar sess├úo e enviar sauda├º├úo[39m[32m 10[2mms[22m[39m
+[31m       [31m├ù[31m deve remover o @s.whatsapp.net do n├║mero do telefone[39m[32m 10[2mms[22m[39m
+[31m       [31m├ù[31m deve responder 200 e enviar msg de cadastro quando usu├írio n├úo encontrado (404)[39m[32m 11[2mms[22m[39m
+[31m       [31m├ù[31m deve responder 200 e enviar msg de erro em falhas gen├®ricas[39m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m27 passed[39m[22m[90m (32)[39m
+[2m   Start at [22m 10:10:33
+[2m   Duration [22m 936ms[2m (transform 517ms, setup 222ms, import 917ms, tests 144ms, environment 1ms)[22m
+

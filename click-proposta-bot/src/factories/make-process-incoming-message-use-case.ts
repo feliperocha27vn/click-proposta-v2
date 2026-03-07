@@ -1,6 +1,8 @@
 import { GeminiAiProvider } from '../providers/ai/gemini-ai-provider'
 import { EvolutionMessagingProvider } from '../providers/messaging/messaging-provider'
 import { SessionRepository } from '../repositories/session-repository'
+import { HandleAwaitingCustomerNameUseCase } from '../use-cases/bot/handle-awaiting-customer-name'
+import { HandleAwaitingTotalValueUseCase } from '../use-cases/bot/handle-awaiting-total-value'
 import { HandleAwaitingTypeUseCase } from '../use-cases/bot/handle-awaiting-type'
 import { HandleCollectingItemsUseCase } from '../use-cases/bot/handle-collecting-items'
 import { HandleConfirmingUseCase } from '../use-cases/bot/handle-confirming'
@@ -14,6 +16,13 @@ export function makeProcessIncomingMessageUseCase() {
 
   const handleNewUser = new HandleNewUserUseCase(sessionRepository)
   const handleAwaitingType = new HandleAwaitingTypeUseCase(sessionRepository)
+  const handleAwaitingCustomerName = new HandleAwaitingCustomerNameUseCase(
+    sessionRepository
+  )
+  const handleAwaitingTotalValue = new HandleAwaitingTotalValueUseCase(
+    sessionRepository,
+    aiProvider
+  )
   const handleCollectingItems = new HandleCollectingItemsUseCase(
     sessionRepository,
     aiProvider
@@ -27,6 +36,8 @@ export function makeProcessIncomingMessageUseCase() {
     sessionRepository,
     handleNewUser,
     handleAwaitingType,
+    handleAwaitingCustomerName,
+    handleAwaitingTotalValue,
     handleCollectingItems,
     handleConfirming
   )

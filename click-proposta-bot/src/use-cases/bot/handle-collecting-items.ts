@@ -40,20 +40,28 @@ export class HandleCollectingItemsUseCase {
 
       // 2. Formatar o resumo para o usuário
       let summaryText = ''
-      let totalAmount = 0
+      let totalAmountItems = 0
+      const isCivil = session.budgetType === 'civil'
 
       for (const item of extractedItems) {
-        summaryText += `• ${item.amount}x ${item.title}${item.price ? ` — R$ ${item.price}` : ''}\n`
-        totalAmount += item.amount
+        const amountPrefix = isCivil ? '' : `${item.amount}x `
+        summaryText += `• ${amountPrefix}${item.title}${item.price ? ` — R$ ${item.price}` : ''}\n`
+        totalAmountItems += item.amount
       }
 
-      // 3. Salvar os itens extraídos na sessão para o próximo passo usar
+      // 3. Salvar os itens extraídos na sessão
+      const nextState = isCivil ? 'AWAITING_TOTAL_VALUE' : 'CONFIRMING'
+
       await this.sessionRepository.saveSession(phone, {
-        state: 'CONFIRMING',
+        state: nextState,
         extractedItems: JSON.stringify(extractedItems),
       })
 
-      return `📋 *Resumo do seu orçamento:*\n\n${summaryText}\nTotal de itens: *${totalAmount}*\n\nConfirmo a geração do PDF?\n\n*Sim* — Gerar PDF\n*Não* — Cancelar`
+      if (isCivil) {
+        return `📋 *Resumo dos itens:*\n\n${summaryText}\n💰 Qual o *valor total* deste serviço?`
+      }
+
+      return `📋 *Resumo do seu orçamento:*\n\n${summaryText}\nTotal de itens: *${totalAmountItems}*\n\nConfirmo a geração do PDF?\n\n*Sim* — Gerar PDF\n*Não* — Cancelar`
     }
 
     // Acumula o que a pessoa está dizendo

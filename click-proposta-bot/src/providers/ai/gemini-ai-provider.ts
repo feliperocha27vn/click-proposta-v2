@@ -21,7 +21,7 @@ export class GeminiAiProvider implements AiProvider {
 
     try {
       const response = await gemini.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.1-flash-lite-preview',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',
@@ -42,7 +42,7 @@ export class GeminiAiProvider implements AiProvider {
         `[Gemini] Raciocínio: ${parsed._raciocinio?.substring(0, 120)}...`
       )
       console.log(
-        `[Gemini] Extração Sucedida: ${parsed.items.length} itens encontrados em "${text.substring(0, 60)}"`
+        `[Gemini] Extração Sucedida: ${parsed.items?.length ?? 0} itens encontrados em "${text.substring(0, 60)}"`
       )
 
       return parsed.items ?? []
@@ -90,6 +90,50 @@ export class GeminiAiProvider implements AiProvider {
     } catch (error) {
       console.error('[Gemini] Erro crítico ao transcrever áudio:', error)
       return ''
+    }
+  }
+
+  async extractTotalValue(text: string): Promise<number | null> {
+    try {
+      const response = await gemini.models.generateContent({
+        model: 'gemini-3.1-flash-lite-preview',
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: `Extraia o valor monetário total do seguinte texto. 
+                Se o texto disser algo como "20 mil", entenda como 20000. 
+                Retorne APENAS um JSON no formato {"total": number}. 
+                Se não houver valor, retorne {"total": null}.
+                
+                Texto: "${text}"`,
+              },
+            ],
+          },
+        ],
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: 'OBJECT',
+            properties: {
+              total: { type: 'NUMBER' },
+            },
+          },
+          temperature: 0,
+        },
+      })
+
+      const jsonText = response.text
+      if (!jsonText) return null
+
+      const parsed = JSON.parse(jsonText) as { total: number | null }
+      console.log(`[Gemini] Valor total extraído: ${parsed.total} de "${text}"`)
+
+      return parsed.total
+    } catch (error) {
+      console.error('[Gemini] Erro ao extrair valor total:', error)
+      return null
     }
   }
 }

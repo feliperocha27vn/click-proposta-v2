@@ -37,6 +37,26 @@ export class MockRedis {
   flush() {
     this.store.clear()
     this.ttls.clear()
+    this.keyValues.clear()
+  }
+
+  private keyValues: Map<string, string> = new Map()
+
+  async get(key: string): Promise<string | null> {
+    return this.keyValues.get(key) ?? null
+  }
+
+  async set(
+    key: string,
+    value: string,
+    mode?: string,
+    duration?: number
+  ): Promise<'OK'> {
+    this.keyValues.set(key, value)
+    if (mode === 'EX' && duration) {
+      this.ttls.set(key, duration)
+    }
+    return 'OK'
   }
 
   /** Utilitário de teste: espia o TTL salvo */

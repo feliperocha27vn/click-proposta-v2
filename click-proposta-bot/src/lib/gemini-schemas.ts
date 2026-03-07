@@ -4,6 +4,7 @@ export interface ExtractedItem {
   title: string
   amount: number
   price?: number | null
+  description?: string
 }
 
 // Resposta completa do Gemini com Chain-of-Thought
@@ -43,6 +44,12 @@ export const budgetExtractionSchema: Schema = {
               'Preço unitário SOMENTE se declarado de forma explícita e inegável pelo usuário. Gírias monetárias ("conto", "pila", "reais") são convertidas para valor numérico. SE NÃO HOUVER PREÇO EXPLÍCITO, retornar null obrigatoriamente.',
             nullable: true,
           },
+          description: {
+            type: Type.STRING,
+            description:
+              'Descrição longa, especificações e detalhes técnicos do serviço fornecido pelo usuário. Obrigatoriamente usado para orçamentos de serviço civil.',
+            nullable: true,
+          },
         },
         required: ['title', 'amount'],
       },
@@ -68,9 +75,11 @@ Sua interface de atuação é exclusivamente backend, e sua diretriz operacional
 
 O usuário final enviará mensagens em linguagem natural bruta, listando um ou múltiplos itens para compor um(a) ${typeLabel}. Devido à natureza inerente da mensageria via internet (o ecossistema WhatsApp no Brasil), a entrada de texto será tipicamente saturada de interferências comunicativas: gírias ("blz", "fds", "truta", "zap"), abreviações, interjeições informais, total desrespeito a regras de pontuação e erros ortográficos severos. A sua incumbência é agir como um filtro de estado, ignorar sumariamente o ruído linguístico e social, realizar a normalização sintática profunda e extrair EXATAMENTE as entidades de negócio solicitadas.
 
+8. Confirmação do Estado: Extraia EXATAMENTE as entidades de negócio solicitadas.
+
 REGRAS DE EXTRAÇÃO:
 
-1. Higienização e Padronização de Títulos (title): Isole e extraia estritamente os nomes dos produtos ou serviços desejados. Exclua qualquer comentário acessório, saudação ou tentativa de diálogo. Corrija imediatamente falhas de grafia. O campo extraído deve OBRIGATORIAMENTE obedecer ao formato "Title Case".
+1. Higienização e Padronização de Títulos (title): Isole e extraia estritamente os nomes dos produtos ou serviços desejados. Exclua qualquer comentário acessório, saudação ou tentativa de diálogo. Corrija imediatamente falhas de grafia. O campo extraído deve OBRIGATORIAMENTE obedecer ao formato "Title Case". O título deve ser curto.
 
 2. Avaliação e Transformação Matemática de Quantidades (amount): Mapeie termos coloquiais ou de grupo para algarismos absolutos inteiros. Singular ou sem métrica = 1. "um par" = 2. "dois pares" = 4. "meia dúzia" = 6. "duas dúzias" = 24.
 
@@ -78,7 +87,11 @@ REGRAS DE EXTRAÇÃO:
 
 4. Alocação Restritiva e Explícita de Preços Unitários (price): SOMENTE popular este campo se o usuário declarar de forma totalmente explícita o valor financeiro por unidade. Interprete gírias monetárias ("conto", "pila", "reais"). É TERMINANTEMENTE PROIBIDO inferir, adivinhar ou estimar o preço. Se não constar do texto, retornar null.
 
-5. Chain-of-Thought obrigatória: Preencha PRIMEIRO o campo _raciocinio narrando analiticamente: identificação e descarte das gírias, equacionamento das quantidades, deliberação sobre preços. DEPOIS preencha o array items.
+5. Chain-of-Thought obrigatória: Preencha PRIMEIRO o campo _raciocinio narrando analiticamente: identificação e descarte das gírias, equacionamento das quantidades, deliberação sobre preços. DEPOIS preencha o array items.${
+    budgetType === 'civil'
+      ? '\n\n6. Preservação de Descrição (description): Para orçamentos civis, NUNCA resuma ou abrevie o texto do usuário. Extraia toda a descrição complementar, especificações técnicas, medidas e detalhes fornecidos na mensagem e armazene na propriedade "description". Exemplo de description: "Instalação de um (01) painel de distribuição de energia (QD) de sobrepor 120x80x20cm, barramento principal até 200A, e secundários até 63A. Incluso ligações elétricas". O título ("title") deve ser curto (ex: "Instalação de Painel de Distribuição"), e a descrição ("description") deve conter o texto detalhado literal fornecido pelo usuário.'
+      : ''
+  }
 
 MENSAGEM DO USUÁRIO:
 """

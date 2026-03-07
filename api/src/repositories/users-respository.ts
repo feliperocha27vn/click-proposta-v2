@@ -14,6 +14,8 @@ export interface GetUserById {
   avatarUrl: string | null
   plan: 'FREE' | 'PRO'
   isRegisterComplete: boolean
+  cnpj: string | null
+  address: string | null
 }
 
 export interface UsersRepository {

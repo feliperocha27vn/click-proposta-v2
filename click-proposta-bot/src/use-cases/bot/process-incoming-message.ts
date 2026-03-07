@@ -1,4 +1,6 @@
 import type { SessionRepository } from '../../repositories/session-repository'
+import type { HandleAwaitingCustomerNameUseCase } from './handle-awaiting-customer-name'
+import type { HandleAwaitingTotalValueUseCase } from './handle-awaiting-total-value'
 import type { HandleAwaitingTypeUseCase } from './handle-awaiting-type'
 import type { HandleCollectingItemsUseCase } from './handle-collecting-items'
 import type { HandleConfirmingUseCase } from './handle-confirming'
@@ -15,6 +17,8 @@ export class ProcessIncomingMessageUseCase {
     private sessionRepository: SessionRepository,
     private handleNewUser: HandleNewUserUseCase,
     private handleAwaitingType: HandleAwaitingTypeUseCase,
+    private handleAwaitingCustomerName: HandleAwaitingCustomerNameUseCase,
+    private handleAwaitingTotalValue: HandleAwaitingTotalValueUseCase,
     private handleCollectingItems: HandleCollectingItemsUseCase,
     private handleConfirming: HandleConfirmingUseCase
   ) {}
@@ -36,6 +40,12 @@ export class ProcessIncomingMessageUseCase {
     switch (session.state) {
       case 'AWAITING_TYPE':
         return this.handleAwaitingType.execute({ phone, text })
+
+      case 'AWAITING_CUSTOMER_NAME':
+        return this.handleAwaitingCustomerName.execute({ phone, text })
+
+      case 'AWAITING_TOTAL_VALUE':
+        return this.handleAwaitingTotalValue.execute({ phone, text })
 
       case 'COLLECTING_ITEMS':
         return this.handleCollectingItems.execute({ session, phone, text })

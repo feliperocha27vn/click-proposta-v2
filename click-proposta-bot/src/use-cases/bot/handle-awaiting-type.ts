@@ -25,11 +25,19 @@ export class HandleAwaitingTypeUseCase {
 
     const budgetType = isProduct ? 'product' : 'civil'
 
+    if (isProduct) {
+      await this.sessionRepository.saveSession(phone, {
+        state: 'COLLECTING_ITEMS',
+        budgetType,
+      })
+      return '✅ Ótimo! Agora me mande os itens do orçamento.\n\nPode digitar assim:\n_2x Parafuso phillips 5cm — R$ 0,50_\n_1x Cimento 50kg — R$ 35,00_\n\nOu envie um áudio com os itens.\n\nQuando terminar, envie *1*.'
+    }
+
+    // isCivil
     await this.sessionRepository.saveSession(phone, {
-      state: 'COLLECTING_ITEMS',
+      state: 'AWAITING_CUSTOMER_NAME',
       budgetType,
     })
-
-    return '✅ Ótimo! Agora me mande os itens do orçamento.\n\nPode digitar assim:\n_2x Parafuso phillips 5cm — R$ 0,50_\n_1x Cimento 50kg — R$ 35,00_\n\nOu envie um áudio com os itens.\n\nQuando terminar, envie *1*.'
+    return 'Certo! Para começarmos, qual é o nome do cliente?'
   }
 }
