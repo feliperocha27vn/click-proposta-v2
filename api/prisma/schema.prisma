@@ -28,9 +28,9 @@ model User {
   Customers          Customers[]
   Payments           Payments[]
   ProposalDraft      ProposalDraft[]
+  ProposalLog        ProposalLog[]
   Proposal           Proposal[]
   Services           Services[]
-  ProposalLog        ProposalLog[]
 
   @@map("users")
 }
@@ -100,8 +100,8 @@ model ProposalServices {
 model Payments {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
-  stripeId  String   @unique @map("stripe_id")
   createdAt DateTime @default(now()) @map("created_at")
+  stripeId  String   @unique @map("stripe_id")
   user      User     @relation(fields: [userId], references: [id])
 
   @@map("payments")
@@ -153,6 +153,17 @@ model BudgetsServices {
   @@map("budgets_services")
 }
 
+model ProposalLog {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  origin    String
+  type      String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("proposal_logs")
+}
+
 enum planType {
   FREE
   PRO
@@ -163,16 +174,4 @@ enum status {
   SENT
   APPROVED
   REJECTED
-}
-
-model ProposalLog {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  origin    String // 'BOT' ou 'SITE'
-  type      String // 'PROPOSAL' ou 'BUDGET'
-  createdAt DateTime @default(now()) @map("created_at")
-
-  user User @relation(fields: [userId], references: [id])
-
-  @@map("proposal_logs")
 }
