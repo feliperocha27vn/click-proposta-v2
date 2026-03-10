@@ -8,7 +8,6 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string(),
   EVOLUTION_API_URL: z.string().url(),
   EVOLUTION_API_TOKEN: z.string(),
-  DATABASE_URL: z.string().url(),
 })
 
 export const env = envSchema.parse(process.env)
