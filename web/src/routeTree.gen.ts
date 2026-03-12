@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
+import { Route as TermsOfServiceRouteImport } from './pages/terms-of-service'
+import { Route as PrivacyPolicyRouteImport } from './pages/privacy-policy'
 import { Route as LoginRouteImport } from './pages/login'
 import { Route as AuthenticatedRouteImport } from './pages/_authenticated'
 import { Route as IndexRouteImport } from './pages/index'
@@ -27,6 +29,16 @@ import { Route as AuthenticatedBudgetCivilCustomerIdRouteImport } from './pages/
 import { Route as AuthenticatedCreateProposalSelectTypeProposalRouteImport } from './pages/_authenticated/_create-proposal/select-type-proposal'
 import { Route as AuthenticatedCreateProposalSelectCostumerRouteImport } from './pages/_authenticated/_create-proposal/select-costumer'
 
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -123,6 +135,8 @@ const AuthenticatedCreateProposalSelectCostumerRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/my-services': typeof AuthenticatedMyServicesRoute
   '/plans': typeof AuthenticatedPlansRoute
@@ -141,6 +155,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/my-services': typeof AuthenticatedMyServicesRoute
   '/plans': typeof AuthenticatedPlansRoute
@@ -161,6 +177,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/my-services': typeof AuthenticatedMyServicesRoute
   '/_authenticated/plans': typeof AuthenticatedPlansRoute
@@ -181,6 +199,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/dashboard'
     | '/my-services'
     | '/plans'
@@ -199,6 +219,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/dashboard'
     | '/my-services'
     | '/plans'
@@ -218,6 +240,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/login'
+    | '/privacy-policy'
+    | '/terms-of-service'
     | '/_authenticated/dashboard'
     | '/_authenticated/my-services'
     | '/_authenticated/plans'
@@ -238,6 +262,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   PublicBudgetBudgetIdRoute: typeof PublicBudgetBudgetIdRoute
   PublicProposalProposalIdRoute: typeof PublicProposalProposalIdRoute
@@ -245,6 +271,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -407,6 +447,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   PublicBudgetBudgetIdRoute: PublicBudgetBudgetIdRoute,
   PublicProposalProposalIdRoute: PublicProposalProposalIdRoute,

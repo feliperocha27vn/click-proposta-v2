@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router'
+
 export function LandingFooter() {
   return (
     <footer className="w-full border-t border-zinc-100 bg-white">
@@ -14,7 +16,7 @@ export function LandingFooter() {
           </div>
 
           {/* Links */}
-          <div className="flex gap-8 text-sm text-zinc-500">
+          <div className="flex flex-wrap gap-12 text-sm text-zinc-500">
             <div className="space-y-2">
               <p className="font-medium text-zinc-800">Produto</p>
               <ul className="space-y-1.5">
@@ -33,6 +35,28 @@ export function LandingFooter() {
                   >
                     Preços
                   </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-2">
+              <p className="font-medium text-zinc-800">Legal</p>
+              <ul className="space-y-1.5">
+                <li>
+                  <Link
+                    to="/privacy-policy"
+                    className="transition-colors hover:text-zinc-900"
+                  >
+                    Política de Privacidade
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/terms-of-service"
+                    className="transition-colors hover:text-zinc-900"
+                  >
+                    Termos de Serviço
+                  </Link>
                 </li>
               </ul>
             </div>
