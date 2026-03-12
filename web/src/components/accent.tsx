@@ -66,7 +66,7 @@ export default function CardDemo() {
           <CardTitle>Recent Users</CardTitle>
         </div>
         <div>
-          <Button variant="outline" size="sm">
+          <Button variant="secondary" size="sm">
             <Settings />
           </Button>
         </div>
@@ -110,7 +110,7 @@ export default function CardDemo() {
         })}
       </CardContent>
       <CardFooter className="justify-center">
-        <Button variant="link">
+        <Button variant="ghost">
           <a href="#">Learn more</a>
         </Button>
       </CardFooter>

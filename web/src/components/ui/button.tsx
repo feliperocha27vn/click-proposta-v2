@@ -1,6 +1,7 @@
 import type { ComponentProps } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { tv, type VariantProps } from 'tailwind-variants'
+import { Slot } from '@radix-ui/react-slot'
 
 export const buttonVariants = tv({
   base: [
@@ -18,11 +19,16 @@ export const buttonVariants = tv({
         'border-transparent bg-transparent text-muted-foreground hover:text-foreground hover:bg-surface-raised',
       destructive:
         'border-destructive bg-destructive text-destructive-foreground hover:bg-destructive/90',
+      outline:
+        'border-border bg-transparent hover:bg-muted hover:text-foreground',
+      link:
+        'border-transparent bg-transparent text-primary underline-offset-4 hover:underline',
     },
     size: {
       sm: 'h-8 px-3 gap-1.5 text-xs [&_svg]:size-3',
       md: 'h-11 px-6 gap-2 text-sm [&_svg]:size-4',
       lg: 'h-14 px-4 gap-2 text-base [&_svg]:size-5',
+      icon: 'h-11 w-11 justify-center',
     },
   },
   defaultVariants: { variant: 'primary', size: 'md' },
@@ -30,7 +36,9 @@ export const buttonVariants = tv({
 
 export interface ButtonProps
   extends ComponentProps<'button'>,
-    VariantProps<typeof buttonVariants> {}
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
 
 export function Button({
   className,
@@ -38,11 +46,14 @@ export function Button({
   size,
   disabled,
   children,
+  asChild = false,
   ...props
 }: ButtonProps) {
+  const Comp = asChild ? Slot : 'button'
+
   return (
-    <button
-      type="button"
+    <Comp
+      type={asChild ? undefined : 'button'}
       data-slot="button"
       data-disabled={disabled ? '' : undefined}
       className={twMerge(buttonVariants({ variant, size }), className)}
@@ -50,6 +61,6 @@ export function Button({
       {...props}
     >
       {children}
-    </button>
+    </Comp>
   )
 }
