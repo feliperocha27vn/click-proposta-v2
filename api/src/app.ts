@@ -17,8 +17,8 @@ import { routesPayments } from './http/controllers/payments/routes'
 import { generatePdfProduct } from './http/controllers/pdf/generate-pdf-product'
 import { generatePdfDocument } from './http/controllers/pdf/genrate-dowload-pdf'
 import { regenaretePdfDocument } from './http/controllers/pdf/regenarete'
-import { routesProposalDraft } from './http/controllers/proposal-draft/routes'
 import { routesProposal } from './http/controllers/proposal/routes'
+import { routesProposalDraft } from './http/controllers/proposal-draft/routes'
 import { routesService } from './http/controllers/services/routes'
 import { usersRoutes } from './http/controllers/users/routes'
 
@@ -35,7 +35,11 @@ app.register(fastifyRawBody, {
 })
 
 app.register(fastifyCors, {
-  origin: ['http://localhost:5173', 'https://click-proposta.umdoce.dev.br'],
+  origin: [
+    'http://localhost:5173',
+    'https://click-proposta.umdoce.dev.br',
+    'https://click-proposta-v2.vercel.app/',
+  ],
   methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH', 'OPTIONS'],
   credentials: true,
 })
