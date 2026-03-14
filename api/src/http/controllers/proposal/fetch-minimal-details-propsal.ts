@@ -12,15 +12,17 @@ export const fetchMinimalDetailsProposal: FastifyPluginAsyncZod = async app => {
         operationId: 'fetchMinimalDetailsProposal',
         tags: ['Proposals'],
         response: {
-          200: z.array(
-            z.object({
-              id: z.uuid(),
-              name: z.string().min(2).max(100),
-              title: z.string().min(2).max(100),
-              totalPrice: z.string(),
-              status: z.enum(['DRAFT', 'SENT', 'APPROVED', 'REJECTED']),
-            })
-          ),
+          200: z.object({
+            proposals: z.array(
+              z.object({
+                id: z.uuid(),
+                name: z.string().min(2).max(100),
+                title: z.string().min(2).max(100),
+                totalPrice: z.string(),
+                status: z.enum(['DRAFT', 'SENT', 'APPROVED', 'REJECTED']),
+              })
+            ),
+          }),
           500: z.object({ message: z.string() }),
         },
       },
@@ -35,7 +37,7 @@ export const fetchMinimalDetailsProposal: FastifyPluginAsyncZod = async app => {
             userId: request.user.sub,
           })
 
-        return reply.status(200).send(minimalProposals)
+        return reply.status(200).send({ proposals: minimalProposals })
       } catch (error) {
         console.error(error)
         return reply.status(500).send({ message: 'Internal server error.' })

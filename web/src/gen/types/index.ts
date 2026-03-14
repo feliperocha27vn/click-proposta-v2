@@ -93,10 +93,10 @@ export type {
 } from "./FetchManyServices.ts";
 export type {
   FetchMinimalDetailsProposal200,
-  FetchMinimalDetailsProposal200StatusEnumKey,
   FetchMinimalDetailsProposal500,
   FetchMinimalDetailsProposalQuery,
   FetchMinimalDetailsProposalQueryResponse,
+  ProposalsStatusEnumKey,
 } from "./FetchMinimalDetailsProposal.ts";
 export type {
   GeneratePdfProduct200,
@@ -262,5 +262,5 @@ export type {
   UpdateServiceMutationResponse,
   UpdateServicePathParams,
 } from "./UpdateService.ts";
-export { fetchMinimalDetailsProposal200StatusEnum } from "./FetchMinimalDetailsProposal.ts";
+export { proposalsStatusEnum } from "./FetchMinimalDetailsProposal.ts";
 export { userPlanEnum } from "./GetMe.ts";

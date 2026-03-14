@@ -3,21 +3,50 @@
  * Do not edit manually.
  */
 
-export const fetchMinimalDetailsProposal200StatusEnum = {
+export const proposalsStatusEnum = {
   DRAFT: "DRAFT",
   SENT: "SENT",
   APPROVED: "APPROVED",
   REJECTED: "REJECTED",
 } as const;
 
-export type FetchMinimalDetailsProposal200StatusEnumKey =
-  (typeof fetchMinimalDetailsProposal200StatusEnum)[keyof typeof fetchMinimalDetailsProposal200StatusEnum];
+export type ProposalsStatusEnumKey =
+  (typeof proposalsStatusEnum)[keyof typeof proposalsStatusEnum];
 
 /**
  * @description Default Response
  */
-export type FetchMinimalDetailsProposal200 =
-  FetchMinimalDetailsProposal200StatusEnumKey[];
+export type FetchMinimalDetailsProposal200 = {
+  /**
+   * @type array
+   */
+  proposals: {
+    /**
+     * @type string, uuid
+     */
+    id: string;
+    /**
+     * @minLength 2
+     * @maxLength 100
+     * @type string
+     */
+    name: string;
+    /**
+     * @minLength 2
+     * @maxLength 100
+     * @type string
+     */
+    title: string;
+    /**
+     * @type string
+     */
+    totalPrice: string;
+    /**
+     * @type string
+     */
+    status: ProposalsStatusEnumKey;
+  }[];
+};
 
 /**
  * @description Default Response

@@ -142,10 +142,10 @@ export type {
 } from "./types/FetchManyServices.ts";
 export type {
   FetchMinimalDetailsProposal200,
-  FetchMinimalDetailsProposal200StatusEnumKey,
   FetchMinimalDetailsProposal500,
   FetchMinimalDetailsProposalQuery,
   FetchMinimalDetailsProposalQueryResponse,
+  ProposalsStatusEnumKey,
 } from "./types/FetchMinimalDetailsProposal.ts";
 export type {
   GeneratePdfProduct200,
@@ -507,5 +507,5 @@ export { regeneratePdfDocumentSuspense } from "./hooks/undefinedHooks/useRegener
 export { regeneratePdfDocumentSuspenseQueryKey } from "./hooks/undefinedHooks/useRegeneratePdfDocumentSuspense.ts";
 export { regeneratePdfDocumentSuspenseQueryOptions } from "./hooks/undefinedHooks/useRegeneratePdfDocumentSuspense.ts";
 export { useRegeneratePdfDocumentSuspense } from "./hooks/undefinedHooks/useRegeneratePdfDocumentSuspense.ts";
-export { fetchMinimalDetailsProposal200StatusEnum } from "./types/FetchMinimalDetailsProposal.ts";
+export { proposalsStatusEnum } from "./types/FetchMinimalDetailsProposal.ts";
 export { userPlanEnum } from "./types/GetMe.ts";

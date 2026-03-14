@@ -21,7 +21,7 @@ function RouteComponent() {
   const { data: proposalsData, isLoading: isLoadingProposals } = useFetchMinimalDetailsProposal()
 
   const hasBudgets = Array.isArray(budgetsData?.budgets) && budgetsData.budgets.length > 0
-  const hasProposals = Array.isArray(proposalsData) && proposalsData.length > 0
+  const hasProposals = Array.isArray(proposalsData?.proposals) && proposalsData.proposals.length > 0
 
   const handleBudgetClick = (budgetId: string) => {
     navigate({ to: '/budget/$budget-id', params: { 'budget-id': budgetId } })
@@ -85,7 +85,7 @@ function RouteComponent() {
                 ))}
 
                 {/* Proposals */}
-                {proposalsData?.map(proposal => (
+                {proposalsData?.proposals?.map(proposal => (
                   <ProposalCard
                     key={`proposal-${proposal.id}`}
                     id={proposal.id}
@@ -145,7 +145,7 @@ function RouteComponent() {
               </div>
             ) : hasProposals ? (
               <div className="flex flex-col gap-y-4">
-                {Array.isArray(proposalsData) && proposalsData.map(proposal => (
+                {proposalsData?.proposals?.map(proposal => (
                   <ProposalCard
                     key={proposal.id}
                     id={proposal.id}
