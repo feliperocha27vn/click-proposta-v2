@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Check } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -10,14 +10,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { useAuth } from '@/contexts/auth-context'
-import {
-  createNewPayment,
-  type GetCompleteRegister200,
-  type GetMeResult,
-  getCompleteRegister,
-  getDataForPayment,
-  getMe,
-} from '@/http/api'
+import { useCreateNewPayment } from '@/gen/hooks/PaymentsHooks/useCreateNewPayment'
+import { useGetCompleteRegister } from '@/gen/hooks/UsersHooks/useGetCompleteRegister'
+import { getDataForPayment } from '@/gen/hooks/UsersHooks/useGetDataForPayment'
+import { useGetMe } from '@/gen/hooks/UsersHooks/useGetMe'
 import { AlertErrorModal } from './-components/alert-error-modal'
 import FormCompleteCustomer from './-components/form-complete-customer'
 import { LoadingValidationModal } from './-components/loading-validation-modal'
@@ -31,27 +27,12 @@ function RouteComponent() {
   const [completeModal, setCompleteModal] = useState(false)
   const [errorModal, setErrorModal] = useState(false)
   const [loadingValidation, setLoadingValidation] = useState(false)
-  const [isRegisterComplete, setIsRegisterComplete] =
-    useState<GetCompleteRegister200>()
-  const [userData, setUserData] = useState<GetMeResult['user']>()
 
-  useEffect(() => {
-    getCompleteRegister()
-      .then(reply => {
-        setIsRegisterComplete(reply)
-      })
-      .catch(error => {
-        console.error('Erro no useEffect inicial:', error)
-      })
+  const { data: isRegisterComplete } = useGetCompleteRegister()
+  const { data: userDataResponse } = useGetMe()
+  const userData = userDataResponse?.user
 
-    getMe()
-      .then((reply: GetMeResult) => {
-        setUserData(reply.user)
-      })
-      .catch((error: unknown) => {
-        console.error('Erro ao buscar dados do usuário:', error)
-      })
-  }, [])
+  const { mutateAsync: createNewPaymentMutate } = useCreateNewPayment()
 
   async function handleOpenProModal() {
     if (userData?.plan === 'PRO') return
@@ -65,12 +46,14 @@ function RouteComponent() {
 
       // 2. Se chegou aqui, os dados estão completos (API retornou 200)
       // Gera o link de pagamento direto
-      const checkoutUrl = await createNewPayment({
-        customer: {
-          name: userDataPayment.name,
-          email: userDataPayment.email,
-          cellphone: userDataPayment.phone.replace(/\D/g, ''),
-          cpf: userDataPayment.cpf.replace(/\D/g, ''),
+      const checkoutUrl = await createNewPaymentMutate({
+        data: {
+          customer: {
+            name: userDataPayment.name,
+            email: userDataPayment.email,
+            cellphone: userDataPayment.phone.replace(/\D/g, ''),
+            cpf: userDataPayment.cpf.replace(/\D/g, ''),
+          },
         },
       })
 

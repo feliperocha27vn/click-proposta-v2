@@ -9,18 +9,19 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { type UpdateProposalBody, updateProposal } from '@/http/api'
-import { useId, useState } from 'react'
+import { useUpdateProposal } from '@/gen/hooks/ProposalsHooks/useUpdateProposal'
+import type { UpdateProposalMutationRequest } from '@/gen/types/UpdateProposal'
+import { useId } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface FormEditProposalProps {
   isOpen: boolean
   onClose: () => void
   proposalId: string
-  field: keyof UpdateProposalBody
+  field: keyof UpdateProposalMutationRequest
   currentValue: string
   fieldLabel: string
-  onUpdate: (field: keyof UpdateProposalBody, newValue: string) => void
+  onUpdate: (field: keyof UpdateProposalMutationRequest, newValue: string) => void
 }
 
 export function FormEditProposal({
@@ -35,18 +36,17 @@ export function FormEditProposal({
   const { register, handleSubmit, reset } = useForm<{ value: string }>({
     defaultValues: { value: currentValue },
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { mutateAsync: updateProposalMutate, isPending: isSubmitting } = useUpdateProposal()
   const inputId = useId()
 
   async function onSubmit(data: { value: string }) {
     try {
-      setIsSubmitting(true)
-
-      const updateData: UpdateProposalBody = {
-        [field]: data.value,
-      }
-
-      await updateProposal(proposalId, updateData)
+      await updateProposalMutate({
+        proposalId,
+        data: {
+          [field]: data.value,
+        },
+      })
 
       // Chama o callback para atualizar o estado local
       onUpdate(field, data.value)
@@ -57,8 +57,6 @@ export function FormEditProposal({
     } catch (error) {
       console.error('Erro ao atualizar proposta:', error)
       alert('Erro ao atualizar. Tente novamente.')
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
@@ -93,7 +91,7 @@ export function FormEditProposal({
               <Textarea
                 id={inputId}
                 {...register('value', { required: true })}
-                className="min-h-[100px]"
+                className="min-h-25"
                 placeholder={`Digite ${fieldLabel.toLowerCase()}`}
               />
             ) : (

@@ -8,9 +8,9 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getByIdBudget } from '@/http/api'
+import { useGetByIdBudget } from '@/gen/hooks/BudgetsHooks/useGetByIdBudget'
 import { formaterPrice } from '@/utils/formater-price'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { format, isValid } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -25,11 +25,15 @@ export const Route = createFileRoute('/_authenticated/budget/$budget-id')({
 function RouteComponent() {
   const { 'budget-id': budgetId } = useParams({ strict: false })
 
-  const { data: budgetData, isLoading } = useQuery({
-    queryKey: ['budget', budgetId],
-    queryFn: () => getByIdBudget(budgetId!),
-    enabled: !!budgetId,
-  })
+  const { data: budgetDataResponse, isLoading } = useGetByIdBudget(
+    budgetId ?? '',
+    {
+      query: {
+        enabled: !!budgetId,
+      },
+    }
+  )
+  const budgetData = budgetDataResponse
 
   const dateIsValid = isValid(new Date(budgetData?.budget.createdAt || ''))
 
@@ -108,7 +112,7 @@ function RouteComponent() {
             {budgetData?.budget.budgetsServices.some(
               s => s.price && s.price > 0
             ) && (
-              <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80 mt-1 w-fit bg-blue-600 text-white">
+              <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-blue-600 text-white mt-1 w-fit">
                 Orçamento de Produtos
               </span>
             )}

@@ -15,7 +15,12 @@ export class GetCompleteRegisterUserUseCase {
       throw new ResourceNotFoundError()
     }
 
-    const isRegisterComplete = user.isRegisterComplete
+    // O registro só é considerado completo se a flag for true E houver dados essenciais
+    const isRegisterComplete = 
+      !!user.isRegisterComplete && 
+      !!user.phone && 
+      !!user.cpf && 
+      !!user.address
 
     return { isRegisterComplete }
   }

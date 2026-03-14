@@ -9,19 +9,16 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  approveProposal,
-  getProposalById,
-  recuseProposal,
-  type GetProposalById200,
-} from '@/http/api'
+import { useGetProposalById } from '@/gen/hooks/ProposalsHooks/useGetProposalById'
+import { useApproveProposal } from '@/gen/hooks/ProposalsHooks/useApproveProposal'
+import { useRecuseProposal } from '@/gen/hooks/ProposalsHooks/useRecuseProposal'
 import {
   createFileRoute,
   Link,
   useParams,
   useSearch,
 } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Logo from '../../assets/logo.png'
 
 interface PlanUserProps {
@@ -34,27 +31,23 @@ export const Route = createFileRoute('/public-proposal/$proposal-id')({
 
 function RouteComponent() {
   const { 'proposal-id': proposalId } = useParams({ strict: false })
-  const [proposal, setProposal] = useState<GetProposalById200>()
-  const [loading, setLoading] = useState(true)
+  const search = useSearch({
+    from: '/public-proposal/$proposal-id',
+  }) as PlanUserProps
   const [modalOpen, setModalOpen] = useState(false)
   const [rejectModalOpen, setRejectModalOpen] = useState(false)
 
-  const object: PlanUserProps = useSearch({
-    from: '/public-proposal/$proposal-id',
-  })
-
-  if (!proposalId) {
-    console.log('ID da proposta não fornecido')
-  }
-
-  useEffect(() => {
-    if (proposalId) {
-      getProposalById(proposalId).then(reply => {
-        setProposal(reply)
-        setLoading(false)
-      })
+  const { data: proposal, isLoading: loading } = useGetProposalById(
+    proposalId ?? '',
+    {
+      query: {
+        enabled: !!proposalId,
+      },
     }
-  }, [proposalId])
+  )
+
+  const { mutateAsync: approveProposalMutate } = useApproveProposal()
+  const { mutateAsync: recuseProposalMutate } = useRecuseProposal()
 
   const formaterPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -63,7 +56,7 @@ function RouteComponent() {
 
   async function handleAcceptProposal(proposalId: string) {
     try {
-      await approveProposal(proposalId)
+      await approveProposalMutate({ proposalId })
     } catch (error) {
       console.error('Erro ao aceitar a proposta:', error)
     }
@@ -71,7 +64,7 @@ function RouteComponent() {
 
   async function handleRejectProposal(proposalId: string) {
     try {
-      await recuseProposal(proposalId)
+      await recuseProposalMutate({ id: proposalId })
       setRejectModalOpen(true)
     } catch (error) {
       console.error('Erro ao rejeitar a proposta:', error)
@@ -85,7 +78,7 @@ function RouteComponent() {
           <img
             src={Logo}
             alt="Logo da Click Proposta"
-            className={`w-26 ${object.plan === 'PRO' ? 'hidden' : 'opacity-30'}`}
+            className={`w-26 ${search.plan === 'PRO' ? 'hidden' : 'opacity-30'}`}
           />
           {loading ? (
             <Skeleton className="h-6 w-48 bg-zinc-300" />

@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { type CreateNewCustomerBody, createNewCustomer } from '@/http/api'
+import { useCreateNewCustomer } from '@/gen/hooks/CustomersHooks/useCreateNewCustomer'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AlertCreateCustomer } from './alerts-create-customer.tsx'
@@ -37,16 +37,17 @@ export default function FormCreateNewCustomer({
     actionText: 'OK',
   })
   const { register, handleSubmit, reset } = useForm<CreateCustomerFormData>()
+  const { mutateAsync: createNewCustomerMutate } = useCreateNewCustomer()
 
   async function onSubmit(data: CreateCustomerFormData) {
     try {
-      const customerData: CreateNewCustomerBody = {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-      }
-
-      await createNewCustomer(customerData)
+      await createNewCustomerMutate({
+        data: {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+        },
+      })
 
       setAlertConfig({
         type: 'success',

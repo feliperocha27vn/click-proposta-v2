@@ -3,12 +3,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  type FetchCustomers200CustomersItem,
-  fetchCustomers,
-  searchByNameEmail,
-} from '@/http/api'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useFetchCustomers } from '@/gen/hooks/CustomersHooks/useFetchCustomers'
+import { useSearchByNameEmail } from '@/gen/hooks/CustomersHooks/useSearchByNameEmail'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useSearch } from '@tanstack/react-router'
 import { ChevronRight, Plus, Search, User } from 'lucide-react'
 import { useState } from 'react'
@@ -29,17 +26,19 @@ function RouteComponent() {
   const [search, setSearch] = useState('')
   const [appliedSearch, setAppliedSearch] = useState('')
 
-  const { data: customers = [], isLoading: loading } = useQuery({
-    queryKey: ['customers', appliedSearch],
-    queryFn: async () => {
-      if (appliedSearch) {
-        const reply = await searchByNameEmail({ search: appliedSearch })
-        return reply.customers as unknown as FetchCustomers200CustomersItem[]
-      }
-      const reply = await fetchCustomers()
-      return reply.customers
-    },
+  const { data: allCustomersResponse, isLoading: loadingAll } = useFetchCustomers({
+    query: { enabled: !appliedSearch },
   })
+  const { data: searchedCustomersResponse, isLoading: loadingSearch } =
+    useSearchByNameEmail(
+      { search: appliedSearch },
+      { query: { enabled: !!appliedSearch } }
+    )
+
+  const customers = appliedSearch
+    ? searchedCustomersResponse?.customers || []
+    : allCustomersResponse?.customers || []
+  const loading = appliedSearch ? loadingSearch : loadingAll
 
   function handleCreateClick() {
     setCreateModal(true)

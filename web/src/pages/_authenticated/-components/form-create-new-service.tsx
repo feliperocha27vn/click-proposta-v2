@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { createService } from '@/http/api'
+import { useCreateService } from '@/gen/hooks/ServicesHooks/useCreateService'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -29,6 +29,7 @@ export default function FormCreateNewService() {
     actionText: 'OK',
   })
   const { register, handleSubmit, reset } = useForm<CreateNewServiceFormData>()
+  const { mutateAsync: createServiceMutate } = useCreateService()
 
   function handleAddInput(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
@@ -45,9 +46,11 @@ export default function FormCreateNewService() {
 
       const description = descriptions.join(';')
 
-      const reply = await createService({
-        name: data.name,
-        description: description || undefined,
+      const reply = await createServiceMutate({
+        data: {
+          name: data.name,
+          description: description || undefined,
+        },
       })
 
       if (reply.statusCode === 201) {

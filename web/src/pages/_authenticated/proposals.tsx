@@ -2,8 +2,8 @@ import { BackButton } from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { fetchManyBudgets, fetchMinimalDetailsProposal } from '@/http/api'
-import { useQuery } from '@tanstack/react-query'
+import { useFetchManyBudgets } from '@/gen/hooks/BudgetsHooks/useFetchManyBudgets'
+import { useFetchMinimalDetailsProposal } from '@/gen/hooks/ProposalsHooks/useFetchMinimalDetailsProposal'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { AlertWithoutProposal } from './-components/alert-without-proposal'
 import type { BudgetsStatus } from './-components/budget-status'
@@ -16,18 +16,12 @@ export const Route = createFileRoute('/_authenticated/proposals')({
 
 function RouteComponent() {
   const navigate = useNavigate()
-  const { data: budgetsData, isLoading: isLoadingBudgets } = useQuery({
-    queryKey: ['budgets'],
-    queryFn: () => fetchManyBudgets(),
-  })
+  const { data: budgetsData, isLoading: isLoadingBudgets } = useFetchManyBudgets()
 
-  const { data: proposalsData, isLoading: isLoadingProposals } = useQuery({
-    queryKey: ['proposals'],
-    queryFn: () => fetchMinimalDetailsProposal(),
-  })
+  const { data: proposalsData, isLoading: isLoadingProposals } = useFetchMinimalDetailsProposal()
 
-  const hasBudgets = budgetsData?.budgets && budgetsData.budgets.length > 0
-  const hasProposals = proposalsData && proposalsData.length > 0
+  const hasBudgets = Array.isArray(budgetsData?.budgets) && budgetsData.budgets.length > 0
+  const hasProposals = Array.isArray(proposalsData) && proposalsData.length > 0
 
   const handleBudgetClick = (budgetId: string) => {
     navigate({ to: '/budget/$budget-id', params: { 'budget-id': budgetId } })
@@ -78,7 +72,7 @@ function RouteComponent() {
             ) : hasBudgets || hasProposals ? (
               <div className="flex flex-col gap-y-4">
                 {/* Budgets */}
-                {budgetsData?.budgets.map(budget => (
+                {budgetsData?.budgets?.map(budget => (
                   <ProposalCard
                     key={`budget-${budget.id}`}
                     id={budget.id}
@@ -121,7 +115,7 @@ function RouteComponent() {
               </div>
             ) : hasBudgets ? (
               <div className="flex flex-col gap-y-4">
-                {budgetsData?.budgets.map(budget => (
+                {budgetsData?.budgets?.map(budget => (
                   <ProposalCard
                     key={budget.id}
                     id={budget.id}
@@ -151,7 +145,7 @@ function RouteComponent() {
               </div>
             ) : hasProposals ? (
               <div className="flex flex-col gap-y-4">
-                {proposalsData?.map(proposal => (
+                {Array.isArray(proposalsData) && proposalsData.map(proposal => (
                   <ProposalCard
                     key={proposal.id}
                     id={proposal.id}

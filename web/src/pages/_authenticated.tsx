@@ -2,8 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/contexts/auth-context'
-import { getMe } from '@/http/api'
-import { useQuery } from '@tanstack/react-query'
+import { useGetMe } from '@/gen/hooks/UsersHooks/useGetMe'
 import {
   createFileRoute,
   Link,
@@ -48,10 +47,7 @@ function AuthenticatedLayout() {
     }
   }, [loading])
 
-  const { data: userData } = useQuery({
-    queryKey: ['user'],
-    queryFn: getMe,
-  })
+  const { data: userData } = useGetMe()
 
   // Mostra loading enquanto verifica autenticação
   if (loading) {
@@ -154,13 +150,13 @@ function AuthenticatedLayout() {
             </div>
             <div className="flex items-center gap-x-4 font-semibold">
               <Avatar className="size-12">
-                <AvatarImage src={userData?.user.avatarUrl ?? ''} />
+                <AvatarImage src={userData?.user?.avatarUrl ?? ''} />
                 <AvatarFallback>
                   <Skeleton className="size-8 not-first:rounded-full" />
                 </AvatarFallback>
               </Avatar>
 
-              <p>{userData?.user.name}</p>
+              <p>{userData?.user?.name}</p>
 
               <Button
                 variant="outline"

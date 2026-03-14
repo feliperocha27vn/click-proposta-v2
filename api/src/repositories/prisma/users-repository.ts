@@ -127,7 +127,12 @@ export class PrismaUsersRepository implements UsersRepository {
   async getCompleteRegister(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { isRegisterComplete: true },
+      select: { 
+        isRegisterComplete: true,
+        cpf: true,
+        phone: true,
+        address: true
+      },
     })
 
     if (!user) {

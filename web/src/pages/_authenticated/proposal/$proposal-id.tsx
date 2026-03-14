@@ -1,12 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  getMe,
-  getProposalById,
-  type GetProposalById200,
-  type UpdateProposalBody,
-} from '@/http/api'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useGetMe } from '@/gen/hooks/UsersHooks/useGetMe'
+import { useGetProposalById } from '@/gen/hooks/ProposalsHooks/useGetProposalById'
+import type { UpdateProposalMutationRequest } from '@/gen/types/UpdateProposal'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Edit3 } from 'lucide-react'
 import { useState } from 'react'
@@ -24,7 +21,7 @@ function RouteComponent() {
 
   const [editModal, setEditModal] = useState<{
     isOpen: boolean
-    field: keyof UpdateProposalBody | null
+    field: keyof UpdateProposalMutationRequest | null
     currentValue: string
     fieldLabel: string
   }>({
@@ -34,20 +31,16 @@ function RouteComponent() {
     fieldLabel: '',
   })
 
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: getMe,
-  })
+  const { data: userDataResponse } = useGetMe()
+  const plan = userDataResponse?.user?.plan
 
   if (!proposalId) {
     console.log('ID da proposta não fornecido')
   }
 
-  const { data: proposal, isLoading: loading } = useQuery({
-    queryKey: ['proposal', proposalId],
-    queryFn: () => getProposalById(proposalId as string),
-    enabled: !!proposalId,
-  })
+  const { data: proposal, isLoading: loading } = useGetProposalById(
+    proposalId as string
+  )
 
   const formaterPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -55,7 +48,7 @@ function RouteComponent() {
   })
 
   function handleEditClick(
-    field: keyof UpdateProposalBody,
+    field: keyof UpdateProposalMutationRequest,
     currentValue: string | undefined,
     fieldLabel: string
   ) {
@@ -76,28 +69,16 @@ function RouteComponent() {
     })
   }
 
-  function handleUpdateField(
-    field: keyof UpdateProposalBody,
-    newValue: string
-  ) {
+  function handleUpdateField() {
     if (proposal && proposalId) {
-      queryClient.setQueryData(
-        ['proposal', proposalId],
-        (oldData: GetProposalById200 | undefined) => {
-          if (!oldData) return oldData
-          return {
-            ...oldData,
-            [field]: newValue,
-          }
-        }
-      )
+      queryClient.invalidateQueries({ queryKey: ['proposal', proposalId] })
     }
   }
 
   const shareData = {
     title: `${proposal?.title} - Click Proposta`,
     text: 'Confira minhas propostas!',
-    url: `${env.VITE_APP_URL}/public-proposal/${proposalId}?plan=${user?.user.plan}`,
+    url: `${env.VITE_APP_URL}/public-proposal/${proposalId}?plan=${plan}`,
   }
 
   async function handleShare() {
@@ -115,7 +96,7 @@ function RouteComponent() {
           <img
             src={Logo}
             alt="Logo da Click Proposta"
-            className={`w-26 ${user?.user.plan === 'PRO' ? 'hidden' : 'opacity-30'}`}
+            className={`w-26 ${plan === 'PRO' ? 'hidden' : 'opacity-30'}`}
           />
           {loading ? (
             <Skeleton className="h-6 w-48 bg-zinc-300" />

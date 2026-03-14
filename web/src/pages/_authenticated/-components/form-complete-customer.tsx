@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -12,11 +12,10 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  type CompleteRegisterBody,
-  completeRegister,
-  createNewPayment,
-} from '@/http/api'
+import { useCompleteRegister } from '@/gen/hooks/UsersHooks/useCompleteRegister'
+import { useCreateNewPayment } from '@/gen/hooks/PaymentsHooks/useCreateNewPayment'
+import { getCompleteRegisterQueryKey } from '@/gen/hooks/UsersHooks/useGetCompleteRegister'
+import type { CompleteRegisterMutationRequest } from '@/gen/types/CompleteRegister'
 import { AlertErrorModal } from './alert-error-modal'
 
 interface FormCompleteCustomerProps {
@@ -37,49 +36,54 @@ export default function FormCompleteCustomer({
   const [step, setStep] = useState<1 | 2>(1)
   const [errorModal, setErrorModal] = useState(false)
   const { register, handleSubmit, reset, trigger } =
-    useForm<CompleteRegisterBody>()
+    useForm<CompleteRegisterMutationRequest>()
   const queryClient = useQueryClient()
 
-  const { mutateAsync: submitRegister, isPending } = useMutation({
-    mutationFn: (data: CompleteRegisterBody) =>
-      completeRegister({
+  const { mutateAsync: submitRegister, isPending } = useCompleteRegister({
+    mutation: {
+      onSuccess: async (_, variables) => {
+        await queryClient.invalidateQueries({
+          queryKey: getCompleteRegisterQueryKey(),
+        })
+
+        // Se o plano selecionado for PRO, dispara o pagamento imediatamente
+        if (_selectedPlan === 'pro') {
+          try {
+            const checkoutUrl = await createNewPaymentMutate({
+              data: {
+                customer: {
+                  name: _customerName || '', // Fallback se necessário, mas geralmente vem via props
+                  email: '', // O backend já pega do usuário autenticado se omitirmos ou podemos passar do session
+                  cellphone: variables.data.phone.replace(/\D/g, ''),
+                  cpf: variables.data.cpf.replace(/\D/g, ''),
+                },
+              },
+            })
+            window.location.href = checkoutUrl
+            // Como há redirecionamento, o código abaixo não será executado em caso de sucesso
+          } catch (error) {
+            console.error('Erro ao gerar pagamento após cadastro:', error)
+            setErrorModal(true)
+          }
+        }
+
+        // Fecha o modal e reseta o formulário, pois o cadastro em si foi bem-sucedido
+        reset()
+        setStep(1)
+        onClose()
+      },
+    },
+  })
+  const { mutateAsync: createNewPaymentMutate } = useCreateNewPayment()
+
+  async function onSubmit(data: CompleteRegisterMutationRequest) {
+    await submitRegister({
+      data: {
         ...data,
         cpf: data.cpf.replace(/\D/g, ''),
         cnpj: data.cnpj ? data.cnpj.replace(/\D/g, '') : undefined,
-      }),
-    onSuccess: async (_, variables) => {
-      queryClient.setQueryData(['complete-register'], {
-        isRegisterComplete: true,
-      })
-
-      // Se o plano selecionado for PRO, dispara o pagamento imediatamente
-      if (_selectedPlan === 'pro') {
-        try {
-          const checkoutUrl = await createNewPayment({
-            customer: {
-              name: _customerName || '', // Fallback se necessário, mas geralmente vem via props
-              email: '', // O backend já pega do usuário autenticado se omitirmos ou podemos passar do session
-              cellphone: variables.phone.replace(/\D/g, ''),
-              cpf: variables.cpf.replace(/\D/g, ''),
-            },
-          })
-          window.location.href = checkoutUrl
-          // Como há redirecionamento, o código abaixo não será executado em caso de sucesso
-        } catch (error) {
-          console.error('Erro ao gerar pagamento após cadastro:', error)
-          setErrorModal(true)
-        }
-      }
-
-      // Fecha o modal e reseta o formulário, pois o cadastro em si foi bem-sucedido
-      reset()
-      setStep(1)
-      onClose()
-    },
-  })
-
-  async function onSubmit(data: CompleteRegisterBody) {
-    await submitRegister(data)
+      },
+    })
   }
 
   const handleNextStep = async () => {

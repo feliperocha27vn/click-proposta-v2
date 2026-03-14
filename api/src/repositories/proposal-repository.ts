@@ -52,4 +52,5 @@ export interface ProposalRepository {
     accepted: number
     total: number
   }>
+  findCountByDay(userId: string, days: number): Promise<{ date: Date; count: number }[]>
 }

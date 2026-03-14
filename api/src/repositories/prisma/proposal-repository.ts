@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
+import { subDays } from 'date-fns'
 import type {
   ProposalRepository,
   ServicesProposal,
@@ -158,5 +159,37 @@ export class PrismaProposalRepository implements ProposalRepository {
       accepted: acceptedProposals + acceptedBudgets, 
       total: totalProposals + totalBudgets 
     }
+  }
+
+  async findCountByDay(userId: string, days: number) {
+    const startDate = subDays(new Date(), days)
+    startDate.setHours(0, 0, 0, 0)
+
+    const proposals = await prisma.proposal.findMany({
+      where: {
+        userId,
+        createdAt: {
+          gte: startDate,
+        },
+        status: {
+          not: 'DRAFT',
+        },
+      },
+      select: {
+        createdAt: true,
+      },
+    })
+
+    const counts: { [key: string]: number } = {}
+
+    for (const proposal of proposals) {
+      const date = proposal.createdAt.toISOString().split('T')[0]
+      counts[date] = (counts[date] || 0) + 1
+    }
+
+    return Object.entries(counts).map(([date, count]) => ({
+      date: new Date(date),
+      count,
+    }))
   }
 }

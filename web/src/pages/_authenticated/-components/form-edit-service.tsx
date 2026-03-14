@@ -7,7 +7,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import type { FetchManyServices200ServicesItem } from "@/http/api"
+import type { FetchManyServices200 } from "@/gen/types/FetchManyServices"
 import { Plus, X } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useForm } from 'react-hook-form'
@@ -21,7 +21,7 @@ interface EditServiceFormData {
 interface FormEditServiceProps {
     isOpen: boolean
     onClose: () => void
-    service: FetchManyServices200ServicesItem | null
+    service: FetchManyServices200['services'][number] | null
     onUpdate: (serviceId: string, data: { name: string; description?: string }) => Promise<void>
 }
 

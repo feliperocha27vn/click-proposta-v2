@@ -16,11 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  createService,
-  fetchManyServices,
-  type FetchManyServices200ServicesItem,
-} from '@/http/api'
+import { useCreateService } from '@/gen/hooks/ServicesHooks/useCreateService'
+import { fetchManyServices } from '@/gen/hooks/ServicesHooks/useFetchManyServices'
+import type { FetchManyServices200 } from '@/gen/types/FetchManyServices'
 import { Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -38,11 +36,11 @@ interface CreateNewServiceFormData {
 }
 
 interface SelectServicesWithPriceProps {
-  services: FetchManyServices200ServicesItem[]
+  services: FetchManyServices200['services']
   onServicesChange: (services: ServiceItem[]) => void
   initialServices?: ServiceItem[]
   onServiceCreated?: () => void
-  onServicesUpdate?: (services: FetchManyServices200ServicesItem[]) => void
+  onServicesUpdate?: (services: FetchManyServices200['services']) => void
 }
 
 export function SelectServicesWithPrice({
@@ -64,6 +62,7 @@ export function SelectServicesWithPrice({
     actionText: 'OK',
   })
   const { register, handleSubmit, reset } = useForm<CreateNewServiceFormData>()
+  const { mutateAsync: createServiceMutate } = useCreateService()
 
   // Notifica o componente pai quando os serviços mudam
   useEffect(() => {
@@ -109,9 +108,11 @@ export function SelectServicesWithPrice({
 
       const description = descriptions.join(';')
 
-      const reply = await createService({
-        name: data.name,
-        description: description || undefined,
+      const reply = await createServiceMutate({
+        data: {
+          name: data.name,
+          description: description || undefined,
+        },
       })
 
       if (reply.statusCode === 201) {

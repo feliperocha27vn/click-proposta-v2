@@ -3,15 +3,13 @@ import { BackButton } from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  type FetchManyServices200ServicesItem,
-  type PostBudgetsBody,
-  fetchManyServices,
-  getCustomerById,
-  getMe,
-  postBudgets,
-} from '@/http/api'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useFetchManyServices } from '@/gen/hooks/ServicesHooks/useFetchManyServices'
+import { useGetCustomerById } from '@/gen/hooks/CustomersHooks/useGetCustomerById'
+import { useGetMe } from '@/gen/hooks/UsersHooks/useGetMe'
+import { usePostBudgets } from '@/gen/hooks/BudgetsHooks/usePostBudgets'
+import type { FetchManyServices200 } from '@/gen/types/FetchManyServices'
+import type { PostBudgetsMutationRequest } from '@/gen/types/PostBudgets'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -27,7 +25,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const queryClient = useQueryClient()
   const { register, handleSubmit, control, getValues } =
-    useForm<PostBudgetsBody>({
+    useForm<PostBudgetsMutationRequest>({
       defaultValues: {
         customerId: '',
         userId: '',
@@ -39,25 +37,21 @@ function RouteComponent() {
   const [closeDialog, setCloseDialog] = useState(false)
   const navigate = useNavigate()
 
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: getMe,
-  })
+  const { data: userDataResponse } = useGetMe()
+  const user = userDataResponse
 
-  const { data: customer } = useQuery({
-    queryKey: ['customer', customerId],
-    queryFn: () => getCustomerById(customerId || ''),
-  })
+  const { data: customerDataResponse } = useGetCustomerById(
+    customerId as string
+  )
+  const customer = customerDataResponse
 
-  const { data: servicesData } = useQuery({
-    queryKey: ['services'],
-    queryFn: async () => {
-      const response = await fetchManyServices()
-      return response.services
+  const { data: servicesDataResponse } = useFetchManyServices({
+    query: {
+      staleTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: false,
     },
-    staleTime: 1000 * 60 * 10,
-    refetchOnWindowFocus: false,
   })
+  const servicesData = servicesDataResponse?.services || []
 
   const { mutate: generatePdfFn, isPending } = useMutation({
     mutationFn: generatePdf,
@@ -67,11 +61,12 @@ function RouteComponent() {
     mutate: createBudgetFn,
     isPending: isPendingCreateBudget,
     isSuccess,
-  } = useMutation({
-    mutationFn: postBudgets,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgets'] })
-      queryClient.invalidateQueries({ queryKey: ['proposals'] })
+  } = usePostBudgets({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['budgets'] })
+        queryClient.invalidateQueries({ queryKey: ['proposals'] })
+      },
     },
   })
 
@@ -80,7 +75,7 @@ function RouteComponent() {
     name: 'services',
   })
 
-  function handleSelectService(data: FetchManyServices200ServicesItem) {
+  function handleSelectService(data: FetchManyServices200['services'][number]) {
     const exists = fields.some(field => field.id === data.id)
     if (!exists) {
       append({
@@ -92,21 +87,23 @@ function RouteComponent() {
     setCloseDialog(false)
   }
 
-  function handleGeneratePdf(data: PostBudgetsBody) {
+  function handleGeneratePdf(data: PostBudgetsMutationRequest) {
     createBudgetFn({
-      customerId: customerId || '',
-      userId: user?.user.id || '',
-      total: data.total,
-      services: data.services,
+      data: {
+        customerId: customerId || '',
+        userId: user?.user?.id || '',
+        total: data.total,
+        services: data.services,
+      },
     })
 
     generatePdfFn({
-      imgUrl: user?.user.avatarUrl || '',
+      imgUrl: user?.user?.avatarUrl || '',
       services: data.services.map(service => ({
         ...service,
         budgetsId: null,
       })),
-      nameUser: user?.user.name || '',
+      nameUser: user?.user?.name || '',
       nameCustomer: customer?.customer.name || '',
       emailCustomer: customer?.customer.email || '',
       phoneCustomer: customer?.customer.phone || '',
@@ -114,12 +111,14 @@ function RouteComponent() {
     })
   }
 
-  function handleSubmitForm(data: PostBudgetsBody) {
+  function handleSubmitForm(data: PostBudgetsMutationRequest) {
     createBudgetFn({
-      customerId: customerId || '',
-      userId: user?.user.id || '',
-      total: data.total,
-      services: data.services,
+      data: {
+        customerId: customerId || '',
+        userId: user?.user?.id || '',
+        total: data.total,
+        services: data.services,
+      },
     })
   }
 
@@ -133,11 +132,11 @@ function RouteComponent() {
           <div className="flex items-center gap-x-2">
             <img
               className="size-24 rounded-2xl"
-              src={user?.user.avatarUrl || ''}
-              alt={`Logo da empresa ${user?.user.name || ''}`}
+              src={user?.user?.avatarUrl || ''}
+              alt={`Logo da empresa ${user?.user?.name || ''}`}
             />
             <div className="space-y-2">
-              <h1 className="font-semibold">{user?.user.name}</h1>
+              <h1 className="font-semibold">{user?.user?.name}</h1>
             </div>
           </div>
           <div className="flex flex-col items-center text-center gap-y-4">

@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Link } from '@tanstack/react-router'
 
 export interface HeroSectionProps extends ComponentProps<'section'> {}
 
@@ -31,10 +32,12 @@ export function HeroSection({ className, ...props }: HeroSectionProps) {
         <div className="flex flex-col gap-5 p-6 pb-2 md:w-[55%] md:p-8 lg:p-16 relative z-10">
           {/* Top Badge */}
           <div className="flex animate-fade-in-up [animation-delay:100ms]">
-            <Badge className="bg-[#1447E6] hover:bg-[#1447E6]/90 gap-1.5 cursor-pointer text-white px-3 py-1 md:px-4 md:py-1.5 text-xs md:text-sm shadow-md shadow-blue-500/20">
-              Comece com 2 propostas grátis
-              <ChevronRight className="size-3.5 md:size-4" />
-            </Badge>
+            <Link to="/login">
+              <Badge className="bg-[#1447E6] hover:bg-[#1447E6]/90 gap-1.5 cursor-pointer text-white px-3 py-1 md:px-4 md:py-1.5 text-xs md:text-sm shadow-md shadow-blue-500/20">
+                Comece com 2 propostas grátis
+                <ChevronRight className="size-3.5 md:size-4" />
+              </Badge>
+            </Link>
           </div>
 
           {/* Headings */}
@@ -49,15 +52,19 @@ export function HeroSection({ className, ...props }: HeroSectionProps) {
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 mt-2 md:mt-6 animate-fade-in-up [animation-delay:400ms]">
-            <Button
-              size="lg"
-              className="w-full sm:w-auto text-base bg-blue-600 hover:bg-blue-700 text-white border-blue-600 md:h-14 md:px-8 md:rounded-xl shadow-lg shadow-blue-500/25 transition-transform hover:scale-105"
-            >
-              Começar de graça
-            </Button>
-            <Button variant="ghost" size="lg" className="w-full sm:w-auto text-base md:h-14 md:px-8 md:rounded-xl transition-colors hover:bg-zinc-100">
-              Como funciona?
-            </Button>
+            <Link to="/login" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="w-full text-base bg-blue-600 hover:bg-blue-700 text-white border-blue-600 md:h-14 md:px-8 md:rounded-xl shadow-lg shadow-blue-500/25 transition-transform hover:scale-105"
+              >
+                Começar de graça
+              </Button>
+            </Link>
+            <a href="#how-it-works" className="w-full sm:w-auto">
+              <Button variant="ghost" size="lg" className="w-full text-base md:h-14 md:px-8 md:rounded-xl transition-colors hover:bg-zinc-100">
+                Como funciona?
+              </Button>
+            </a>
           </div>
         </div>
 
@@ -100,12 +107,14 @@ export function HeroSection({ className, ...props }: HeroSectionProps) {
 
           {/* Floating Bottom CTA */}
           <div className="absolute -bottom-5 left-0 w-full flex justify-center md:hidden z-30 animate-fade-in-up [animation-delay:800ms]">
-            <Button
-              size="md"
-              className="rounded-xl shadow-md font-semibold px-6 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
-            >
-              Faça seu primeiro orçamento
-            </Button>
+            <Link to="/login">
+              <Button
+                size="md"
+                className="rounded-xl shadow-md font-semibold px-6 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+              >
+                Faça seu primeiro orçamento
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

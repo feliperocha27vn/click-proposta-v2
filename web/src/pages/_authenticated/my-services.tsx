@@ -10,29 +10,31 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  deleteService,
-  fetchManyServices,
-  updateService,
-  type FetchManyServices200ServicesItem,
-} from '@/http/api'
+import { useDeleteService } from '@/gen/hooks/ServicesHooks/useDeleteService'
+import { useFetchManyServices } from '@/gen/hooks/ServicesHooks/useFetchManyServices'
+import { useUpdateService } from '@/gen/hooks/ServicesHooks/useUpdateService'
+import type { FetchManyServices200 } from '@/gen/types/FetchManyServices'
 import { createFileRoute } from '@tanstack/react-router'
 import { Pen, Trash } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { AlertDeleteService } from './-components/alert-delete-service'
 import FormCreateNewService from './-components/form-create-new-service'
 import FormEditService from './-components/form-edit-service'
 import { MenuMobileAuth } from './-components/menu-mobile'
+
+type ServiceItem = FetchManyServices200['services'][number]
 
 export const Route = createFileRoute('/_authenticated/my-services')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const [services, setServices] = useState<FetchManyServices200ServicesItem[]>(
-    []
-  )
-  const [loading, setLoading] = useState(true)
+  const { data: servicesData, isLoading: loading } = useFetchManyServices()
+  const { mutateAsync: deleteServiceMutate } = useDeleteService()
+  const { mutateAsync: updateServiceMutate } = useUpdateService()
+
+  const services = servicesData?.services || []
+
   const [deleteAlert, setDeleteAlert] = useState({
     isOpen: false,
     serviceId: '',
@@ -40,15 +42,8 @@ function RouteComponent() {
   })
   const [editModal, setEditModal] = useState({
     isOpen: false,
-    service: null as FetchManyServices200ServicesItem | null,
+    service: null as ServiceItem | null,
   })
-
-  useEffect(() => {
-    fetchManyServices().then(reply => {
-      setServices(reply.services)
-      setLoading(false)
-    })
-  }, [])
 
   function handleDeleteClick(serviceId: string, serviceName: string) {
     setDeleteAlert({
@@ -58,16 +53,11 @@ function RouteComponent() {
     })
   }
 
-  function handleConfirmDelete() {
+  async function handleConfirmDelete() {
     // Aqui você pode adicionar a lógica de exclusão da API
     console.log(`Excluindo serviço: ${deleteAlert.serviceId}`)
 
-    deleteService(deleteAlert.serviceId).then(() => {
-      // Remove o serviço da lista local
-      setServices(
-        services.filter(service => service.id !== deleteAlert.serviceId)
-      )
-    })
+    await deleteServiceMutate({ idService: deleteAlert.serviceId })
 
     // Fecha o alerta
     setDeleteAlert({
@@ -85,7 +75,7 @@ function RouteComponent() {
     })
   }
 
-  function handleEditClick(service: FetchManyServices200ServicesItem) {
+  function handleEditClick(service: ServiceItem) {
     setEditModal({
       isOpen: true,
       service,
@@ -107,23 +97,13 @@ function RouteComponent() {
       // Aqui você pode adicionar a chamada da API de update
       console.log('Atualizando serviço:', serviceId, data)
 
-      await updateService(serviceId, {
-        name: data.name,
-        description: data.description || undefined,
-      }).then(() =>
-        // Atualiza o serviço na lista local
-        setServices(
-          services.map(service =>
-            service.id === serviceId
-              ? {
-                ...service,
-                name: data.name,
-                description: data.description || null,
-              }
-              : service
-          )
-        )
-      )
+      await updateServiceMutate({
+        idService: serviceId,
+        data: {
+          name: data.name,
+          description: data.description || undefined,
+        },
+      })
 
       // Não fecha o modal aqui - deixa o componente FormEditService controlar o fechamento
     } catch (error) {

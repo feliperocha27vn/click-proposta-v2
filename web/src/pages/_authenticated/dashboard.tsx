@@ -1,19 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { CreditCard, FileText, MessageCircleMore } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import {
-  countTotalAndAcceptedProposals,
-  getCompleteRegister,
-} from '@/http/api'
+import { useCountTotalAndAcceptedProposals } from '@/gen/hooks/ProposalsHooks/useCountTotalAndAcceptedProposals'
+import { useGetCompleteRegister } from '@/gen/hooks/UsersHooks/useGetCompleteRegister'
 import FormCompleteCustomer from './-components/form-complete-customer'
 import { MenuMobileAuth } from './-components/menu-mobile'
-import { MobileRecentProposals } from './-components/mobile-recent-proposals'
-import {
-  type RecentProposal,
-  RecentProposalsTable,
-} from './-components/recent-proposals-table'
+import { RecentProposalsChart } from './-components/recent-proposals-chart'
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
   component: RouteComponent,
@@ -22,23 +15,23 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 function RouteComponent() {
   const [completeModal, setCompleteModal] = useState(false)
 
-  const { data: registerStatus } = useQuery({
-    queryKey: ['complete-register'],
-    queryFn: getCompleteRegister,
-    staleTime: Infinity,
+  const { data: registerStatus, isLoading: isLoadingRegister } = useGetCompleteRegister({
+    query: {
+      staleTime: Infinity,
+    }
   })
 
-  const { data: proposalsCount } = useQuery({
-    queryKey: ['proposals-count'],
-    queryFn: countTotalAndAcceptedProposals,
-    staleTime: 1000 * 60 * 5,
+  const { data: proposalsCount } = useCountTotalAndAcceptedProposals({
+    query: {
+      staleTime: 1000 * 60 * 5,
+    }
   })
 
   useEffect(() => {
-    if (registerStatus && !registerStatus.isRegisterComplete) {
+    if (!isLoadingRegister && typeof registerStatus === 'object' && registerStatus?.isRegisterComplete === false) {
       setCompleteModal(true)
     }
-  }, [registerStatus])
+  }, [registerStatus, isLoadingRegister])
 
   const stats = [
     {
@@ -53,43 +46,7 @@ function RouteComponent() {
     },
   ]
 
-  const recentProposals: RecentProposal[] = [
-    {
-      client: 'Acme Corp',
-      description: 'Site Institucional',
-      date: '19 Out, 2026',
-      amount: 'R$ 5.000,00',
-      status: 'Enviado',
-    },
-    {
-      client: 'TechStart Inc',
-      description: 'Aplicativo Mobile',
-      date: '18 Out, 2026',
-      amount: 'R$ 3.200,00',
-      status: 'Pendente',
-    },
-    {
-      client: 'Global Solutions',
-      description: 'Sistema ERP',
-      date: '15 Out, 2026',
-      amount: 'R$ 8.500,00',
-      status: 'Aceito',
-    },
-    {
-      client: 'Local Bakery',
-      description: 'Site Institucional',
-      date: '12 Out, 2026',
-      amount: 'R$ 1.200,00',
-      status: 'Rascunho',
-    },
-    {
-      client: 'Consultoria Silva',
-      description: 'Consultoria',
-      date: '10 Out, 2026',
-      amount: 'R$ 4.000,00',
-      status: 'Rejeitado',
-    },
-  ]
+
 
   function sendMessageToBot() {
     const message = 'Olá gostaria de criar um novo orçamento'
@@ -173,10 +130,9 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div className="gap-4 grid-cols-1 hidden md:grid">
-        <RecentProposalsTable proposals={recentProposals} />
+      <div className="grid grid-cols-1">
+        <RecentProposalsChart />
       </div>
-      <MobileRecentProposals proposals={recentProposals} />
 
       <FormCompleteCustomer
         isOpen={completeModal}

@@ -6,14 +6,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog'
-import type { FetchManyServices200ServicesItem } from '@/http/api'
+import type { FetchManyServices200 } from '@/gen/types/FetchManyServices'
 import { Link } from '@tanstack/react-router'
 
 interface DialogServicesDetailProps {
     closeDialog: boolean
     setCloseDialog: (value: boolean) => void
-    servicesData: FetchManyServices200ServicesItem[]
-    handleSelectService: (item: FetchManyServices200ServicesItem) => void
+    servicesData: FetchManyServices200['services']
+    handleSelectService: (item: FetchManyServices200['services'][number]) => void
 }
 
 export function DialogServicesDetail({

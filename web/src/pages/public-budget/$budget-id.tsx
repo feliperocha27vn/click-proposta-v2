@@ -3,9 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
-import { type GetPublicBudget200, getPublicBudget } from '@/http/api'
+import { useGetPublicBudget } from '@/gen/hooks/BudgetsHooks/useGetPublicBudget'
 import { createFileRoute, Link, useParams } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/public-budget/$budget-id')({
   component: RouteComponent,
@@ -13,24 +12,16 @@ export const Route = createFileRoute('/public-budget/$budget-id')({
 
 function RouteComponent() {
   const { 'budget-id': budgetId } = useParams({ strict: false })
-  const [budgetData, setBudgetData] = useState<GetPublicBudget200['budget']>()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-
-  useEffect(() => {
-    if (budgetId) {
-      getPublicBudget(budgetId)
-        .then(response => {
-          setBudgetData(response.budget)
-          setLoading(false)
-        })
-        .catch(err => {
-          console.error(err)
-          setError(true)
-          setLoading(false)
-        })
-    }
-  }, [budgetId])
+  const {
+    data: budgetResponse,
+    isLoading: loading,
+    isError: error,
+  } = useGetPublicBudget(budgetId ?? '', {
+    query: {
+      enabled: !!budgetId,
+    },
+  })
+  const budgetData = budgetResponse?.budget
 
   const formatterPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
