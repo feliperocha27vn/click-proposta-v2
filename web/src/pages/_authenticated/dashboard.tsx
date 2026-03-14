@@ -1,10 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import {
-  CreditCard,
-  DollarSign,
-  FileText,
-  MessageCircleMore,
-} from 'lucide-react'
+import { DollarSign, FileText, MessageCircleMore } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useCountTotalAndAcceptedProposals } from '@/gen/hooks/ProposalsHooks/useCountTotalAndAcceptedProposals'
