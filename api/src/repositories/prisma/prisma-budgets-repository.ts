@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
-import { subDays } from 'date-fns'
+import { endOfMonth, startOfMonth, subDays } from 'date-fns'
+import { prisma } from '@/lib/prisma'
 import type { BudgetsRepository } from '../budgets-repository'
 
 export class PrismaBudgetsRepository implements BudgetsRepository {
@@ -62,5 +62,25 @@ export class PrismaBudgetsRepository implements BudgetsRepository {
       date: new Date(date),
       count,
     }))
+  }
+
+  async sumTotalValue(userId: string) {
+    const result = await prisma.budgets.aggregate({
+      where: {
+        usersId: userId,
+        createdAt: {
+          gte: startOfMonth(new Date()),
+          lte: endOfMonth(new Date()),
+        },
+        status: {
+          not: 'REJECTED',
+        },
+      },
+      _sum: {
+        total: true,
+      },
+    })
+
+    return result._sum.total?.toNumber() || 0
   }
 }

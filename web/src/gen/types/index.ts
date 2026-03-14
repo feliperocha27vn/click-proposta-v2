@@ -163,6 +163,12 @@ export type {
   GetProposalAndBudgetStatsQueryResponse,
 } from "./GetProposalAndBudgetStats.ts";
 export type {
+  GetProposalAndBudgetTotalValue200,
+  GetProposalAndBudgetTotalValue500,
+  GetProposalAndBudgetTotalValueQuery,
+  GetProposalAndBudgetTotalValueQueryResponse,
+} from "./GetProposalAndBudgetTotalValue.ts";
+export type {
   GetProposalById200,
   GetProposalById200ChallengeEnumKey,
   GetProposalById200DiscountEnumKey,

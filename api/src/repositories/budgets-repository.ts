@@ -5,4 +5,5 @@ export interface BudgetsRepository {
   getById(budgetId: string): Promise<Budgets | null>
   fetchMany(usersId: string, pageIndex: number): Promise<Budgets[]>
   findCountByDay(userId: string, days: number): Promise<{ date: Date; count: number }[]>
+  sumTotalValue(userId: string, startDate?: Date, endDate?: Date): Promise<number>
 }

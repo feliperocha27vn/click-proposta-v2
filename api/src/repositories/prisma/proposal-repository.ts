@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
-import { subDays } from 'date-fns'
+import { endOfMonth, startOfMonth, subDays } from 'date-fns'
+import { prisma } from '@/lib/prisma'
 import type {
   ProposalRepository,
   ServicesProposal,
@@ -155,9 +155,9 @@ export class PrismaProposalRepository implements ProposalRepository {
       },
     })
 
-    return { 
-      accepted: acceptedProposals + acceptedBudgets, 
-      total: totalProposals + totalBudgets 
+    return {
+      accepted: acceptedProposals + acceptedBudgets,
+      total: totalProposals + totalBudgets,
     }
   }
 
@@ -191,5 +191,24 @@ export class PrismaProposalRepository implements ProposalRepository {
       date: new Date(date),
       count,
     }))
+  }
+  async sumTotalValue(userId: string) {
+    const result = await prisma.proposal.aggregate({
+      where: {
+        userId,
+        createdAt: {
+          gte: startOfMonth(new Date()),
+          lte: endOfMonth(new Date()),
+        },
+        status: {
+          not: 'REJECTED',
+        },
+      },
+      _sum: {
+        totalPrice: true,
+      },
+    })
+
+    return result._sum.totalPrice?.toNumber() || 0
   }
 }

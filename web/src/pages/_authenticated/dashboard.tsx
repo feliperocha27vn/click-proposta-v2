@@ -1,8 +1,14 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { CreditCard, FileText, MessageCircleMore } from 'lucide-react'
+import {
+  CreditCard,
+  DollarSign,
+  FileText,
+  MessageCircleMore,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useCountTotalAndAcceptedProposals } from '@/gen/hooks/ProposalsHooks/useCountTotalAndAcceptedProposals'
+import { useGetProposalAndBudgetTotalValue } from '@/gen/hooks/ProposalsHooks/useGetProposalAndBudgetTotalValue'
 import { useGetCompleteRegister } from '@/gen/hooks/UsersHooks/useGetCompleteRegister'
 import FormCompleteCustomer from './-components/form-complete-customer'
 import { MenuMobileAuth } from './-components/menu-mobile'
@@ -15,20 +21,31 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 function RouteComponent() {
   const [completeModal, setCompleteModal] = useState(false)
 
-  const { data: registerStatus, isLoading: isLoadingRegister } = useGetCompleteRegister({
-    query: {
-      staleTime: Infinity,
-    }
-  })
+  const { data: registerStatus, isLoading: isLoadingRegister } =
+    useGetCompleteRegister({
+      query: {
+        staleTime: Infinity,
+      },
+    })
 
   const { data: proposalsCount } = useCountTotalAndAcceptedProposals({
     query: {
       staleTime: 1000 * 60 * 5,
-    }
+    },
+  })
+
+  const { data: totalValueData } = useGetProposalAndBudgetTotalValue({
+    query: {
+      staleTime: 1000 * 60 * 5,
+    },
   })
 
   useEffect(() => {
-    if (!isLoadingRegister && typeof registerStatus === 'object' && registerStatus?.isRegisterComplete === false) {
+    if (
+      !isLoadingRegister &&
+      typeof registerStatus === 'object' &&
+      registerStatus?.isRegisterComplete === false
+    ) {
       setCompleteModal(true)
     }
   }, [registerStatus, isLoadingRegister])
@@ -40,13 +57,14 @@ function RouteComponent() {
       icon: FileText,
     },
     {
-      title: 'Propostas Aceitas',
-      value: proposalsCount?.accepted?.toString() || '0',
-      icon: CreditCard,
+      title: 'Valor Total Acumulado',
+      value: (totalValueData?.totalValue || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }),
+      icon: DollarSign,
     },
   ]
-
-
 
   function sendMessageToBot() {
     const message = 'Olá gostaria de criar um novo orçamento'
@@ -111,8 +129,6 @@ function RouteComponent() {
                     : index === 1
                       ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                       : index === 2
-                        ? 'bg-amber-50 text-amber-600 border border-amber-200'
-                        : 'bg-indigo-50 text-indigo-600 border border-indigo-200'
                 }`}
               >
                 <stat.icon className="size-5 md:size-6 xl:size-7" />

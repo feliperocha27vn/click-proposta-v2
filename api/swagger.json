@@ -2068,6 +2068,54 @@
         }
       }
     },
+    "/proposals/total-value": {
+      "get": {
+        "operationId": "getProposalAndBudgetTotalValue",
+        "tags": [
+          "Proposals"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "totalValue": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "totalValue"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/customer/{customerId}": {
       "get": {
         "operationId": "getCustomerById",

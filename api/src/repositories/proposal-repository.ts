@@ -53,4 +53,5 @@ export interface ProposalRepository {
     total: number
   }>
   findCountByDay(userId: string, days: number): Promise<{ date: Date; count: number }[]>
+  sumTotalValue(userId: string, startDate?: Date, endDate?: Date): Promise<number>
 }

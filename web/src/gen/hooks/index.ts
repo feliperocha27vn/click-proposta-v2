@@ -27,6 +27,8 @@ export type { FetchMinimalDetailsProposalQueryKey } from "./ProposalsHooks/useFe
 export type { FetchMinimalDetailsProposalSuspenseQueryKey } from "./ProposalsHooks/useFetchMinimalDetailsProposalSuspense.ts";
 export type { GetProposalAndBudgetStatsQueryKey } from "./ProposalsHooks/useGetProposalAndBudgetStats.ts";
 export type { GetProposalAndBudgetStatsSuspenseQueryKey } from "./ProposalsHooks/useGetProposalAndBudgetStatsSuspense.ts";
+export type { GetProposalAndBudgetTotalValueQueryKey } from "./ProposalsHooks/useGetProposalAndBudgetTotalValue.ts";
+export type { GetProposalAndBudgetTotalValueSuspenseQueryKey } from "./ProposalsHooks/useGetProposalAndBudgetTotalValueSuspense.ts";
 export type { GetProposalByIdQueryKey } from "./ProposalsHooks/useGetProposalById.ts";
 export type { GetProposalByIdSuspenseQueryKey } from "./ProposalsHooks/useGetProposalByIdSuspense.ts";
 export type { RecuseProposalMutationKey } from "./ProposalsHooks/useRecuseProposal.ts";
@@ -163,6 +165,14 @@ export { getProposalAndBudgetStatsSuspense } from "./ProposalsHooks/useGetPropos
 export { getProposalAndBudgetStatsSuspenseQueryKey } from "./ProposalsHooks/useGetProposalAndBudgetStatsSuspense.ts";
 export { getProposalAndBudgetStatsSuspenseQueryOptions } from "./ProposalsHooks/useGetProposalAndBudgetStatsSuspense.ts";
 export { useGetProposalAndBudgetStatsSuspense } from "./ProposalsHooks/useGetProposalAndBudgetStatsSuspense.ts";
+export { getProposalAndBudgetTotalValue } from "./ProposalsHooks/useGetProposalAndBudgetTotalValue.ts";
+export { getProposalAndBudgetTotalValueQueryKey } from "./ProposalsHooks/useGetProposalAndBudgetTotalValue.ts";
+export { getProposalAndBudgetTotalValueQueryOptions } from "./ProposalsHooks/useGetProposalAndBudgetTotalValue.ts";
+export { useGetProposalAndBudgetTotalValue } from "./ProposalsHooks/useGetProposalAndBudgetTotalValue.ts";
+export { getProposalAndBudgetTotalValueSuspense } from "./ProposalsHooks/useGetProposalAndBudgetTotalValueSuspense.ts";
+export { getProposalAndBudgetTotalValueSuspenseQueryKey } from "./ProposalsHooks/useGetProposalAndBudgetTotalValueSuspense.ts";
+export { getProposalAndBudgetTotalValueSuspenseQueryOptions } from "./ProposalsHooks/useGetProposalAndBudgetTotalValueSuspense.ts";
+export { useGetProposalAndBudgetTotalValueSuspense } from "./ProposalsHooks/useGetProposalAndBudgetTotalValueSuspense.ts";
 export { getProposalById } from "./ProposalsHooks/useGetProposalById.ts";
 export { getProposalByIdQueryKey } from "./ProposalsHooks/useGetProposalById.ts";
 export { getProposalByIdQueryOptions } from "./ProposalsHooks/useGetProposalById.ts";
