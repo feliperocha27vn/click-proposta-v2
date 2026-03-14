@@ -3,6 +3,7 @@ import { BackButton } from '@/components/back-button'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useFetchManyServices } from '@/gen/hooks/ServicesHooks/useFetchManyServices'
 import { useGetCustomerById } from '@/gen/hooks/CustomersHooks/useGetCustomerById'
 import { useGetMe } from '@/gen/hooks/UsersHooks/useGetMe'
@@ -162,9 +163,13 @@ function RouteComponent() {
           )}
           <div className="flex flex-col items-center text-center gap-y-4">
             <span className="h-px bg-zinc-200 w-full" />
-            <h1 className="text-lg w-11/12 font-medium text-zinc-700">
-              {customer?.customer.name}
-            </h1>
+            {isLoadingCustomer ? (
+              <Skeleton className="h-6 w-48" />
+            ) : (
+              <h1 className="text-lg w-11/12 font-medium text-zinc-700">
+                {customer?.customer.name}
+              </h1>
+            )}
             {fields.map((field, index) => (
               <div
                 key={field.id}

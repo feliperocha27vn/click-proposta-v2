@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/contexts/auth-context'
 import { useCreateNewPayment } from '@/gen/hooks/PaymentsHooks/useCreateNewPayment'
 import { useGetCompleteRegister } from '@/gen/hooks/UsersHooks/useGetCompleteRegister'
@@ -29,7 +28,7 @@ function RouteComponent() {
   const [errorModal, setErrorModal] = useState(false)
   const [loadingValidation, setLoadingValidation] = useState(false)
 
-  const { data: isRegisterComplete, isLoading: isLoadingRegister } = useGetCompleteRegister()
+  const { data: isRegisterComplete } = useGetCompleteRegister()
   const { data: userDataResponse, isLoading: isLoadingUser } = useGetMe()
   const userData = userDataResponse?.user
 
